@@ -3,7 +3,7 @@
 Promo landing page for **BORN FIRE (CALLING GOSPEL LIVE SHOW VOL.1)**, the debut live album by Calling Choir (콜링콰이어).
 Static HTML/CSS/JS, no build step. English by default, Korean via the EN/KO toggle (or `?lang=ko`; Korean browsers switch automatically).
 
-Live URL (after GitHub Pages is on): https://lightf0903.github.io/born-fire/
+Live URL (after GitHub Pages is on): https://lightf0903.github.io/BORN-FIRE/
 
 ## Things to fill in
 
