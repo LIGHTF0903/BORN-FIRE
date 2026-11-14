@@ -232,10 +232,6 @@ section{padding:clamp(72px,11vw,128px) 0}
 .fpend__btn--main{background:#fff;color:#000}
 .fpend__btn--yt{background:var(--yt);color:#fff}
 .fpend__replay{all:unset;cursor:pointer;margin-top:4px;font-size:13px;color:var(--muted)} .fpend__replay:hover{color:var(--fg)}
-.fpbar{display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;margin-top:6px;font-size:13px;color:var(--muted)}
-.fpbar[hidden]{display:none}
-.fpbar a{display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:var(--fg);opacity:.85} .fpbar a:hover{opacity:1;text-decoration:underline}
-.fpbar svg{width:16px;height:16px;color:var(--yt)}
 .btn-listen{cursor:pointer;font-family:inherit;background:linear-gradient(135deg,var(--fire),var(--fire-2));color:#000;box-shadow:0 12px 34px -12px rgba(255,90,31,.8)}
 .btn-listen svg{width:20px;height:20px}
 .lsn__bg{position:absolute;inset:0;background:#0a0706 center/cover no-repeat;opacity:0;transition:opacity .5s cubic-bezier(.22,1,.36,1);will-change:opacity}
@@ -381,11 +377,6 @@ footer a{color:var(--muted);text-decoration:none} footer a:hover{color:var(--fg)
           <button class="fpend__replay" id="fpendReplay" type="button">↺ Replay</button>
         </div>
       </div>
-      <div class="fpbar" id="fpbar" hidden>
-        <a id="fpbarWatch" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.5 15.6V8.4l6.3 3.6z"/></svg>Watch on YouTube</a>
-        <span aria-hidden="true">·</span>
-        <a href="https://www.youtube.com/@Callingchoir?sub_confirmation=1" target="_blank" rel="noopener">Subscribe</a>
-      </div>
       <div class="flow__ctrl">
         <p class="flow__hint"><span class="ln">Drag or use the arrows to browse.</span><span class="ln">Tap the middle card to play.</span></p>
         <div class="flow__nav">
@@ -510,11 +501,10 @@ let pos=TITLE;            // continuous position (index of the centred card)
 const wrap=d=>{d=((d%N)+N)%N;return d>N/2?d-N:d;};
 const fplayer=document.getElementById('fplayer'), fpFrame=document.getElementById('fplayerFrame');
 let openedAt=0;
-const fpend=document.getElementById('fpend'), fpbar=document.getElementById('fpbar');
+const fpend=document.getElementById('fpend');
 let inlIdx=-1;
 function nextPlayable(i){for(let k=1;k<=N;k++){const j=(i+k)%N;if(TRACKS[j][3])return j;}return i;}
-function syncExtras(i){inlIdx=i;fpend.hidden=true;fpbar.hidden=false;
-  document.getElementById('fpbarWatch').href='https://www.youtube.com/watch?v='+TRACKS[i][3];
+function syncExtras(i){inlIdx=i;fpend.hidden=true;
   const n=TRACKS[nextPlayable(i)];document.getElementById('fpendNext').textContent=n[0]+'. '+n[1];}
 function onInlState(e){if(e.data===YT.PlayerState.ENDED){fpend.hidden=false;}else if(e.data===YT.PlayerState.PLAYING){fpend.hidden=true;}}
 document.getElementById('fpendGo').onclick=()=>{const j=nextPlayable(inlIdx);go(Math.round(pos)+wrap(j-pos));};
@@ -527,10 +517,10 @@ function playInline(i){const t=TRACKS[i];if(!t||!t[3])return;if(window.muteStage
     const f=fpFrame.querySelector('iframe');if(f)f.title=`${t[1]} — Calling Choir live`;};
   if(window.YT&&YT.Player)mk();else{const iv=setInterval(()=>{if(window.YT&&YT.Player){clearInterval(iv);mk();}},100);}}
 let inl=null, inlVol=100;  // volume tracked here: getVolume() lags right after setVolume()
-function stopInline(){if(fplayer.hidden)return;if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});try{inl&&inl.destroy();}catch(_){}inl=null;fpFrame.innerHTML='';fplayer.hidden=true;fpend.hidden=true;fpbar.hidden=true;}
+function stopInline(){if(fplayer.hidden)return;if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});try{inl&&inl.destroy();}catch(_){}inl=null;fpFrame.innerHTML='';fplayer.hidden=true;fpend.hidden=true;}
 // Click anywhere outside the open video closes it (the < > buttons switch videos instead)
 document.addEventListener('click',e=>{if(fplayer.hidden||performance.now()-openedAt<300)return;
-  if(e.target.closest('#fplayer,#fpbar,#flowPrev,#flowNext,#modal,.fcard'))return;stopInline();});
+  if(e.target.closest('#fplayer,#flowPrev,#flowNext,#modal,.fcard'))return;stopInline();});
 // ESC closes the inline player from anywhere on the page
 // YouTube's own shortcuts, re-created here so ESC can also close the player
 addEventListener('keydown',e=>{
