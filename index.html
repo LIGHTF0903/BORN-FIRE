@@ -103,7 +103,9 @@ a{color:inherit}
   background:var(--fire-2);color:#000;font-weight:800;font-size:11px;letter-spacing:.18em;padding:10px 4px}
 .stage__sound{position:absolute;z-index:3;left:50%;top:50%;transform:translate(-50%,-50%);width:58px;height:58px;border-radius:999px;
   border:1px solid rgba(255,255,255,.55);background:rgba(0,0,0,.28);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
-  display:grid;place-items:center;cursor:pointer;color:#fff;transition:transform .15s ease,background .15s ease}
+  display:grid;place-items:center;cursor:pointer;color:#fff;transition:transform .15s ease,background .15s ease,opacity .6s ease}
+.stage.idle .stage__sound{opacity:0;pointer-events:none}
+.stage.idle{cursor:none}
 .stage__sound:hover{background:rgba(0,0,0,.45)} .stage__sound:active{transform:translate(-50%,-50%) scale(.94)}
 .stage__sound svg{width:24px;height:24px}
 .stage__sound .on{display:none} .stage.unmuted .stage__sound .on{display:block} .stage.unmuted .stage__sound .off{display:none}
@@ -387,6 +389,10 @@ addEventListener('scroll', () => sticky.classList.toggle('on', scrollY > innerHe
     stage.classList.toggle('unmuted',unmute);btn.setAttribute('aria-pressed',String(unmute));
     btn.setAttribute('aria-label',unmute?'소리 끄기 / Mute':'소리 켜기 / Unmute');
   });
+  // Hide the sound button after 2.5s of no activity; show it again on mouse move / touch / key / scroll
+  let idleT; const wake=()=>{stage.classList.remove('idle');clearTimeout(idleT);idleT=setTimeout(()=>stage.classList.add('idle'),2500);};
+  ['mousemove','touchstart','keydown','scroll'].forEach(ev=>addEventListener(ev,wake,{passive:true}));
+  btn.addEventListener('focus',wake); wake();
   // Mute the background when a track video starts playing
   document.getElementById('tracks').addEventListener('click',()=>{if(ready&&stage.classList.contains('unmuted'))btn.click();});
   // Pause when off-screen to save data
