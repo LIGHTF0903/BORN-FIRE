@@ -225,4 +225,7 @@ footer a{color:var(--muted);text-decoration:none} footer a:hover{color:var(--fg)
   .lsn__list a{padding:5px 0;gap:12px;font-size:14px}
   .lsn__ic{width:28px;height:28px;border-radius:7px}
   .lsn__go{padding:6px 12px;font-size:11px}
+  /* EN only: its longer intro line can't wrap (nowrap above 860px), which pushed the buttons onto a second row */
+  html[lang="en"] .more__txt{flex:1 1 0;min-width:0}
+  html[lang="en"] .more__txt .ln{white-space:normal}
 }
