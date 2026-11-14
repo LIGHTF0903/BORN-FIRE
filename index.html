@@ -397,7 +397,7 @@ addEventListener('scroll', () => sticky.classList.toggle('on', scrollY > innerHe
   document.getElementById('tracks').addEventListener('click',()=>{if(ready&&stage.classList.contains('unmuted'))btn.click();});
   // Scroll-linked fade: music keeps playing while scrolling, getting quieter (as if from a distance)
   let lastVol=-1;
-  const vol=()=>Math.round(100*Math.max(0.12,1-scrollY/(innerHeight*1.6)));
+  const vol=()=>Math.round(100*Math.max(0.35,1-scrollY/(innerHeight*3)));
   const fade=()=>{if(!ready||!stage.classList.contains('unmuted'))return;const v=vol();if(v!==lastVol){player.setVolume(v);lastVol=v;}};
   addEventListener('scroll',fade,{passive:true});
   // Pause only when off-screen AND muted (saves data without cutting the music)
