@@ -1,19 +1,12 @@
 # BORN FIRE — Calling Choir landing page
 
 Promo landing page for **BORN FIRE (CALLING GOSPEL LIVE SHOW VOL.1)**, the debut live album by Calling Choir (콜링콰이어).
-Static HTML/CSS/JS, no build step. English by default, Korean via the EN/KO toggle (or `?lang=ko`; Korean browsers switch automatically).
+Single static `index.html` (no build step). Every track in the tracklist plays its official live video inline.
 
-Live URL (after GitHub Pages is on): https://lightf0903.github.io/BORN-FIRE/
+Live: https://lightf0903.github.io/BORN-FIRE/
 
-## Things to fill in
+## Editing
 
-| What | Where |
-| --- | --- |
-| Official album cover | Save as `assets/cover.jpg` (square, 1200×1200 or larger). Until then a generated placeholder is shown. |
-| Streaming links | `index.html`, section `#listen`: replace each `href="#"` (Spotify, Apple Music, YouTube Music, Melon, Genie, Bugs). Links left as `#` show "Soon". |
-| Share image | `assets/og-image.png` (1200×630) is a generated placeholder; replace with official artwork if you like. |
-| Custom domain | If you use one, update the `canonical`, `og:url`, `og:image` and JSON-LD URLs in `index.html`. |
-
-## Enable GitHub Pages
-
-Settings → Pages → Build and deployment → Source: **Deploy from a branch** → Branch: `main` / `(root)` → Save.
+- Tracks and video IDs: the `TRACKS` array at the bottom of `index.html` (`[number, name, credit, youtubeId]`; empty id = "video coming soon").
+- Share image: `assets/og-image.png` (1200×630).
+- Streaming links (Melon, Spotify, Apple Music…) can be added as buttons in the Follow section.
