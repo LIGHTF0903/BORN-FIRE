@@ -209,6 +209,28 @@ section{padding:clamp(72px,11vw,128px) 0}
 .fplayer__frame,.fplayer__frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
 .fplayer__close{position:absolute;z-index:2;top:10px;right:10px;width:34px;height:34px;border-radius:999px;border:1px solid rgba(255,255,255,.35);background:rgba(0,0,0,.55);color:#fff;cursor:pointer;font-size:14px;display:grid;place-items:center}
 @keyframes fpIn{from{opacity:0;clip-path:inset(0 calc(50% - var(--cw) / 2) round 22px)}to{opacity:1;clip-path:inset(0 0 round 22px)}}
+.fpend{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:20px;text-align:center;
+  background:radial-gradient(80% 80% at 50% 100%,rgba(255,90,31,.35),rgba(0,0,0,0) 70%),rgba(8,6,6,.95);animation:fpFade .35s ease}
+.fpend[hidden]{display:none}
+@keyframes fpFade{from{opacity:0}to{opacity:1}}
+.fpend__label{margin:0;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--fire-2);font-weight:700}
+.fpend__next{margin:0 0 6px;font-weight:800;font-size:clamp(18px,2.4vw,26px);line-height:1.25}
+.fpend__btns{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.fpend__btn{all:unset;box-sizing:border-box;display:inline-flex;align-items:center;gap:8px;padding:11px 18px;border-radius:999px;font-weight:700;font-size:14px;cursor:pointer;white-space:nowrap}
+.fpend__btn svg{width:18px;height:18px}
+.fpend__btn--main{background:#fff;color:#000}
+.fpend__btn--yt{background:var(--yt);color:#fff}
+.fpend__replay{all:unset;cursor:pointer;margin-top:4px;font-size:13px;color:var(--muted)} .fpend__replay:hover{color:var(--fg)}
+.fpbar{display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;margin-top:6px;font-size:13px;color:var(--muted)}
+.fpbar[hidden]{display:none}
+.fpbar a{display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:var(--fg);opacity:.85} .fpbar a:hover{opacity:1;text-decoration:underline}
+.fpbar svg{width:16px;height:16px;color:var(--yt)}
+.more{margin-top:44px;padding:24px;border:1px solid var(--line);border-radius:20px;background:var(--bg-2);display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:18px}
+.more__txt{margin:0;font-size:16px;line-height:1.5} .more__txt span{color:var(--muted);font-size:14px}
+.more__btns{display:flex;flex-wrap:wrap;gap:10px}
+.more .btn{padding:13px 22px;font-size:15px}
+@media (max-width:600px){.more{flex-direction:column;align-items:stretch;text-align:center}.more__btns{flex-direction:column}}
+@media (max-width:600px){.fpend__btn{padding:9px 14px;font-size:13px}.fpend__next{font-size:16px}.fpend{gap:6px}}
 .flow__ctrl{display:flex;align-items:center;justify-content:center;gap:24px;margin-top:12px;position:relative}
 .flow__hint{position:absolute;left:0;top:50%;transform:translateY(-50%);margin:0;font-size:12px;line-height:1.5;color:var(--dim);max-width:30ch}
 .flow__nav{display:flex;align-items:center;gap:16px}
@@ -309,7 +331,22 @@ footer a{color:var(--muted);text-decoration:none} footer a:hover{color:var(--fg)
     <div class="head rv"><h2 class="display">Tracklist</h2><p>12곡 전부 공식 라이브 영상으로 볼 수 있어요. Tap a track to watch.</p></div>
     <div class="flow rv" id="flow" tabindex="0" role="region" aria-roledescription="carousel" aria-label="트랙 카드 넘기기">
       <div class="flow__stage" id="flowStage"></div>
-      <div class="fplayer" id="fplayer" hidden><div class="fplayer__frame" id="fplayerFrame"></div></div>
+      <div class="fplayer" id="fplayer" hidden><div class="fplayer__frame" id="fplayerFrame"></div>
+        <div class="fpend" id="fpend" hidden>
+          <p class="fpend__label">다음 곡 · Up next</p>
+          <p class="fpend__next" id="fpendNext"></p>
+          <div class="fpend__btns">
+            <button class="fpend__btn fpend__btn--main" id="fpendGo" type="button">▶ 다음 곡 보기 · Next track</button>
+            <a class="fpend__btn fpend__btn--yt" href="https://www.youtube.com/@Callingchoir?sub_confirmation=1" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.5 15.6V8.4l6.3 3.6z"/></svg>유튜브 구독 · Subscribe</a>
+          </div>
+          <button class="fpend__replay" id="fpendReplay" type="button">↺ 다시 보기 · Replay</button>
+        </div>
+      </div>
+      <div class="fpbar" id="fpbar" hidden>
+        <a id="fpbarWatch" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.5 15.6V8.4l6.3 3.6z"/></svg>유튜브에서 보기 · Watch on YouTube</a>
+        <span aria-hidden="true">·</span>
+        <a href="https://www.youtube.com/@Callingchoir?sub_confirmation=1" target="_blank" rel="noopener">구독하기 · Subscribe</a>
+      </div>
       <div class="flow__ctrl">
         <p class="flow__hint">드래그하거나 화살표로 넘기고, 가운데 카드를 누르면 재생돼요.<br>Drag to browse. Tap the middle card to play.</p>
         <div class="flow__nav">
@@ -317,6 +354,13 @@ footer a{color:var(--muted);text-decoration:none} footer a:hover{color:var(--fg)
           <span class="flow__count" id="flowCount" aria-live="polite">08 / 12</span>
           <button class="ibtn" id="flowNext" type="button" aria-label="다음 곡">›</button>
         </div>
+      </div>
+    </div>
+    <div class="more rv">
+      <p class="more__txt"><b>공연의 더 많은 순간은 유튜브와 인스타그램에서</b><br><span>More moments from Calling Choir on YouTube &amp; Instagram.</span></p>
+      <div class="more__btns">
+        <a class="btn btn-yt" href="https://www.youtube.com/@Callingchoir?sub_confirmation=1" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.5 15.6V8.4l6.3 3.6z"/></svg>유튜브 · YouTube</a>
+        <a class="btn btn-ig" href="https://www.instagram.com/calling.showchoir/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.6" cy="6.4" r="1.2" fill="currentColor" stroke="none"/></svg>인스타그램 · Instagram</a>
       </div>
     </div>
   </div>
@@ -417,18 +461,27 @@ let pos=TITLE;            // continuous position (index of the centred card)
 const wrap=d=>{d=((d%N)+N)%N;return d>N/2?d-N:d;};
 const fplayer=document.getElementById('fplayer'), fpFrame=document.getElementById('fplayerFrame');
 let openedAt=0;
-function playInline(i){const t=TRACKS[i];if(!t||!t[3])return;if(window.muteStage)window.muteStage();openedAt=performance.now();
+const fpend=document.getElementById('fpend'), fpbar=document.getElementById('fpbar');
+let inlIdx=-1;
+function nextPlayable(i){for(let k=1;k<=N;k++){const j=(i+k)%N;if(TRACKS[j][3])return j;}return i;}
+function syncExtras(i){inlIdx=i;fpend.hidden=true;fpbar.hidden=false;
+  document.getElementById('fpbarWatch').href='https://www.youtube.com/watch?v='+TRACKS[i][3];
+  const n=TRACKS[nextPlayable(i)];document.getElementById('fpendNext').textContent=n[0]+'. '+n[1];}
+function onInlState(e){if(e.data===YT.PlayerState.ENDED){fpend.hidden=false;}else if(e.data===YT.PlayerState.PLAYING){fpend.hidden=true;}}
+document.getElementById('fpendGo').onclick=()=>{const j=nextPlayable(inlIdx);go(Math.round(pos)+wrap(j-pos));};
+document.getElementById('fpendReplay').onclick=()=>{fpend.hidden=true;try{inl.seekTo(0,true);inl.playVideo();}catch(_){}};
+function playInline(i){const t=TRACKS[i];if(!t||!t[3])return;if(window.muteStage)window.muteStage();openedAt=performance.now();syncExtras(i);
   if(!fplayer.hidden&&inl&&inl.loadVideoById){inl.loadVideoById(t[3]);return;}
   fpFrame.innerHTML='<div id="fpYT"></div>';fplayer.hidden=false;inl=null;
   const mk=()=>{inl=new YT.Player('fpYT',{videoId:t[3],host:'https://www.youtube-nocookie.com',
-    playerVars:{autoplay:1,rel:0,playsinline:1,modestbranding:1},events:{onReady:e=>e.target.playVideo()}});
+    playerVars:{autoplay:1,rel:0,playsinline:1,modestbranding:1},events:{onReady:e=>e.target.playVideo(),onStateChange:onInlState}});
     const f=fpFrame.querySelector('iframe');if(f)f.title=`${t[1]} — 콜링콰이어 라이브`;};
   if(window.YT&&YT.Player)mk();else{const iv=setInterval(()=>{if(window.YT&&YT.Player){clearInterval(iv);mk();}},100);}}
 let inl=null, inlVol=100;  // volume tracked here: getVolume() lags right after setVolume()
-function stopInline(){if(fplayer.hidden)return;if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});try{inl&&inl.destroy();}catch(_){}inl=null;fpFrame.innerHTML='';fplayer.hidden=true;}
+function stopInline(){if(fplayer.hidden)return;if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});try{inl&&inl.destroy();}catch(_){}inl=null;fpFrame.innerHTML='';fplayer.hidden=true;fpend.hidden=true;fpbar.hidden=true;}
 // Click anywhere outside the open video closes it (the < > buttons switch videos instead)
 document.addEventListener('click',e=>{if(fplayer.hidden||performance.now()-openedAt<300)return;
-  if(e.target.closest('#fplayer,#flowPrev,#flowNext,#modal,.fcard'))return;stopInline();});
+  if(e.target.closest('#fplayer,#fpbar,#flowPrev,#flowNext,#modal,.fcard'))return;stopInline();});
 // ESC closes the inline player from anywhere on the page
 // YouTube's own shortcuts, re-created here so ESC can also close the player
 addEventListener('keydown',e=>{
