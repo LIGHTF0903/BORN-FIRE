@@ -65,7 +65,7 @@
 <link rel="preconnect" href="https://i.ytimg.com">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Pretendard:wght@400;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Pinyon+Script&family=Pretendard:wght@400;600;800&display=swap" rel="stylesheet">
 
 <style>
 :root{
@@ -91,8 +91,31 @@ a{color:inherit}
 .wrap{max-width:var(--max);margin:0 auto;padding:0 16px}
 .display{font-family:Anton,Pretendard,sans-serif;font-weight:400;letter-spacing:.01em;line-height:.95;text-transform:uppercase}
 
+/* ---------- STAGE (full-screen live video) ---------- */
+.stage{position:relative;height:100svh;min-height:480px;overflow:hidden;background:#000 url("https://i.ytimg.com/vi/jKdQVbeaqe4/maxresdefault.jpg") center/cover no-repeat}
+.stage__video{position:absolute;top:50%;left:50%;width:max(100vw,177.78svh);height:max(100svh,56.25vw);transform:translate(-50%,-50%) scale(1.3);pointer-events:none;border:0;opacity:0;transition:opacity .8s ease}
+.stage.playing .stage__video{opacity:1}
+.stage::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(0,0,0,.35) 0%,rgba(0,0,0,0) 30%,rgba(0,0,0,0) 65%,rgba(10,7,8,1) 100%)}
+.stage__logo{position:absolute;z-index:2;top:clamp(28px,6vh,64px);left:0;right:0;margin:0;text-align:center;pointer-events:none;
+  font-family:"Pinyon Script",cursive;font-weight:400;font-size:clamp(56px,11vw,128px);line-height:1;color:rgba(255,236,224,.92);
+  text-shadow:0 0 18px rgba(255,90,31,.55),0 0 2px rgba(0,0,0,.4)}
+.stage__tag{position:absolute;z-index:2;left:0;top:clamp(90px,16vh,140px);writing-mode:vertical-rl;transform:rotate(180deg);
+  background:var(--fire-2);color:#000;font-weight:800;font-size:11px;letter-spacing:.18em;padding:10px 4px}
+.stage__sound{position:absolute;z-index:3;left:50%;top:50%;transform:translate(-50%,-50%);width:58px;height:58px;border-radius:999px;
+  border:1px solid rgba(255,255,255,.55);background:rgba(0,0,0,.28);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  display:grid;place-items:center;cursor:pointer;color:#fff;transition:transform .15s ease,background .15s ease}
+.stage__sound:hover{background:rgba(0,0,0,.45)} .stage__sound:active{transform:translate(-50%,-50%) scale(.94)}
+.stage__sound svg{width:24px;height:24px}
+.stage__sound .on{display:none} .stage.unmuted .stage__sound .on{display:block} .stage.unmuted .stage__sound .off{display:none}
+.stage__foot{position:absolute;z-index:2;left:0;right:0;bottom:22px;display:flex;justify-content:space-between;align-items:flex-end;gap:12px;padding:0 20px;
+  font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.8)}
+.stage__foot a{text-decoration:none}
+.stage__down{display:inline-flex;flex-direction:column;align-items:center;gap:6px}
+.stage__down i{width:1px;height:28px;background:rgba(255,255,255,.7);animation:drip 1.8s ease-in-out infinite;transform-origin:top}
+@keyframes drip{0%{transform:scaleY(0)}50%{transform:scaleY(1)}100%{transform:scaleY(0);transform-origin:bottom}}
+
 /* ---------- HERO ---------- */
-.hero{position:relative;min-height:100svh;display:flex;flex-direction:column;justify-content:flex-end;padding:96px 0 32px;overflow:hidden}
+.hero{position:relative;display:flex;flex-direction:column;justify-content:flex-end;padding:72px 0 56px;overflow:hidden}
 .hero::before{
   content:"";position:absolute;inset:0;
   background:
@@ -196,7 +219,21 @@ footer a{color:var(--fg);text-decoration:none;border-bottom:1px solid var(--line
 </head>
 <body>
 
-<header class="hero">
+<header class="stage" id="stage">
+  <div id="stage-player" class="stage__video" aria-hidden="true"></div>
+  <p class="stage__logo" aria-hidden="true">Born Fire</p>
+  <span class="stage__tag">2026</span>
+  <button class="stage__sound" id="stage-sound" type="button" aria-label="소리 켜기 / Unmute" aria-pressed="false">
+    <svg class="off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="m22 9-6 6M16 9l6 6"/></svg>
+    <svg class="on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+  </button>
+  <div class="stage__foot">
+    <span>Calling Choir<br>모닥불 (Born Fire) · Live</span>
+    <a class="stage__down" href="#album">Scroll<i></i></a>
+  </div>
+</header>
+
+<section class="hero" id="album">
   <div class="wrap">
     <p class="eyebrow">Calling Gospel Live Show Vol.1</p>
     <h1 class="title display"><span>Born</span><span class="fire">Fire</span></h1>
@@ -214,7 +251,7 @@ footer a{color:var(--fg);text-decoration:none;border-bottom:1px solid var(--line
       </a>
     </div>
   </div>
-</header>
+</section>
 
 <section>
   <div class="wrap">
@@ -328,6 +365,33 @@ ul.addEventListener('click', e => {
 
 const sticky = document.getElementById('sticky');
 addEventListener('scroll', () => sticky.classList.toggle('on', scrollY > innerHeight * 0.9), {passive:true});
+
+// Full-screen background live video (muted autoplay loop, tap to unmute)
+(function(){
+  const stage=document.getElementById('stage'), btn=document.getElementById('stage-sound'), VID='jKdQVbeaqe4', START=140;
+  let player=null, ready=false;
+  window.onYouTubeIframeAPIReady=function(){
+    player=new YT.Player('stage-player',{videoId:VID,host:'https://www.youtube-nocookie.com',
+      playerVars:{autoplay:1,mute:1,controls:0,start:START,playsinline:1,rel:0,modestbranding:1,disablekb:1,iv_load_policy:3,fs:0},
+      events:{
+        onReady:e=>{ready=true;e.target.mute();e.target.playVideo();},
+        onStateChange:e=>{if(e.data===YT.PlayerState.PLAYING)stage.classList.add('playing');
+                          if(e.data===YT.PlayerState.ENDED){e.target.seekTo(START,true);e.target.playVideo();}}
+      }});
+  };
+  const t=document.createElement('script');t.src='https://www.youtube.com/iframe_api';document.head.appendChild(t);
+  btn.addEventListener('click',()=>{
+    if(!ready)return;
+    const unmute=!stage.classList.contains('unmuted');
+    if(unmute){player.unMute();player.setVolume(100);player.playVideo();}else{player.mute();}
+    stage.classList.toggle('unmuted',unmute);btn.setAttribute('aria-pressed',String(unmute));
+    btn.setAttribute('aria-label',unmute?'소리 끄기 / Mute':'소리 켜기 / Unmute');
+  });
+  // Mute the background when a track video starts playing
+  document.getElementById('tracks').addEventListener('click',()=>{if(ready&&stage.classList.contains('unmuted'))btn.click();});
+  // Pause when off-screen to save data
+  new IntersectionObserver(([en])=>{if(!ready)return;en.isIntersecting?player.playVideo():player.pauseVideo();}).observe(stage);
+})();
 </script>
 </body>
 </html>
