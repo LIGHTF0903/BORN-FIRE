@@ -69,11 +69,7 @@
 </script>
 
 <link rel="preconnect" href="https://i.ytimg.com">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Pinyon+Script&family=Pretendard:wght@400;600;800&display=swap" rel="stylesheet">
-
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="../assets/fonts/fonts.css">
 
 <style>
 :root{
@@ -100,6 +96,7 @@ section{padding:clamp(72px,11vw,128px) 0}
 .stage{position:relative;height:100svh;min-height:480px;overflow:hidden;background:#000 url("https://i.ytimg.com/vi/jKdQVbeaqe4/maxresdefault.jpg") center/cover no-repeat}
 .stage__video{position:absolute;top:50%;left:50%;width:calc(max(100vw,177.78svh)*1.3);height:calc(max(100svh,56.25vw)*1.3);transform:translate(-50%,-50%);pointer-events:none;border:0;opacity:0;transition:opacity .8s ease}
 .stage.playing .stage__video{opacity:1}
+.stage.still .stage__sound{display:none}
 .stage::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(0,0,0,.35) 0%,rgba(0,0,0,0) 30%,rgba(0,0,0,0) 65%,rgba(10,7,8,1) 100%)}
 .stage__logo{position:absolute;z-index:2;top:clamp(70px,10vh,96px);left:0;right:0;margin:0;text-align:center;pointer-events:none;
   font-family:"Pinyon Script",cursive;font-weight:400;font-size:clamp(56px,11vw,128px);line-height:1;color:rgba(255,236,224,.92);
@@ -511,7 +508,7 @@ function syncExtras(i){inlIdx=i;fpend.hidden=true;
 function onInlState(e){if(e.data===YT.PlayerState.ENDED){fpend.hidden=false;}else if(e.data===YT.PlayerState.PLAYING){fpend.hidden=true;}}
 document.getElementById('fpendGo').onclick=()=>{const j=nextPlayable(inlIdx);go(Math.round(pos)+wrap(j-pos));};
 document.getElementById('fpendReplay').onclick=()=>{fpend.hidden=true;try{inl.seekTo(0,true);inl.playVideo();}catch(_){}};
-function playInline(i){const t=TRACKS[i];if(!t||!t[3])return;if(window.muteStage)window.muteStage();openedAt=performance.now();syncExtras(i);
+function playInline(i){const t=TRACKS[i];if(!t||!t[3])return;if(window.pauseStage)window.pauseStage();openedAt=performance.now();syncExtras(i);
   if(!fplayer.hidden&&inl&&inl.loadVideoById){inl.loadVideoById(t[3]);return;}
   fpFrame.innerHTML='<div id="fpYT"></div>';fplayer.hidden=false;inl=null;
   const mk=()=>{inl=new YT.Player('fpYT',{videoId:t[3],host:'https://www.youtube-nocookie.com',
@@ -519,15 +516,17 @@ function playInline(i){const t=TRACKS[i];if(!t||!t[3])return;if(window.muteStage
     const f=fpFrame.querySelector('iframe');if(f)f.title=`${t[1]} — Calling Choir live`;};
   if(window.YT&&YT.Player)mk();else{const iv=setInterval(()=>{if(window.YT&&YT.Player){clearInterval(iv);mk();}},100);}}
 let inl=null, inlVol=100;  // volume tracked here: getVolume() lags right after setVolume()
-function stopInline(){if(fplayer.hidden)return;if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});try{inl&&inl.destroy();}catch(_){}inl=null;fpFrame.innerHTML='';fplayer.hidden=true;fpend.hidden=true;}
+function stopInline(){if(fplayer.hidden)return;if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});try{inl&&inl.destroy();}catch(_){}inl=null;fpFrame.innerHTML='';fplayer.hidden=true;fpend.hidden=true;if(window.resumeStage)window.resumeStage();}
 // Click anywhere outside the open video closes it (the < > buttons switch videos instead)
-document.addEventListener('click',e=>{if(fplayer.hidden||performance.now()-openedAt<300)return;
+document.addEventListener('click',e=>{if(fplayer.hidden||performance.now()-openedAt<300||flow.dataset.justDragged)return;  // a drag's trailing click must not close the video
+
   if(e.target.closest('#fplayer,#flowPrev,#flowNext,#modal,.fcard'))return;stopInline();});
 // ESC closes the inline player from anywhere on the page
 // YouTube's own shortcuts, re-created here so ESC can also close the player
 addEventListener('keydown',e=>{
   if(fplayer.hidden||document.getElementById('modal').classList.contains('on')||e.ctrlKey||e.metaKey||e.altKey)return;
   const tag=(e.target.tagName||'');if(tag==='INPUT'||tag==='TEXTAREA')return;
+  if((e.key===' '||e.key==='Enter')&&e.target.closest&&e.target.closest('button,a[href],[role="button"],summary,select'))return;
   if(e.key==='Escape'){stopInline();return;}
   const p=inl;if(!p||!p.getPlayerState)return;
   const k=e.key.toLowerCase(), t=()=>p.getCurrentTime()||0, d=()=>p.getDuration()||0, seek=x=>p.seekTo(Math.max(0,Math.min(d(),x)),true);
@@ -583,12 +582,22 @@ fstage.addEventListener('pointerdown',e=>{if(e.button!==0)return;drag={x:e.clien
 addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-drag.x;
   if(!drag.moved){if(Math.abs(dx)<6)return;if(Math.abs(e.clientY-drag.y)>Math.abs(dx)){drag=null;return;}drag.moved=true;drag.wasPlaying=!fplayer.hidden;if(drag.wasPlaying){try{inl&&inl.pauseVideo();}catch(_){}fplayer.style.visibility='hidden';}flow.classList.remove('anim');fstage.classList.add('dragging');try{fstage.setPointerCapture(drag.id);}catch(_){}}
   const gap=parseFloat(getComputedStyle(flow).getPropertyValue('--gap'))||250;pos=drag.p-dx/gap;layout();});
-addEventListener('pointerup',e=>{if(!drag)return;const moved=drag.moved,wasPlaying=drag.wasPlaying;drag=null;fstage.classList.remove('dragging');
-  if(moved){flow.dataset.justDragged='1';setTimeout(()=>delete flow.dataset.justDragged,50);
-    if(wasPlaying){fplayer.style.visibility='';const from=pos;pos=Math.round(pos);const k=((pos%N)+N)%N;
-      if(TRACKS[k][3]){flow.classList.add('anim');layout();playInline(k);}else{stopInline();go(pos);}}
-    else go(Math.round(pos));}});
-addEventListener('pointercancel',()=>{if(drag){drag=null;fstage.classList.remove('dragging');go(Math.round(pos));}});
+// One place ends every drag: finger lifted, or the browser/OS cancelled it (edge-swipe, scroll takeover, app switch).
+// A cancelled drag snaps back to the card it started on; a hidden-while-dragging video is always shown again.
+function endDrag(cancelled){if(!drag)return;const moved=drag.moved,wasPlaying=drag.wasPlaying,start=drag.p;drag=null;fstage.classList.remove('dragging');
+  if(!moved)return;
+  flow.dataset.justDragged='1';setTimeout(()=>delete flow.dataset.justDragged,50);
+  if(cancelled)pos=start;
+  if(wasPlaying){fplayer.style.visibility='';pos=Math.round(pos);const k=((pos%N)+N)%N;
+    if(k===inlIdx&&inl){flow.classList.add('anim');layout();try{inl.playVideo();}catch(_){}}
+    else if(TRACKS[k][3]){flow.classList.add('anim');layout();playInline(k);}else{stopInline();go(pos);}}
+  else go(Math.round(pos));}
+addEventListener('pointerup',()=>endDrag(false));
+addEventListener('pointercancel',()=>endDrag(true));
+// only when the carousel itself loses capture (a card's implicit touch capture moving to the carousel also fires this, bubbling)
+fstage.addEventListener('lostpointercapture',e=>{if(e.target===fstage)endDrag(true);});
+addEventListener('blur',()=>endDrag(true));
+document.addEventListener('visibilitychange',()=>{if(document.hidden)endDrag(true);});
 // horizontal wheel / trackpad swipe (vertical wheel keeps scrolling the page)
 let wheelAcc=0,wheelT;
 fstage.addEventListener('wheel',e=>{if(Math.abs(e.deltaX)<=Math.abs(e.deltaY))return;e.preventDefault();wheelAcc+=e.deltaX;
@@ -632,11 +641,16 @@ document.querySelectorAll('.rv').forEach(el=>io.observe(el));
 // Full-screen background live video (muted autoplay loop, tap to unmute)
 (function(){
   const stage=document.getElementById('stage'), btn=document.getElementById('stage-sound'), VID='jKdQVbeaqe4', START=140;
+  // Data-saver on (Android Chrome / Samsung Internet): keep the still poster (the .stage background) and never load the background video
+  const SAVE=!!(navigator.connection&&navigator.connection.saveData);
+  if(SAVE)stage.classList.add('still');
   let player=null, ready=false;
   const paused=()=>player.getPlayerState()===YT.PlayerState.PAUSED;
   window.onYouTubeIframeAPIReady=function(){
+    if(SAVE)return;
     player=new YT.Player('stage-player',{videoId:VID,host:'https://www.youtube-nocookie.com',
-      playerVars:{autoplay:1,mute:1,controls:0,start:START,vq:'hd1080',playsinline:1,rel:0,modestbranding:1,disablekb:1,iv_load_policy:3,fs:0},
+      playerVars:Object.assign({autoplay:1,mute:1,controls:0,start:START,playsinline:1,rel:0,modestbranding:1,disablekb:1,iv_load_policy:3,fs:0},
+        matchMedia('(hover: hover) and (pointer: fine)').matches?{vq:'hd1080'}:{}),  // PC: ask for 1080p; phones/tablets: YouTube picks automatically
       events:{
         onReady:e=>{ready=true;e.target.mute();},  // autoplay=1 starts it; extra playVideo() calls make YouTube flash its play/pause icon
         onStateChange:e=>{if(e.data===YT.PlayerState.PLAYING)stage.classList.add('playing');
@@ -655,8 +669,12 @@ document.querySelectorAll('.rv').forEach(el=>io.observe(el));
   let idleT; let holdUntil=Date.now()+6000; const wake=()=>{stage.classList.remove('idle');clearTimeout(idleT);idleT=setTimeout(()=>stage.classList.add('idle'),Math.max(2500,holdUntil-Date.now()));};
   ['mousemove','touchstart','keydown','scroll'].forEach(ev=>addEventListener(ev,wake,{passive:true}));
   btn.addEventListener('focus',wake); wake();
-  // Mute the background when a track video starts playing
-  window.muteStage=()=>{if(ready&&stage.classList.contains('unmuted'))btn.click();};
+  // While a track video plays, the background video is paused (its sound setting is left as it was);
+  // when the track video is closed, the background picks up again from where it stopped.
+  let pausedForCard=false;
+  window.pauseStage=()=>{if(!ready||pausedForCard)return;try{if(player.getPlayerState()!==YT.PlayerState.PAUSED){player.pauseVideo();pausedForCard=true;}}catch(_){}};
+  window.resumeStage=()=>{if(!pausedForCard)return;pausedForCard=false;try{player.playVideo();}catch(_){}};
+  window.muteStage=window.pauseStage;
   // Scroll-linked fade: music keeps playing while scrolling, getting quieter (as if from a distance)
   let lastVol=-1;
   const album=document.getElementById('album');
