@@ -518,7 +518,8 @@ function playInline(i){const t=TRACKS[i];if(!t||!t[3])return;if(window.pauseStag
 let inl=null, inlVol=100;  // volume tracked here: getVolume() lags right after setVolume()
 function stopInline(){if(fplayer.hidden)return;if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});try{inl&&inl.destroy();}catch(_){}inl=null;fpFrame.innerHTML='';fplayer.hidden=true;fpend.hidden=true;if(window.resumeStage)window.resumeStage();}
 // Click anywhere outside the open video closes it (the < > buttons switch videos instead)
-document.addEventListener('click',e=>{if(fplayer.hidden||performance.now()-openedAt<300)return;
+document.addEventListener('click',e=>{if(fplayer.hidden||performance.now()-openedAt<300||flow.dataset.justDragged)return;  // a drag's trailing click must not close the video
+
   if(e.target.closest('#fplayer,#flowPrev,#flowNext,#modal,.fcard'))return;stopInline();});
 // ESC closes the inline player from anywhere on the page
 // YouTube's own shortcuts, re-created here so ESC can also close the player
