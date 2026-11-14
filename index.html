@@ -435,7 +435,7 @@ footer a{color:var(--muted);text-decoration:none} footer a:hover{color:var(--fg)
     <p><span class="ln">교회 밖으로 날아가는 하나님의 불씨들.</span></p>
     <p class="outro__label">섭외 · 문의</p>
     <div class="outro__btns outro__btns--contact">
-      <a class="btn btn-mail" href="mailto:callingchoir@gmail.com"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>callingchoir@gmail.com</a>
+      <a class="btn btn-mail" id="mailBtn" href="mailto:callingchoir@gmail.com" data-copied="이메일 주소가 복사됐어요"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg><span class="mail-txt" aria-live="polite">callingchoir@gmail.com</span></a>
       <a class="btn btn-site" href="https://www.calling-showchoir.com/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>공식 홈페이지</a>
     </div>
   </div>
@@ -672,6 +672,10 @@ function open(){clearTimeout(t);d.classList.remove('out');d.classList.add('on');
 function close(){if(!d.classList.contains('on')||d.classList.contains('out'))return;d.classList.remove('in');d.classList.add('out');o.focus({preventScroll:true});t=setTimeout(()=>{d.classList.remove('on','out');d.setAttribute('aria-hidden','true');},RM()?0:300);}
 o.addEventListener('click',open);d.addEventListener('click',e=>{if(!e.target.closest('.lsn__list a'))close();});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&d.classList.contains('in')){e.stopImmediatePropagation();close();}},true);})();</script>
+<script>(function(){const b=document.getElementById('mailBtn');if(!b)return;const t=b.querySelector('.mail-txt'),orig=t.textContent;let h=0;
+b.addEventListener('click',async e=>{if(!matchMedia('(hover: hover) and (pointer: fine)').matches)return;e.preventDefault();
+try{await navigator.clipboard.writeText('callingchoir@gmail.com');t.textContent=b.dataset.copied;clearTimeout(h);h=setTimeout(()=>{t.textContent=orig;},1500);}
+catch(_){location.href=b.href;}});})();</script>
 </body>
 </html>
 
