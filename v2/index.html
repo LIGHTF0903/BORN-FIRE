@@ -399,13 +399,13 @@ document.querySelectorAll('.rv').forEach(el=>io.observe(el));
 // Full-screen background live video (muted autoplay loop, tap to unmute)
 (function(){
   const stage=document.getElementById('stage'), btn=document.getElementById('stage-sound'), VID='jKdQVbeaqe4', START=140;
-  let player=null, ready=false;
+  let player=null, ready=false, revealT=0;
   window.onYouTubeIframeAPIReady=function(){
     player=new YT.Player('stage-player',{videoId:VID,host:'https://www.youtube-nocookie.com',
       playerVars:{autoplay:1,mute:1,controls:0,start:START,playsinline:1,rel:0,modestbranding:1,disablekb:1,iv_load_policy:3,fs:0},
       events:{
-        onReady:e=>{ready=true;e.target.mute();e.target.playVideo();},
-        onStateChange:e=>{if(e.data===YT.PlayerState.PLAYING)stage.classList.add('playing');
+        onReady:e=>{ready=true;e.target.mute();if(e.target.getPlayerState()!==YT.PlayerState.PLAYING)e.target.playVideo();},
+        onStateChange:e=>{if(e.data===YT.PlayerState.PLAYING&&!revealT)revealT=setTimeout(()=>stage.classList.add('playing'),1200);
                           if(e.data===YT.PlayerState.ENDED){e.target.seekTo(START,true);e.target.playVideo();}}
       }});
   };
@@ -433,7 +433,7 @@ document.querySelectorAll('.rv').forEach(el=>io.observe(el));
   addEventListener('scroll',fade,{passive:true});
   // Pause only when off-screen AND muted (saves data without cutting the music)
   new IntersectionObserver(([en])=>{if(!ready)return;
-    if(en.isIntersecting)player.playVideo();else if(!stage.classList.contains('unmuted'))player.pauseVideo();}).observe(stage);
+    if(en.isIntersecting){if(player.getPlayerState()!==YT.PlayerState.PLAYING)player.playVideo();}else if(!stage.classList.contains('unmuted'))player.pauseVideo();}).observe(stage);
 })();
 </script>
 </body>
