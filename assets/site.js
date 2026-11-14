@@ -184,8 +184,8 @@ document.querySelectorAll('.rv').forEach(el=>io.observe(el));
   let lastVol=-1;
   const album=document.getElementById('album');
   // Same drop as before down to the album intro; below it the volume keeps falling evenly
-  // and reaches 30% exactly at the bottom of the page
-  const FLOOR=0.3;
+  // and reaches 50% exactly at the bottom of the page
+  const FLOOR=0.5;
   const vol=()=>{const H=innerHeight,y=scrollY,y0=album.offsetTop,v0=1-y0/(H*3),end=document.documentElement.scrollHeight-H;
     const v=y<=y0?1-y/(H*3):v0-(v0-FLOOR)*Math.min(1,(y-y0)/Math.max(1,end-y0));return Math.round(100*Math.max(FLOOR,v));};
   const fade=()=>{if(!ready||!stage.classList.contains('unmuted'))return;const v=vol();if(v!==lastVol){player.setVolume(v);lastVol=v;}};
