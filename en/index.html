@@ -203,6 +203,8 @@ section{padding:clamp(72px,11vw,128px) 0}
 .tl{display:inline-block}.tl--p{display:block}.cr{display:block}
 .fcard__name{display:block;font-weight:800;font-size:22px;line-height:1.2;text-shadow:0 2px 12px rgba(0,0,0,.5)}
 .fcard__credit{display:block;margin-top:6px;font-size:13px;color:rgba(255,255,255,.75)}
+.fcard__badge.fcard__badge--bonus{background:var(--fire-2)}
+.modal__title .fcard__badge{margin:0 8px 0 0;vertical-align:middle}
 .fcard__badge{display:inline-block;margin-bottom:10px;background:var(--fire);color:#000;font-weight:800;font-size:10px;letter-spacing:.16em;padding:4px 8px;border-radius:4px}
 .fcard__play{position:absolute;z-index:1;left:50%;bottom:22px;transform:translateX(-50%);display:inline-flex;align-items:center;gap:8px;white-space:nowrap;
   padding:10px 18px;border-radius:999px;background:#fff;color:#000;font-weight:700;font-size:14px;opacity:0;transition:opacity .3s ease}
@@ -444,6 +446,10 @@ footer a{color:var(--muted);text-decoration:none} footer a:hover{color:var(--fg)
 const tl=s=>{const m=s.match(/^(.*\S)\s+(\([^()]*\))$/);return m?`<span class="tl">${m[1]}</span><span class="tl tl--p">${m[2]}</span>`:`<span class="tl">${s}</span>`;};
 // Credit lines: a leading Lead/Feat/Bonus part stays on line 1, the rest goes to line 2 (separator dropped)
 const cr=s=>{const m=s.match(/^((?:Lead|Feat|Bonus)\b.*?)\s+[\/·]\s+(.+)$/);return m?`<span class="cr">${m[1]}</span><span class="cr">${m[2]}</span>`:s;};
+// Bonus tracks get a BONUS badge (like TITLE); the 'Bonus' word is dropped from the credit line
+const isBonus=c=>/^Bonus(?![A-Za-z])/.test(c);
+const noBonus=c=>c.replace(/^Bonus\s*(?:[·\/]\s*)?/,'');
+const badge=(i,c)=>i===TITLE?'<span class="fcard__badge">TITLE</span>':isBonus(c)?'<span class="fcard__badge fcard__badge--bonus">BONUS</span>':'';
 const TRACKS = [
   ["01","Born to Rise","Solo. MINA","piGta7dxUCo"],
   ["02","Get Up","Feat. Sooyong Yoon","1viWq7LlsVo"],
@@ -469,7 +475,7 @@ const N=TRACKS.length, PLAYSVG='<svg viewBox="0 0 24 24" fill="currentColor"><pa
 fstage.innerHTML = TRACKS.map((t,i)=>`
   <button class="fcard${t[3]?'':' soon'}" type="button" data-i="${i}" ${t[3]?`style="background:#111 url('../assets/cards/${t[0]}.jpg') 50% 50%/cover no-repeat"`:''} aria-label="${t[0]} ${t[1]}${t[3]?'':' (video coming soon)'}">
     <span class="fcard__n">${t[0]}</span>
-    <span class="fcard__t">${i===TITLE?'<span class="fcard__badge">TITLE</span>':''}<span class="fcard__name">${tl(t[1])}</span><span class="fcard__credit">${t[3]?cr(t[2]):'Video coming soon'}</span></span>
+    <span class="fcard__t">${badge(i,t[2])}<span class="fcard__name">${tl(t[1])}</span><span class="fcard__credit">${t[3]?cr(noBonus(t[2])):'Video coming soon'}</span></span>
     <span class="fcard__play">${PLAYSVG} Watch live</span>
   </button>`).join('');
 const cards=[...fstage.children];
@@ -583,7 +589,7 @@ function openTrack(i){
   if(window.muteStage) window.muteStage();
   cur=i;
   mf.innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${t[3]}?autoplay=1&rel=0&playsinline=1" allow="accelerometer; autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen title="${t[1]} — Calling Choir live"></iframe>`;
-  mt.innerHTML=`${t[0]}. ${tl(t[1])}<small>${cr(t[2])}</small>`;
+  mt.innerHTML=`${badge(i,t[2])}${t[0]}. ${tl(t[1])}<small>${cr(noBonus(t[2]))}</small>`;
   if(!modal.classList.contains('on')){lastFocus=document.activeElement;modal.classList.add('on');document.body.style.overflow='hidden';document.getElementById('m-close').focus();}
 }
 function closeModal(){modal.classList.remove('on');mf.innerHTML='';document.body.style.overflow='';if(lastFocus)lastFocus.focus();}
