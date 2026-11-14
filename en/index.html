@@ -642,7 +642,8 @@ document.querySelectorAll('.rv').forEach(el=>io.observe(el));
   const paused=()=>player.getPlayerState()===YT.PlayerState.PAUSED;
   window.onYouTubeIframeAPIReady=function(){
     player=new YT.Player('stage-player',{videoId:VID,host:'https://www.youtube-nocookie.com',
-      playerVars:{autoplay:1,mute:1,controls:0,start:START,vq:'hd1080',playsinline:1,rel:0,modestbranding:1,disablekb:1,iv_load_policy:3,fs:0},
+      playerVars:Object.assign({autoplay:1,mute:1,controls:0,start:START,playsinline:1,rel:0,modestbranding:1,disablekb:1,iv_load_policy:3,fs:0},
+        matchMedia('(hover: hover) and (pointer: fine)').matches?{vq:'hd1080'}:{}),  // PC: ask for 1080p; phones/tablets: YouTube picks automatically
       events:{
         onReady:e=>{ready=true;e.target.mute();},  // autoplay=1 starts it; extra playVideo() calls make YouTube flash its play/pause icon
         onStateChange:e=>{if(e.data===YT.PlayerState.PLAYING)stage.classList.add('playing');
