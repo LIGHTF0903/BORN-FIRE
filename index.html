@@ -592,7 +592,8 @@ function endDrag(cancelled){if(!drag)return;const moved=drag.moved,wasPlaying=dr
   else go(Math.round(pos));}
 addEventListener('pointerup',()=>endDrag(false));
 addEventListener('pointercancel',()=>endDrag(true));
-fstage.addEventListener('lostpointercapture',()=>endDrag(true));
+// only when the carousel itself loses capture (a card's implicit touch capture moving to the carousel also fires this, bubbling)
+fstage.addEventListener('lostpointercapture',e=>{if(e.target===fstage)endDrag(true);});
 addEventListener('blur',()=>endDrag(true));
 document.addEventListener('visibilitychange',()=>{if(document.hidden)endDrag(true);});
 // horizontal wheel / trackpad swipe (vertical wheel keeps scrolling the page)
