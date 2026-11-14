@@ -417,12 +417,34 @@ let pos=TITLE;            // continuous position (index of the centred card)
 const wrap=d=>{d=((d%N)+N)%N;return d>N/2?d-N:d;};
 const fplayer=document.getElementById('fplayer'), fpFrame=document.getElementById('fplayerFrame');
 function playInline(i){const t=TRACKS[i];if(!t||!t[3])return;if(window.muteStage)window.muteStage();
-  fpFrame.innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${t[3]}?autoplay=1&rel=0&playsinline=1" allow="accelerometer; autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen title="${t[1]} — 콜링콰이어 라이브"></iframe>`;
-  fplayer.hidden=false;}
-function stopInline(){if(fplayer.hidden)return;fpFrame.innerHTML='';fplayer.hidden=true;}
+  fpFrame.innerHTML='<div id="fpYT"></div>';fplayer.hidden=false;inl=null;
+  const mk=()=>{inl=new YT.Player('fpYT',{videoId:t[3],host:'https://www.youtube-nocookie.com',
+    playerVars:{autoplay:1,rel:0,playsinline:1,modestbranding:1},events:{onReady:e=>e.target.playVideo()}});
+    const f=fpFrame.querySelector('iframe');if(f)f.title=`${t[1]} — 콜링콰이어 라이브`;};
+  if(window.YT&&YT.Player)mk();else{const iv=setInterval(()=>{if(window.YT&&YT.Player){clearInterval(iv);mk();}},100);}}
+let inl=null, inlVol=100;  // volume tracked here: getVolume() lags right after setVolume()
+function stopInline(){if(fplayer.hidden)return;if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});try{inl&&inl.destroy();}catch(_){}inl=null;fpFrame.innerHTML='';fplayer.hidden=true;}
 document.getElementById('fplayerClose').onclick=stopInline;
 // ESC closes the inline player from anywhere on the page
-addEventListener('keydown',e=>{if(e.key==='Escape'&&!fplayer.hidden&&!document.getElementById('modal').classList.contains('on'))stopInline();});
+// YouTube's own shortcuts, re-created here so ESC can also close the player
+addEventListener('keydown',e=>{
+  if(fplayer.hidden||document.getElementById('modal').classList.contains('on')||e.ctrlKey||e.metaKey||e.altKey)return;
+  const tag=(e.target.tagName||'');if(tag==='INPUT'||tag==='TEXTAREA')return;
+  if(e.key==='Escape'){stopInline();return;}
+  const p=inl;if(!p||!p.getPlayerState)return;
+  const k=e.key.toLowerCase(), t=()=>p.getCurrentTime()||0, d=()=>p.getDuration()||0, seek=x=>p.seekTo(Math.max(0,Math.min(d(),x)),true);
+  let hit=true;
+  if(k===' '||k==='k'){p.getPlayerState()===1?p.pauseVideo():p.playVideo();}
+  else if(k==='arrowleft')seek(t()-5); else if(k==='arrowright')seek(t()+5);
+  else if(k==='j')seek(t()-10); else if(k==='l')seek(t()+10);
+  else if(k==='arrowup'){if(p.isMuted())p.unMute();inlVol=Math.min(100,inlVol+5);p.setVolume(inlVol);}
+  else if(k==='arrowdown'){inlVol=Math.max(0,inlVol-5);p.setVolume(inlVol);}
+  else if(k==='m'){p.isMuted()?p.unMute():p.mute();}
+  else if(k==='f'){if(document.fullscreenElement)document.exitFullscreen();else (fpFrame.querySelector('iframe')||fplayer).requestFullscreen().catch(()=>{});}
+  else if(/^[0-9]$/.test(k))seek(d()*(+k)/10);
+  else hit=false;
+  if(hit){e.preventDefault();e.stopImmediatePropagation();}
+},true);
 // Clicking inside the YouTube player moves keyboard focus into it (a separate site), so the page stops hearing ESC.
 // After such a click, hand focus back to the page (clicks on the video controls still work).
 addEventListener('blur',()=>{setTimeout(()=>{const a=document.activeElement;
@@ -449,7 +471,7 @@ function go(target){if(Math.round(target)!==Math.round(pos))stopInline();flow.cl
 const centre=()=>((Math.round(pos)%N)+N)%N;
 document.getElementById('flowPrev').onclick=()=>go(Math.round(pos)-1);
 document.getElementById('flowNext').onclick=()=>go(Math.round(pos)+1);
-flow.addEventListener('keydown',e=>{if(e.key==='ArrowRight'){e.preventDefault();go(Math.round(pos)+1);}if(e.key==='ArrowLeft'){e.preventDefault();go(Math.round(pos)-1);}
+flow.addEventListener('keydown',e=>{if(!fplayer.hidden)return;if(e.key==='ArrowRight'){e.preventDefault();go(Math.round(pos)+1);}if(e.key==='ArrowLeft'){e.preventDefault();go(Math.round(pos)-1);}
   if(e.key==='Enter'&&e.target===flow)playInline(centre());if(e.key==='Escape')stopInline();});
 // drag / swipe
 let drag=null;
