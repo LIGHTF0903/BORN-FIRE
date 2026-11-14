@@ -255,13 +255,13 @@ section{padding:clamp(72px,11vw,128px) 0}
 
 /* ---------- C. ABOUT ---------- */
 .about__grid{display:grid;gap:clamp(28px,5vw,64px);align-items:center}
-.about__img{border-radius:20px;overflow:hidden;aspect-ratio:4/5;background:#000 50% 50%/auto 128% no-repeat}
+.about__img{border-radius:20px;overflow:hidden;aspect-ratio:4/5;background:#000 50% 50%/cover no-repeat}
 .about h2{margin:0 0 20px;font-size:clamp(40px,7vw,76px)}
 .about p{color:#d9cdc6;font-size:clamp(15px,1.4vw,17px);margin:0 0 16px;max-width:46ch}
 .strip{display:flex;flex-wrap:wrap;margin:36px 0 0;padding:0;list-style:none;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .strip li{flex:1 1 50%;padding:16px 4px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
 .strip b{display:block;color:var(--fg);font-size:15px;letter-spacing:.02em;text-transform:none;margin-top:2px}
-@media (max-width:859px){.about__img{aspect-ratio:16/10;background-size:128% auto}}
+@media (max-width:859px){.about__img{aspect-ratio:16/10;background-position:50% 22%}}
 @media (min-width:860px){.about__grid{grid-template-columns:5fr 6fr}.strip li{flex:1 1 25%}.strip li+li{border-left:1px solid var(--line);padding-left:16px}}
 
 /* ---------- E. CREDITS ---------- */
@@ -369,7 +369,7 @@ footer a{color:var(--muted);text-decoration:none} footer a:hover{color:var(--fg)
 
 <section class="about" id="about">
   <div class="wrap about__grid">
-    <div class="about__img rv" style="background-image:url('https://i.ytimg.com/vi/x11PMs9wFL8/maxres2.jpg')" role="img" aria-label="콜링콰이어 라이브 무대"></div>
+    <div class="about__img rv" style="background-image:url('assets/cards/about.jpg')" role="img" aria-label="콜링콰이어 라이브 무대"></div>
     <div class="rv">
       <p class="kicker">The Album</p>
       <h2 class="display">Born Fire</h2>
@@ -450,11 +450,10 @@ const thumb = (id,q) => `https://i.ytimg.com/vi/${id}/${q||'hqdefault'}.jpg`;
 
 // Coverflow tracklist (starts on the title track)
 const flow=document.getElementById('flow'), fstage=document.getElementById('flowStage'), fcount=document.getElementById('flowCount');
-// Card photo per track: which auto-frame of the video to use and where to crop (default maxres2, centred)
-const CARD_FRAME={6:['maxres1','50%'],7:['maxres3','50%'],8:['maxres3','50%']};
+// Card photos: assets/cards/NN.jpg — sharp 1080p frames from each official live video, cropped 600x840
 const N=TRACKS.length, PLAYSVG='<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4l14 8-14 8z"/></svg>';
 fstage.innerHTML = TRACKS.map((t,i)=>`
-  <button class="fcard${t[3]?'':' soon'}" type="button" data-i="${i}" ${t[3]?`style="background-image:url('https://i.ytimg.com/vi/${t[3]}/${(CARD_FRAME[i]||['maxres2'])[0]}.jpg');background-position:${(CARD_FRAME[i]||[0,'50%'])[1]} 50%"`:''} aria-label="${t[0]} ${t[1]}${t[3]?'':' (영상 준비 중)'}">
+  <button class="fcard${t[3]?'':' soon'}" type="button" data-i="${i}" ${t[3]?`style="background:#111 url('assets/cards/${t[0]}.jpg') 50% 50%/cover no-repeat"`:''} aria-label="${t[0]} ${t[1]}${t[3]?'':' (영상 준비 중)'}">
     <span class="fcard__n">${t[0]}</span>
     <span class="fcard__t">${i===TITLE?'<span class="fcard__badge">TITLE</span>':''}<span class="fcard__name">${t[1]}</span><span class="fcard__credit">${t[3]?t[2]:'영상 준비 중 · Video soon'}</span></span>
     <span class="fcard__play">${PLAYSVG} 라이브 영상 보기</span>
