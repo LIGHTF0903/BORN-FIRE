@@ -309,7 +309,7 @@ footer a{color:var(--muted);text-decoration:none} footer a:hover{color:var(--fg)
     <div class="head rv"><h2 class="display">Tracklist</h2><p>12곡 전부 공식 라이브 영상으로 볼 수 있어요. Tap a track to watch.</p></div>
     <div class="flow rv" id="flow" tabindex="0" role="region" aria-roledescription="carousel" aria-label="트랙 카드 넘기기">
       <div class="flow__stage" id="flowStage"></div>
-      <div class="fplayer" id="fplayer" hidden><div class="fplayer__frame" id="fplayerFrame"></div><button class="fplayer__close" id="fplayerClose" type="button" aria-label="영상 닫기">✕</button></div>
+      <div class="fplayer" id="fplayer" hidden><div class="fplayer__frame" id="fplayerFrame"></div></div>
       <div class="flow__ctrl">
         <p class="flow__hint">드래그하거나 화살표로 넘기고, 가운데 카드를 누르면 재생돼요.<br>Drag to browse. Tap the middle card to play.</p>
         <div class="flow__nav">
@@ -416,7 +416,9 @@ const cards=[...fstage.children];
 let pos=TITLE;            // continuous position (index of the centred card)
 const wrap=d=>{d=((d%N)+N)%N;return d>N/2?d-N:d;};
 const fplayer=document.getElementById('fplayer'), fpFrame=document.getElementById('fplayerFrame');
-function playInline(i){const t=TRACKS[i];if(!t||!t[3])return;if(window.muteStage)window.muteStage();
+let openedAt=0;
+function playInline(i){const t=TRACKS[i];if(!t||!t[3])return;if(window.muteStage)window.muteStage();openedAt=performance.now();
+  if(!fplayer.hidden&&inl&&inl.loadVideoById){inl.loadVideoById(t[3]);return;}
   fpFrame.innerHTML='<div id="fpYT"></div>';fplayer.hidden=false;inl=null;
   const mk=()=>{inl=new YT.Player('fpYT',{videoId:t[3],host:'https://www.youtube-nocookie.com',
     playerVars:{autoplay:1,rel:0,playsinline:1,modestbranding:1},events:{onReady:e=>e.target.playVideo()}});
@@ -424,7 +426,9 @@ function playInline(i){const t=TRACKS[i];if(!t||!t[3])return;if(window.muteStage
   if(window.YT&&YT.Player)mk();else{const iv=setInterval(()=>{if(window.YT&&YT.Player){clearInterval(iv);mk();}},100);}}
 let inl=null, inlVol=100;  // volume tracked here: getVolume() lags right after setVolume()
 function stopInline(){if(fplayer.hidden)return;if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});try{inl&&inl.destroy();}catch(_){}inl=null;fpFrame.innerHTML='';fplayer.hidden=true;}
-document.getElementById('fplayerClose').onclick=stopInline;
+// Click anywhere outside the open video closes it (the < > buttons switch videos instead)
+document.addEventListener('click',e=>{if(fplayer.hidden||performance.now()-openedAt<300)return;
+  if(e.target.closest('#fplayer,#flowPrev,#flowNext,#modal,.fcard'))return;stopInline();});
 // ESC closes the inline player from anywhere on the page
 // YouTube's own shortcuts, re-created here so ESC can also close the player
 addEventListener('keydown',e=>{
@@ -467,7 +471,13 @@ function layout(){
   const k=((Math.round(pos)%N)+N)%N;
   fcount.innerHTML=`<b>${TRACKS[k][0]}</b> / ${String(N).padStart(2,'0')}`;
 }
-function go(target){if(Math.round(target)!==Math.round(pos))stopInline();flow.classList.add('anim');pos=target;layout();}
+function go(target,keepPlaying){
+  const moving=Math.round(target)!==Math.round(pos), playing=keepPlaying||!fplayer.hidden;
+  if(moving&&playing){ // skip cards without a video while a video is playing
+    const dir=Math.sign(Math.round(target)-Math.round(pos))||1;let k=Math.round(target),guard=0;
+    while(!TRACKS[((k%N)+N)%N][3]&&guard++<N)k+=dir;target=k;}
+  flow.classList.add('anim');pos=target;layout();
+  if(moving&&playing)playInline(((Math.round(pos)%N)+N)%N);}
 const centre=()=>((Math.round(pos)%N)+N)%N;
 document.getElementById('flowPrev').onclick=()=>go(Math.round(pos)-1);
 document.getElementById('flowNext').onclick=()=>go(Math.round(pos)+1);
@@ -477,9 +487,13 @@ flow.addEventListener('keydown',e=>{if(!fplayer.hidden)return;if(e.key==='ArrowR
 let drag=null;
 fstage.addEventListener('pointerdown',e=>{if(e.button!==0)return;drag={x:e.clientX,y:e.clientY,p:pos,moved:false,id:e.pointerId};});
 addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-drag.x;
-  if(!drag.moved){if(Math.abs(dx)<6)return;if(Math.abs(e.clientY-drag.y)>Math.abs(dx)){drag=null;return;}drag.moved=true;stopInline();flow.classList.remove('anim');fstage.classList.add('dragging');try{fstage.setPointerCapture(drag.id);}catch(_){}}
+  if(!drag.moved){if(Math.abs(dx)<6)return;if(Math.abs(e.clientY-drag.y)>Math.abs(dx)){drag=null;return;}drag.moved=true;drag.wasPlaying=!fplayer.hidden;if(drag.wasPlaying){try{inl&&inl.pauseVideo();}catch(_){}fplayer.style.visibility='hidden';}flow.classList.remove('anim');fstage.classList.add('dragging');try{fstage.setPointerCapture(drag.id);}catch(_){}}
   const gap=parseFloat(getComputedStyle(flow).getPropertyValue('--gap'))||250;pos=drag.p-dx/gap;layout();});
-addEventListener('pointerup',e=>{if(!drag)return;const moved=drag.moved;drag=null;fstage.classList.remove('dragging');if(moved){flow.dataset.justDragged='1';setTimeout(()=>delete flow.dataset.justDragged,50);go(Math.round(pos));}});
+addEventListener('pointerup',e=>{if(!drag)return;const moved=drag.moved,wasPlaying=drag.wasPlaying;drag=null;fstage.classList.remove('dragging');
+  if(moved){flow.dataset.justDragged='1';setTimeout(()=>delete flow.dataset.justDragged,50);
+    if(wasPlaying){fplayer.style.visibility='';const from=pos;pos=Math.round(pos);const k=((pos%N)+N)%N;
+      if(TRACKS[k][3]){flow.classList.add('anim');layout();playInline(k);}else{stopInline();go(pos);}}
+    else go(Math.round(pos));}});
 addEventListener('pointercancel',()=>{if(drag){drag=null;fstage.classList.remove('dragging');go(Math.round(pos));}});
 // horizontal wheel / trackpad swipe (vertical wheel keeps scrolling the page)
 let wheelAcc=0,wheelT;
