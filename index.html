@@ -237,17 +237,18 @@ section{padding:clamp(72px,11vw,128px) 0}
 .fpbar svg{width:16px;height:16px;color:var(--yt)}
 .btn-listen{cursor:pointer;font-family:inherit;background:linear-gradient(135deg,var(--fire),var(--fire-2));color:#000;box-shadow:0 12px 34px -12px rgba(255,90,31,.8)}
 .btn-listen svg{width:20px;height:20px}
-.lsn__bg{opacity:0;filter:blur(12px) saturate(1.2);transition:opacity .4s ease-out,filter .45s cubic-bezier(.2,.7,.2,1)}
-.lsn.in .lsn__bg{opacity:.55;filter:blur(40px) saturate(1.2)}
-.lsn::after{opacity:0;transition:opacity .4s ease-out}.lsn.in::after{opacity:1}
-.lsn__cover,.lsn__h,.lsn__s,.lsn__list,.lsn__list li,.lsn__x{opacity:0;transform:translateY(16px);transition:opacity .4s cubic-bezier(.2,.7,.2,1),transform .45s cubic-bezier(.2,.7,.2,1)}
-.lsn__cover{transform:translateY(18px) scale(.94)}.lsn__x{transform:scale(.8)}.lsn__list{transform:translateY(10px)}
+.lsn__bg{opacity:0;transition:opacity .5s cubic-bezier(.22,1,.36,1)}
+.lsn.in .lsn__bg{opacity:.55}
+.lsn::after{opacity:0;transition:opacity .5s cubic-bezier(.22,1,.36,1)}.lsn.in::after{opacity:1}
+.lsn__cover,.lsn__h,.lsn__s,.lsn__list,.lsn__list li{opacity:0;transform:translate3d(0,8px,0);transition:opacity .55s cubic-bezier(.22,1,.36,1),transform .6s cubic-bezier(.22,1,.36,1);will-change:opacity,transform}
+.lsn__x{opacity:0;transition:opacity .5s cubic-bezier(.22,1,.36,1)}
 .lsn.in .lsn__cover,.lsn.in .lsn__h,.lsn.in .lsn__s,.lsn.in .lsn__list,.lsn.in .lsn__list li,.lsn.in .lsn__x{opacity:1;transform:none}
-.lsn.in .lsn__h{transition-delay:.04s}.lsn.in .lsn__s{transition-delay:.08s}.lsn.in .lsn__list{transition-delay:.1s}.lsn.in .lsn__x{transition-delay:.15s}
-.lsn.in .lsn__list li:nth-child(1){transition-delay:.14s}.lsn.in .lsn__list li:nth-child(2){transition-delay:.18s}.lsn.in .lsn__list li:nth-child(3){transition-delay:.22s}.lsn.in .lsn__list li:nth-child(4){transition-delay:.26s}
-.lsn.in .lsn__list li:nth-child(5){transition-delay:.3s}.lsn.in .lsn__list li:nth-child(6){transition-delay:.34s}.lsn.in .lsn__list li:nth-child(7){transition-delay:.38s}.lsn.in .lsn__list li:nth-child(8){transition-delay:.42s}
-.lsn.out .lsn__bg,.lsn.out::after,.lsn.out .lsn__cover,.lsn.out .lsn__h,.lsn.out .lsn__s,.lsn.out .lsn__list,.lsn.out .lsn__list li,.lsn.out .lsn__x{transition-duration:.22s;transition-delay:0s;transition-timing-function:ease-in}
-@media (prefers-reduced-motion:reduce){.lsn *,.lsn::after{transition:none!important}.lsn__cover,.lsn__h,.lsn__s,.lsn__list,.lsn__list li,.lsn__x{transform:none!important}}
+.lsn.in .lsn__h{transition-delay:.03s}.lsn.in .lsn__s{transition-delay:.05s}.lsn.in .lsn__list{transition-delay:.06s}.lsn.in .lsn__x{transition-delay:.1s}
+.lsn.in .lsn__list li:nth-child(1){transition-delay:.08s}.lsn.in .lsn__list li:nth-child(2){transition-delay:.105s}.lsn.in .lsn__list li:nth-child(3){transition-delay:.13s}.lsn.in .lsn__list li:nth-child(4){transition-delay:.155s}
+.lsn.in .lsn__list li:nth-child(5){transition-delay:.18s}.lsn.in .lsn__list li:nth-child(6){transition-delay:.205s}.lsn.in .lsn__list li:nth-child(7){transition-delay:.23s}.lsn.in .lsn__list li:nth-child(8){transition-delay:.255s}
+.lsn.out .lsn__bg,.lsn.out::after,.lsn.out .lsn__cover,.lsn.out .lsn__h,.lsn.out .lsn__s,.lsn.out .lsn__list,.lsn.out .lsn__list li,.lsn.out .lsn__x{transition-duration:.28s;transition-delay:0s;transition-timing-function:cubic-bezier(.4,0,.2,1)}
+.lsn.out .lsn__cover,.lsn.out .lsn__h,.lsn.out .lsn__s,.lsn.out .lsn__list{transform:translate3d(0,6px,0)}.lsn.out .lsn__list li{transform:none}
+@media (prefers-reduced-motion:reduce){.lsn *,.lsn::after{transition:none!important}.lsn__cover,.lsn__h,.lsn__s,.lsn__list,.lsn__list li{transform:none!important}}
 .lsn{position:fixed;inset:0;z-index:90;display:none;align-items:center;justify-content:center;padding:20px;overflow:hidden}
 .lsn.on{display:flex}
 .lsn__bg{position:absolute;inset:-40px;background:#000 center/cover no-repeat;filter:blur(40px) saturate(1.2);opacity:.55}
@@ -402,9 +403,9 @@ footer a{color:var(--muted);text-decoration:none} footer a:hover{color:var(--fg)
     <div class="more rv">
       <p class="more__txt"><b class="ln">공연의 더 많은 순간은 유튜브와 인스타그램에서</b><span class="ln">More moments from Calling Choir on YouTube &amp; Instagram.</span></p>
       <div class="more__btns">
-        <a class="btn btn-yt" href="https://www.youtube.com/@Callingchoir?sub_confirmation=1" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.5 15.6V8.4l6.3 3.6z"/></svg>유튜브 · YouTube</a>
-        <a class="btn btn-ig" href="https://www.instagram.com/calling.showchoir/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.6" cy="6.4" r="1.2" fill="currentColor" stroke="none"/></svg>인스타그램 · Instagram</a>
-        <button class="btn btn-listen" type="button" id="lsnOpen" aria-haspopup="dialog"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9 18.5a3 3 0 1 1-2-2.83V5.5l12-2.5v12.5a3 3 0 1 1-2-2.83V7.1L9 8.7v9.8z"/></svg>음원 듣기 · Listen</button>
+        <a class="btn btn-yt" href="https://www.youtube.com/@Callingchoir?sub_confirmation=1" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.5 15.6V8.4l6.3 3.6z"/></svg>유튜브</a>
+        <a class="btn btn-ig" href="https://www.instagram.com/calling.showchoir/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.6" cy="6.4" r="1.2" fill="currentColor" stroke="none"/></svg>인스타그램</a>
+        <button class="btn btn-listen" type="button" id="lsnOpen" aria-haspopup="dialog"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9 18.5a3 3 0 1 1-2-2.83V5.5l12-2.5v12.5a3 3 0 1 1-2-2.83V7.1L9 8.7v9.8z"/></svg>음원 듣기</button>
       </div>
     </div>
   </div>
@@ -684,7 +685,7 @@ document.querySelectorAll('.rv').forEach(el=>io.observe(el));
 <script>(function(){const d=document.getElementById('lsn'),o=document.getElementById('lsnOpen'),x=document.getElementById('lsnX');
 const RM=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;let t=0;
 function open(){clearTimeout(t);d.classList.remove('out');d.classList.add('on');void d.offsetWidth;d.classList.add('in');x.focus({preventScroll:true});}
-function close(){if(!d.classList.contains('in'))return;d.classList.remove('in');d.classList.add('out');o.focus({preventScroll:true});t=setTimeout(()=>d.classList.remove('on','out'),RM()?0:260);}
+function close(){if(!d.classList.contains('in'))return;d.classList.remove('in');d.classList.add('out');o.focus({preventScroll:true});t=setTimeout(()=>d.classList.remove('on','out'),RM()?0:300);}
 o.addEventListener('click',open);x.addEventListener('click',close);d.addEventListener('click',e=>{if(!e.target.closest('.lsn__list a,.lsn__cover,.lsn__h,.lsn__s,.lsn__x'))close();});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&d.classList.contains('in')){e.stopImmediatePropagation();close();}},true);})();</script>
 </body>
