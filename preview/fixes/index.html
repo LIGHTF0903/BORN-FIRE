@@ -484,10 +484,10 @@ const thumb = (id,q) => `https://i.ytimg.com/vi/${id}/${q||'hqdefault'}.jpg`;
 
 // Coverflow tracklist (starts on the title track)
 const flow=document.getElementById('flow'), fstage=document.getElementById('flowStage'), fcount=document.getElementById('flowCount');
-// Card photos: assets/cards/NN.jpg — sharp 1080p frames from each official live video, cropped 600x840
+// Card photos: assets/cards/NN.webp (WebP q90; JPG originals: tag card-jpg-originals) — sharp 1080p frames from each official live video, cropped 600x840
 const N=TRACKS.length, PLAYSVG='<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4l14 8-14 8z"/></svg>';
 fstage.innerHTML = TRACKS.map((t,i)=>`
-  <button class="fcard${t[3]?'':' soon'}" type="button" data-i="${i}" ${t[3]?`style="background:#111 url('../../assets/cards/${t[0]}.jpg') 50% 50%/cover no-repeat"`:''} aria-label="${t[0]} ${t[1]}${t[3]?'':' (영상 준비 중)'}">
+  <button class="fcard${t[3]?'':' soon'}" type="button" data-i="${i}" ${t[3]?`style="background:#111 url('../../assets/cards/${t[0]}.webp') 50% 50%/cover no-repeat"`:''} aria-label="${t[0]} ${t[1]}${t[3]?'':' (영상 준비 중)'}">
     <span class="fcard__n">${t[0]}</span>
     <span class="fcard__t">${badge(i,t[2])}<span class="fcard__name">${tl(t[1])}</span><span class="fcard__credit">${t[3]?cr(noBonus(t[2])):'영상 준비 중 · Video soon'}</span></span>
     <span class="fcard__play">${PLAYSVG} 라이브 영상 보기</span>
