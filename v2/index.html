@@ -102,7 +102,7 @@ section{padding:clamp(72px,11vw,128px) 0}
 .stage__tag{position:absolute;z-index:2;left:0;top:clamp(90px,16vh,140px);writing-mode:vertical-rl;transform:rotate(180deg);
   background:var(--fire-2);color:#000;font-weight:800;font-size:11px;letter-spacing:.18em;padding:10px 4px}
 .stage__sound{position:absolute;z-index:3;left:50%;top:50%;transform:translate(-50%,-50%);width:58px;height:58px;border-radius:999px;
-  border:1px solid rgba(255,255,255,.55);background:rgba(0,0,0,.28);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  border:1px solid rgba(255,255,255,.55);background:rgba(0,0,0,.42);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
   display:grid;place-items:center;cursor:pointer;color:#fff;transition:transform .15s ease,background .15s ease,opacity .6s ease}
 .stage.idle .stage__sound{opacity:0;pointer-events:none}
 .stage.idle{cursor:none}
@@ -399,28 +399,27 @@ document.querySelectorAll('.rv').forEach(el=>io.observe(el));
 // Full-screen background live video (muted autoplay loop, tap to unmute)
 (function(){
   const stage=document.getElementById('stage'), btn=document.getElementById('stage-sound'), VID='jKdQVbeaqe4', START=140;
-  let player=null, ready=false, revealT=0;
+  let player=null, ready=false;
+  const paused=()=>player.getPlayerState()===YT.PlayerState.PAUSED;
   window.onYouTubeIframeAPIReady=function(){
     player=new YT.Player('stage-player',{videoId:VID,host:'https://www.youtube-nocookie.com',
       playerVars:{autoplay:1,mute:1,controls:0,start:START,playsinline:1,rel:0,modestbranding:1,disablekb:1,iv_load_policy:3,fs:0},
       events:{
-        onReady:e=>{ready=true;e.target.mute();if(e.target.getPlayerState()!==YT.PlayerState.PLAYING)e.target.playVideo();},
-        onStateChange:e=>{if(e.data===YT.PlayerState.PLAYING&&!revealT){const t0=e.target.getCurrentTime();
-                            // YouTube flashes its own play/pause bezel right after playback starts; keep the poster on top until it is gone
-                            revealT=setInterval(()=>{if(e.target.getCurrentTime()-t0>4.5){stage.classList.add('playing');clearInterval(revealT);}},250);}
-                          if(e.data===YT.PlayerState.ENDED){e.target.seekTo(START,true);e.target.playVideo();}}
+        onReady:e=>{ready=true;e.target.mute();},  // autoplay=1 starts it; extra playVideo() calls make YouTube flash its play/pause icon
+        onStateChange:e=>{if(e.data===YT.PlayerState.PLAYING)stage.classList.add('playing');
+                          if(e.data===YT.PlayerState.ENDED){holdUntil=Date.now()+5000;wake();e.target.seekTo(START,true);e.target.playVideo();}}
       }});
   };
   const t=document.createElement('script');t.src='https://www.youtube.com/iframe_api';document.head.appendChild(t);
   btn.addEventListener('click',()=>{
     if(!ready)return;
     const unmute=!stage.classList.contains('unmuted');
-    if(unmute){player.unMute();lastVol=vol();player.setVolume(lastVol);player.playVideo();}else{player.mute();}
+    if(unmute){player.unMute();lastVol=vol();player.setVolume(lastVol);if(paused())player.playVideo();}else{player.mute();}
     stage.classList.toggle('unmuted',unmute);btn.setAttribute('aria-pressed',String(unmute));
     btn.setAttribute('aria-label',unmute?'소리 끄기 / Mute':'소리 켜기 / Unmute');
   });
   // Hide the sound button after 2.5s of no activity; show it again on mouse move / touch / key / scroll
-  let idleT; const wake=()=>{stage.classList.remove('idle');clearTimeout(idleT);idleT=setTimeout(()=>stage.classList.add('idle'),2500);};
+  let idleT; let holdUntil=Date.now()+6000; const wake=()=>{stage.classList.remove('idle');clearTimeout(idleT);idleT=setTimeout(()=>stage.classList.add('idle'),Math.max(2500,holdUntil-Date.now()));};
   ['mousemove','touchstart','keydown','scroll'].forEach(ev=>addEventListener(ev,wake,{passive:true}));
   btn.addEventListener('focus',wake); wake();
   // Mute the background when a track video starts playing
@@ -433,9 +432,7 @@ document.querySelectorAll('.rv').forEach(el=>io.observe(el));
     const v=y<=y0?1-y/(H*3):v0-(y-y0)/(H*3)*0.3;return Math.round(100*Math.max(0.6,v));};
   const fade=()=>{if(!ready||!stage.classList.contains('unmuted'))return;const v=vol();if(v!==lastVol){player.setVolume(v);lastVol=v;}};
   addEventListener('scroll',fade,{passive:true});
-  // Pause only when off-screen AND muted (saves data without cutting the music)
-  new IntersectionObserver(([en])=>{if(!ready)return;
-    if(en.isIntersecting){if(player.getPlayerState()!==YT.PlayerState.PLAYING)player.playVideo();}else if(!stage.classList.contains('unmuted'))player.pauseVideo();}).observe(stage);
+  // (No pause/resume on scroll: each resume makes YouTube flash its play icon in the middle of the video)
 })();
 </script>
 </body>
