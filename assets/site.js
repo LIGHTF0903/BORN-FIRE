@@ -38,6 +38,7 @@ document.getElementById('fpendReplay').onclick=()=>{fpend.hidden=true;try{inl.se
 function playInline(i){const t=TRACKS[i];if(!t||!t[3])return;if(window.pauseStage)window.pauseStage();openedAt=performance.now();syncExtras(i);
   if(!fplayer.hidden&&inl&&inl.loadVideoById){inl.loadVideoById(t[3]);return;}
   fpFrame.innerHTML='<div id="fpYT"></div>';fplayer.hidden=false;inl=null;
+  if(matchMedia('(orientation:landscape) and (max-height:500px)').matches)requestAnimationFrame(()=>fplayer.scrollIntoView({block:'center',behavior:'smooth'}));  // sideways phone: bring the video fully into view
   const mk=()=>{inl=new YT.Player('fpYT',{videoId:t[3],host:'https://www.youtube-nocookie.com',
     playerVars:{autoplay:1,rel:0,playsinline:1,modestbranding:1},events:{onReady:e=>e.target.playVideo(),onStateChange:onInlState}});
     const f=fpFrame.querySelector('iframe');if(f)f.title=`${t[1]} — ${PAGE.live}`;};
