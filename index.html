@@ -181,6 +181,65 @@ section{padding:clamp(72px,11vw,128px) 0}
   .thumb.soon{font-size:10px;text-align:center;padding:0 8px}
 }
 
+/* ---------- COVERFLOW TRACKLIST ---------- */
+.flow{--cw:300px;--ch:420px;--gap:250px;position:relative;outline:none;user-select:none;-webkit-user-select:none}
+.flow__stage{position:relative;height:calc(var(--ch) + 40px);perspective:1400px;touch-action:pan-y;cursor:grab;overflow:hidden;
+  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 8%,#000 92%,transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 8%,#000 92%,transparent 100%)}
+.flow__stage.dragging{cursor:grabbing}
+.fcard{all:unset;box-sizing:border-box;position:absolute;left:50%;top:20px;width:var(--cw);height:var(--ch);margin-left:calc(var(--cw) / -2);
+  border-radius:22px;overflow:hidden;background:#111 50% 50%/auto 124% no-repeat;cursor:pointer;
+  box-shadow:0 30px 60px -20px rgba(0,0,0,.8);transform-style:preserve-3d;will-change:transform}
+.flow.anim .fcard{transition:transform .5s cubic-bezier(.2,.7,.2,1),opacity .5s ease,filter .5s ease}
+.fcard::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.35) 0%,rgba(0,0,0,0) 22%,rgba(0,0,0,0) 45%,rgba(0,0,0,.82) 100%)}
+.fcard__n{position:absolute;z-index:1;top:16px;left:0;right:0;text-align:center;font-size:12px;letter-spacing:.2em;font-weight:700;color:rgba(255,255,255,.85)}
+.fcard__t{position:absolute;z-index:1;left:18px;right:18px;bottom:74px;text-align:center}
+.fcard__name{display:block;font-weight:800;font-size:22px;line-height:1.2;text-shadow:0 2px 12px rgba(0,0,0,.5)}
+.fcard__credit{display:block;margin-top:6px;font-size:13px;color:rgba(255,255,255,.75)}
+.fcard__badge{display:inline-block;margin-bottom:10px;background:var(--fire);color:#000;font-weight:800;font-size:10px;letter-spacing:.16em;padding:4px 8px;border-radius:4px}
+.fcard__play{position:absolute;z-index:1;left:50%;bottom:22px;transform:translateX(-50%);display:inline-flex;align-items:center;gap:8px;white-space:nowrap;
+  padding:10px 18px;border-radius:999px;background:#fff;color:#000;font-weight:700;font-size:14px;opacity:0;transition:opacity .3s ease}
+.fcard__play svg{width:12px;height:12px}
+.fcard.is-center .fcard__play{opacity:1}
+.fcard.soon{background:radial-gradient(90% 70% at 50% 110%,rgba(255,90,31,.5),rgba(255,90,31,0) 70%),var(--bg-3);cursor:default}
+.fcard.soon .fcard__play{display:none}
+.fcard:focus-visible{outline:2px solid var(--fire-2);outline-offset:4px}
+.fplayer{position:absolute;z-index:300;left:50%;top:calc(20px + var(--ch) / 2);aspect-ratio:16/9;
+  width:min(calc(var(--ch) * 16 / 9), 100%);transform:translate(-50%,-50%);border-radius:22px;overflow:hidden;background:#000;
+  box-shadow:0 30px 80px -20px rgba(0,0,0,.9);animation:fpIn .45s cubic-bezier(.2,.7,.2,1)}
+.fplayer[hidden]{display:none}
+.fplayer__frame,.fplayer__frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
+.fplayer__close{position:absolute;z-index:2;top:10px;right:10px;width:34px;height:34px;border-radius:999px;border:1px solid rgba(255,255,255,.35);background:rgba(0,0,0,.55);color:#fff;cursor:pointer;font-size:14px;display:grid;place-items:center}
+@keyframes fpIn{from{opacity:0;clip-path:inset(0 calc(50% - var(--cw) / 2) round 22px)}to{opacity:1;clip-path:inset(0 0 round 22px)}}
+.fpend{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:20px;text-align:center;
+  background:radial-gradient(80% 80% at 50% 100%,rgba(255,90,31,.35),rgba(0,0,0,0) 70%),rgba(8,6,6,.95);animation:fpFade .35s ease}
+.fpend[hidden]{display:none}
+@keyframes fpFade{from{opacity:0}to{opacity:1}}
+.fpend__label{margin:0;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--fire-2);font-weight:700}
+.fpend__next{margin:0 0 6px;font-weight:800;font-size:clamp(18px,2.4vw,26px);line-height:1.25}
+.fpend__btns{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.fpend__btn{all:unset;box-sizing:border-box;display:inline-flex;align-items:center;gap:8px;padding:11px 18px;border-radius:999px;font-weight:700;font-size:14px;cursor:pointer;white-space:nowrap}
+.fpend__btn svg{width:18px;height:18px}
+.fpend__btn--main{background:#fff;color:#000}
+.fpend__btn--yt{background:var(--yt);color:#fff}
+.fpend__replay{all:unset;cursor:pointer;margin-top:4px;font-size:13px;color:var(--muted)} .fpend__replay:hover{color:var(--fg)}
+.fpbar{display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;margin-top:6px;font-size:13px;color:var(--muted)}
+.fpbar[hidden]{display:none}
+.fpbar a{display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:var(--fg);opacity:.85} .fpbar a:hover{opacity:1;text-decoration:underline}
+.fpbar svg{width:16px;height:16px;color:var(--yt)}
+.more{margin-top:44px;padding:24px;border:1px solid var(--line);border-radius:20px;background:var(--bg-2);display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:18px}
+.more__txt{margin:0;font-size:16px;line-height:1.5} .more__txt span{color:var(--muted);font-size:14px}
+.more__btns{display:flex;flex-wrap:wrap;gap:10px}
+.more .btn{padding:13px 22px;font-size:15px}
+@media (max-width:600px){.more{flex-direction:column;align-items:stretch;text-align:center}.more__btns{flex-direction:column}}
+@media (max-width:600px){.fpend__btn{padding:9px 14px;font-size:13px}.fpend__next{font-size:16px}.fpend{gap:6px}}
+.flow__ctrl{display:flex;align-items:center;justify-content:center;gap:24px;margin-top:12px;position:relative}
+.flow__hint{position:absolute;left:0;top:50%;transform:translateY(-50%);margin:0;font-size:12px;line-height:1.6;color:var(--dim)}
+.flow__nav{display:flex;align-items:center;gap:16px}
+.flow__count{font-size:14px;font-weight:700;letter-spacing:.08em;min-width:64px;text-align:center}
+.flow__count b{color:var(--fg)}
+@media (max-width:1180px){.flow__hint{position:static;transform:none;text-align:center;max-width:none}.flow__ctrl{flex-direction:column-reverse;gap:12px}}
+@media (max-width:600px){.flow{--cw:230px;--ch:330px;--gap:170px}.fcard__name{font-size:18px}.fcard__t{bottom:66px}}
+
 /* ---------- MODAL PLAYER ---------- */
 .modal{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,.9);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
 .modal.on{display:flex}
@@ -271,8 +330,40 @@ footer a{color:var(--muted);text-decoration:none} footer a:hover{color:var(--fg)
 <section id="tracks" style="padding-top:24px">
   <div class="wrap">
     <div class="head rv"><h2 class="display">Tracklist</h2><p><span class="ln">12곡 전부 공식 라이브 영상으로 볼 수 있어요.</span><span class="ln">Tap a track to watch.</span></p></div>
-    <button class="feature rv" id="feature" type="button"></button>
-    <ul class="grid" id="grid"></ul>
+    <div class="flow rv" id="flow" tabindex="0" role="region" aria-roledescription="carousel" aria-label="트랙 카드 넘기기">
+      <div class="flow__stage" id="flowStage"></div>
+      <div class="fplayer" id="fplayer" hidden><div class="fplayer__frame" id="fplayerFrame"></div>
+        <div class="fpend" id="fpend" hidden>
+          <p class="fpend__label">다음 곡 · Up next</p>
+          <p class="fpend__next" id="fpendNext"></p>
+          <div class="fpend__btns">
+            <button class="fpend__btn fpend__btn--main" id="fpendGo" type="button">▶ 다음 곡 보기 · Next track</button>
+            <a class="fpend__btn fpend__btn--yt" href="https://www.youtube.com/@Callingchoir?sub_confirmation=1" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.5 15.6V8.4l6.3 3.6z"/></svg>유튜브 구독 · Subscribe</a>
+          </div>
+          <button class="fpend__replay" id="fpendReplay" type="button">↺ 다시 보기 · Replay</button>
+        </div>
+      </div>
+      <div class="fpbar" id="fpbar" hidden>
+        <a id="fpbarWatch" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.5 15.6V8.4l6.3 3.6z"/></svg>유튜브에서 보기 · Watch on YouTube</a>
+        <span aria-hidden="true">·</span>
+        <a href="https://www.youtube.com/@Callingchoir?sub_confirmation=1" target="_blank" rel="noopener">구독하기 · Subscribe</a>
+      </div>
+      <div class="flow__ctrl">
+        <p class="flow__hint"><span class="ln">드래그하거나 화살표로 넘기고, 가운데 카드를 누르면 재생돼요.</span><span class="ln">Drag to browse. Tap the middle card to play.</span></p>
+        <div class="flow__nav">
+          <button class="ibtn" id="flowPrev" type="button" aria-label="이전 곡">‹</button>
+          <span class="flow__count" id="flowCount" aria-live="polite">08 / 12</span>
+          <button class="ibtn" id="flowNext" type="button" aria-label="다음 곡">›</button>
+        </div>
+      </div>
+    </div>
+    <div class="more rv">
+      <p class="more__txt"><b class="ln">공연의 더 많은 순간은 유튜브와 인스타그램에서</b><span class="ln">More moments from Calling Choir on YouTube &amp; Instagram.</span></p>
+      <div class="more__btns">
+        <a class="btn btn-yt" href="https://www.youtube.com/@Callingchoir?sub_confirmation=1" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.5 15.6V8.4l6.3 3.6z"/></svg>유튜브 · YouTube</a>
+        <a class="btn btn-ig" href="https://www.instagram.com/calling.showchoir/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.6" cy="6.4" r="1.2" fill="currentColor" stroke="none"/></svg>인스타그램 · Instagram</a>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -357,19 +448,116 @@ const TITLE = 7; // 모닥불
 const PLAY = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4l14 8-14 8z"/></svg>';
 const thumb = (id,q) => `https://i.ytimg.com/vi/${id}/${q||'hqdefault'}.jpg`;
 
-// Featured title track
-const ft = TRACKS[TITLE], feat = document.getElementById('feature');
-feat.style.backgroundImage = `url('${thumb(ft[3],'maxresdefault')}')`;
-feat.dataset.i = TITLE;
-feat.setAttribute('aria-label', `${ft[1]} 라이브 영상 재생`);
-feat.innerHTML = `<span class="feature__txt"><span><span class="badge">TITLE · ${ft[0]}</span><span class="feature__name">${ft[1]}</span><span class="feature__credit">${ft[2]}</span></span><span class="pbtn">${PLAY}</span></span>`;
-
-// Grid of the other tracks
-document.getElementById('grid').innerHTML = TRACKS.map((t,i) => i===TITLE ? '' : `
-  <li class="rv"><button class="tcard" type="button" data-i="${i}" ${t[3]?`aria-label="${t[1]} 라이브 영상 재생"`:'disabled'}>
-    ${t[3] ? `<span class="thumb" style="background-image:url('${thumb(t[3])}')"><span class="pbtn">${PLAY}</span></span>` : `<span class="thumb soon">VIDEO SOON · 영상 준비 중</span>`}
-    <span class="tmeta"><span class="tnum">${t[0]}</span><span><span class="tname">${t[1]}</span><span class="tcredit">${t[2]}</span></span></span>
-  </button></li>`).join('');
+// Coverflow tracklist (starts on the title track)
+const flow=document.getElementById('flow'), fstage=document.getElementById('flowStage'), fcount=document.getElementById('flowCount');
+const N=TRACKS.length, PLAYSVG='<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4l14 8-14 8z"/></svg>';
+fstage.innerHTML = TRACKS.map((t,i)=>`
+  <button class="fcard${t[3]?'':' soon'}" type="button" data-i="${i}" ${t[3]?`style="background-image:url('https://i.ytimg.com/vi/${t[3]}/maxres2.jpg')"`:''} aria-label="${t[0]} ${t[1]}${t[3]?'':' (영상 준비 중)'}">
+    <span class="fcard__n">${t[0]}</span>
+    <span class="fcard__t">${i===TITLE?'<span class="fcard__badge">TITLE</span>':''}<span class="fcard__name">${t[1]}</span><span class="fcard__credit">${t[3]?t[2]:'영상 준비 중 · Video soon'}</span></span>
+    <span class="fcard__play">${PLAYSVG} 라이브 영상 보기</span>
+  </button>`).join('');
+const cards=[...fstage.children];
+let pos=TITLE;            // continuous position (index of the centred card)
+const wrap=d=>{d=((d%N)+N)%N;return d>N/2?d-N:d;};
+const fplayer=document.getElementById('fplayer'), fpFrame=document.getElementById('fplayerFrame');
+let openedAt=0;
+const fpend=document.getElementById('fpend'), fpbar=document.getElementById('fpbar');
+let inlIdx=-1;
+function nextPlayable(i){for(let k=1;k<=N;k++){const j=(i+k)%N;if(TRACKS[j][3])return j;}return i;}
+function syncExtras(i){inlIdx=i;fpend.hidden=true;fpbar.hidden=false;
+  document.getElementById('fpbarWatch').href='https://www.youtube.com/watch?v='+TRACKS[i][3];
+  const n=TRACKS[nextPlayable(i)];document.getElementById('fpendNext').textContent=n[0]+'. '+n[1];}
+function onInlState(e){if(e.data===YT.PlayerState.ENDED){fpend.hidden=false;}else if(e.data===YT.PlayerState.PLAYING){fpend.hidden=true;}}
+document.getElementById('fpendGo').onclick=()=>{const j=nextPlayable(inlIdx);go(Math.round(pos)+wrap(j-pos));};
+document.getElementById('fpendReplay').onclick=()=>{fpend.hidden=true;try{inl.seekTo(0,true);inl.playVideo();}catch(_){}};
+function playInline(i){const t=TRACKS[i];if(!t||!t[3])return;if(window.muteStage)window.muteStage();openedAt=performance.now();syncExtras(i);
+  if(!fplayer.hidden&&inl&&inl.loadVideoById){inl.loadVideoById(t[3]);return;}
+  fpFrame.innerHTML='<div id="fpYT"></div>';fplayer.hidden=false;inl=null;
+  const mk=()=>{inl=new YT.Player('fpYT',{videoId:t[3],host:'https://www.youtube-nocookie.com',
+    playerVars:{autoplay:1,rel:0,playsinline:1,modestbranding:1},events:{onReady:e=>e.target.playVideo(),onStateChange:onInlState}});
+    const f=fpFrame.querySelector('iframe');if(f)f.title=`${t[1]} — 콜링콰이어 라이브`;};
+  if(window.YT&&YT.Player)mk();else{const iv=setInterval(()=>{if(window.YT&&YT.Player){clearInterval(iv);mk();}},100);}}
+let inl=null, inlVol=100;  // volume tracked here: getVolume() lags right after setVolume()
+function stopInline(){if(fplayer.hidden)return;if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});try{inl&&inl.destroy();}catch(_){}inl=null;fpFrame.innerHTML='';fplayer.hidden=true;fpend.hidden=true;fpbar.hidden=true;}
+// Click anywhere outside the open video closes it (the < > buttons switch videos instead)
+document.addEventListener('click',e=>{if(fplayer.hidden||performance.now()-openedAt<300)return;
+  if(e.target.closest('#fplayer,#fpbar,#flowPrev,#flowNext,#modal,.fcard'))return;stopInline();});
+// ESC closes the inline player from anywhere on the page
+// YouTube's own shortcuts, re-created here so ESC can also close the player
+addEventListener('keydown',e=>{
+  if(fplayer.hidden||document.getElementById('modal').classList.contains('on')||e.ctrlKey||e.metaKey||e.altKey)return;
+  const tag=(e.target.tagName||'');if(tag==='INPUT'||tag==='TEXTAREA')return;
+  if(e.key==='Escape'){stopInline();return;}
+  const p=inl;if(!p||!p.getPlayerState)return;
+  const k=e.key.toLowerCase(), t=()=>p.getCurrentTime()||0, d=()=>p.getDuration()||0, seek=x=>p.seekTo(Math.max(0,Math.min(d(),x)),true);
+  let hit=true;
+  if(k===' '||k==='k'){p.getPlayerState()===1?p.pauseVideo():p.playVideo();}
+  else if(k==='arrowleft')seek(t()-5); else if(k==='arrowright')seek(t()+5);
+  else if(k==='j')seek(t()-10); else if(k==='l')seek(t()+10);
+  else if(k==='arrowup'){if(p.isMuted())p.unMute();inlVol=Math.min(100,inlVol+5);p.setVolume(inlVol);}
+  else if(k==='arrowdown'){inlVol=Math.max(0,inlVol-5);p.setVolume(inlVol);}
+  else if(k==='m'){p.isMuted()?p.unMute():p.mute();}
+  else if(k==='f'){if(document.fullscreenElement)document.exitFullscreen();else (fpFrame.querySelector('iframe')||fplayer).requestFullscreen().catch(()=>{});}
+  else if(/^[0-9]$/.test(k))seek(d()*(+k)/10);
+  else hit=false;
+  if(hit){e.preventDefault();e.stopImmediatePropagation();}
+},true);
+// Clicking inside the YouTube player moves keyboard focus into it (a separate site), so the page stops hearing ESC.
+// After such a click, hand focus back to the page (clicks on the video controls still work).
+addEventListener('blur',()=>{setTimeout(()=>{const a=document.activeElement;
+  if(!fplayer.hidden&&a&&a.tagName==='IFRAME'&&fplayer.contains(a)&&!document.fullscreenElement){a.blur();window.focus();flow.focus({preventScroll:true});}},120);});
+function layout(){
+  const gap=parseFloat(getComputedStyle(flow).getPropertyValue('--gap'))||250;
+  cards.forEach((c,i)=>{
+    const d=wrap(i-pos), a=Math.abs(d);
+    const x=d*gap*(1-Math.min(a,3)*0.06);
+    const rot=Math.max(-55,Math.min(55,-d*32));
+    const sc=1-Math.min(a,4)*0.11;
+    c.style.transform=`translateX(${x}px) translateZ(${-a*90}px) rotateY(${rot}deg) scale(${sc})`;
+    c.style.zIndex=100-Math.round(a*10);
+    c.style.opacity=a>3.6?0:1;
+    c.style.filter=`brightness(${1-Math.min(a,3)*0.18})`;
+    c.style.pointerEvents=a>3.2?'none':'';
+    c.classList.toggle('is-center',a<0.5);
+    c.tabIndex=a<0.5?0:-1;
+  });
+  const k=((Math.round(pos)%N)+N)%N;
+  fcount.innerHTML=`<b>${TRACKS[k][0]}</b> / ${String(N).padStart(2,'0')}`;
+}
+function go(target,keepPlaying){
+  const moving=Math.round(target)!==Math.round(pos), playing=keepPlaying||!fplayer.hidden;
+  if(moving&&playing){ // skip cards without a video while a video is playing
+    const dir=Math.sign(Math.round(target)-Math.round(pos))||1;let k=Math.round(target),guard=0;
+    while(!TRACKS[((k%N)+N)%N][3]&&guard++<N)k+=dir;target=k;}
+  flow.classList.add('anim');pos=target;layout();
+  if(moving&&playing)playInline(((Math.round(pos)%N)+N)%N);}
+const centre=()=>((Math.round(pos)%N)+N)%N;
+document.getElementById('flowPrev').onclick=()=>go(Math.round(pos)-1);
+document.getElementById('flowNext').onclick=()=>go(Math.round(pos)+1);
+flow.addEventListener('keydown',e=>{if(!fplayer.hidden)return;if(e.key==='ArrowRight'){e.preventDefault();go(Math.round(pos)+1);}if(e.key==='ArrowLeft'){e.preventDefault();go(Math.round(pos)-1);}
+  if(e.key==='Enter'&&e.target===flow)playInline(centre());if(e.key==='Escape')stopInline();});
+// drag / swipe
+let drag=null;
+fstage.addEventListener('pointerdown',e=>{if(e.button!==0)return;drag={x:e.clientX,y:e.clientY,p:pos,moved:false,id:e.pointerId};});
+addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-drag.x;
+  if(!drag.moved){if(Math.abs(dx)<6)return;if(Math.abs(e.clientY-drag.y)>Math.abs(dx)){drag=null;return;}drag.moved=true;drag.wasPlaying=!fplayer.hidden;if(drag.wasPlaying){try{inl&&inl.pauseVideo();}catch(_){}fplayer.style.visibility='hidden';}flow.classList.remove('anim');fstage.classList.add('dragging');try{fstage.setPointerCapture(drag.id);}catch(_){}}
+  const gap=parseFloat(getComputedStyle(flow).getPropertyValue('--gap'))||250;pos=drag.p-dx/gap;layout();});
+addEventListener('pointerup',e=>{if(!drag)return;const moved=drag.moved,wasPlaying=drag.wasPlaying;drag=null;fstage.classList.remove('dragging');
+  if(moved){flow.dataset.justDragged='1';setTimeout(()=>delete flow.dataset.justDragged,50);
+    if(wasPlaying){fplayer.style.visibility='';const from=pos;pos=Math.round(pos);const k=((pos%N)+N)%N;
+      if(TRACKS[k][3]){flow.classList.add('anim');layout();playInline(k);}else{stopInline();go(pos);}}
+    else go(Math.round(pos));}});
+addEventListener('pointercancel',()=>{if(drag){drag=null;fstage.classList.remove('dragging');go(Math.round(pos));}});
+// horizontal wheel / trackpad swipe (vertical wheel keeps scrolling the page)
+let wheelAcc=0,wheelT;
+fstage.addEventListener('wheel',e=>{if(Math.abs(e.deltaX)<=Math.abs(e.deltaY))return;e.preventDefault();wheelAcc+=e.deltaX;
+  clearTimeout(wheelT);if(Math.abs(wheelAcc)>60){go(Math.round(pos)+Math.sign(wheelAcc));wheelAcc=0;}wheelT=setTimeout(()=>wheelAcc=0,200);},{passive:false});
+// click: side card -> bring to centre, centre card -> play
+fstage.addEventListener('click',e=>{if(flow.dataset.justDragged)return;const c=e.target.closest('.fcard');if(!c)return;const i=+c.dataset.i;
+  if(c.classList.contains('is-center')){playInline(i);}else{go(Math.round(pos)+wrap(i-pos));}});
+addEventListener('resize',layout);
+layout();
 
 // Modal player
 const modal=document.getElementById('modal'), mf=document.getElementById('m-frame'), mt=document.getElementById('m-title');
@@ -385,7 +573,7 @@ function openTrack(i){
 }
 function closeModal(){modal.classList.remove('on');mf.innerHTML='';document.body.style.overflow='';if(lastFocus)lastFocus.focus();}
 function step(d){const k=playable.indexOf(cur);openTrack(playable[(k+d+playable.length)%playable.length]);}
-document.addEventListener('click',e=>{const b=e.target.closest('.tcard,.feature');if(b&&!b.disabled)openTrack(+b.dataset.i);});
+
 document.getElementById('m-close').onclick=closeModal;
 document.getElementById('m-prev').onclick=()=>step(-1);
 document.getElementById('m-next').onclick=()=>step(1);
