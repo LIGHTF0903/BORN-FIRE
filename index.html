@@ -385,7 +385,7 @@ addEventListener('scroll', () => sticky.classList.toggle('on', scrollY > innerHe
   btn.addEventListener('click',()=>{
     if(!ready)return;
     const unmute=!stage.classList.contains('unmuted');
-    if(unmute){player.unMute();player.setVolume(100);player.playVideo();}else{player.mute();}
+    if(unmute){player.unMute();lastVol=vol();player.setVolume(lastVol);player.playVideo();}else{player.mute();}
     stage.classList.toggle('unmuted',unmute);btn.setAttribute('aria-pressed',String(unmute));
     btn.setAttribute('aria-label',unmute?'소리 끄기 / Mute':'소리 켜기 / Unmute');
   });
@@ -395,8 +395,14 @@ addEventListener('scroll', () => sticky.classList.toggle('on', scrollY > innerHe
   btn.addEventListener('focus',wake); wake();
   // Mute the background when a track video starts playing
   document.getElementById('tracks').addEventListener('click',()=>{if(ready&&stage.classList.contains('unmuted'))btn.click();});
-  // Pause when off-screen to save data
-  new IntersectionObserver(([en])=>{if(!ready)return;en.isIntersecting?player.playVideo():player.pauseVideo();}).observe(stage);
+  // Scroll-linked fade: music keeps playing while scrolling, getting quieter (as if from a distance)
+  let lastVol=-1;
+  const vol=()=>Math.round(100*Math.max(0.12,1-scrollY/(innerHeight*1.6)));
+  const fade=()=>{if(!ready||!stage.classList.contains('unmuted'))return;const v=vol();if(v!==lastVol){player.setVolume(v);lastVol=v;}};
+  addEventListener('scroll',fade,{passive:true});
+  // Pause only when off-screen AND muted (saves data without cutting the music)
+  new IntersectionObserver(([en])=>{if(!ready)return;
+    if(en.isIntersecting)player.playVideo();else if(!stage.classList.contains('unmuted'))player.pauseVideo();}).observe(stage);
 })();
 </script>
 </body>
