@@ -313,7 +313,7 @@ section{padding:clamp(72px,11vw,128px) 0}
 .outro h2{margin:0;font-size:clamp(56px,13vw,150px)}
 .outro h2 span{background:linear-gradient(180deg,#fff 0%,var(--fire-2) 50%,var(--fire) 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
 .outro p{color:var(--muted);margin:18px auto 0}
-.outro p.outro__label{margin:56px auto 0;font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--dim);font-weight:700}html[lang="ko"] .outro p.outro__label{letter-spacing:.08em;font-size:12px}.outro__btns.outro__btns--contact{margin-top:16px}.btn.btn-mail{background:linear-gradient(135deg,var(--fire),var(--fire-2));color:#000;box-shadow:0 12px 34px -12px rgba(255,90,31,.8)}.btn.btn-site{border:1px solid rgba(255,255,255,.25);color:var(--fg)}.btn-mail svg,.btn-site svg{width:20px;height:20px}
+.outro .mail-open{display:inline-block;margin-top:16px;font-size:13px;color:var(--muted);text-decoration:none;border-bottom:1px solid rgba(255,255,255,.2);padding-bottom:2px;opacity:0;visibility:hidden;transition:opacity .4s ease,visibility 0s .4s}.outro .mail-open.on{opacity:1;visibility:visible;transition:opacity .4s ease}.outro .mail-open:hover{color:var(--fg);border-color:var(--fire-2)}.outro p.outro__label{margin:56px auto 0;font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--dim);font-weight:700}html[lang="ko"] .outro p.outro__label{letter-spacing:.08em;font-size:12px}.outro__btns.outro__btns--contact{margin-top:16px}.btn.btn-mail{background:linear-gradient(135deg,var(--fire),var(--fire-2));color:#000;box-shadow:0 12px 34px -12px rgba(255,90,31,.8)}.btn.btn-site{border:1px solid rgba(255,255,255,.25);color:var(--fg)}.btn-mail svg,.btn-site svg{width:20px;height:20px}
 .outro__btns{display:flex;flex-direction:column;gap:12px;justify-content:center;margin-top:36px}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:17px 30px;border-radius:999px;font-weight:800;font-size:16px;text-decoration:none;border:1px solid transparent;transition:transform .15s ease}
 .btn:active{transform:scale(.98)} .btn svg{width:22px;height:22px}
@@ -440,6 +440,7 @@ footer a{color:var(--muted);text-decoration:none} footer a:hover{color:var(--fg)
       <a class="btn btn-mail" id="mailBtn" href="mailto:callingchoir@gmail.com" data-copied="Email copied"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg><span class="mail-txt" aria-live="polite">callingchoir@gmail.com</span></a>
       <a class="btn btn-site" href="https://www.calling-showchoir.com/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>Official website</a>
     </div>
+    <a class="mail-open" id="mailOpen" href="mailto:callingchoir@gmail.com">Open in mail app</a>
   </div>
 </section>
 
@@ -674,11 +675,12 @@ function open(){clearTimeout(t);d.classList.remove('out');d.classList.add('on');
 function close(){if(!d.classList.contains('on')||d.classList.contains('out'))return;d.classList.remove('in');d.classList.add('out');o.focus({preventScroll:true});t=setTimeout(()=>{d.classList.remove('on','out');d.setAttribute('aria-hidden','true');},RM()?0:300);}
 o.addEventListener('click',open);d.addEventListener('click',e=>{if(!e.target.closest('.lsn__list a'))close();});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&d.classList.contains('in')){e.stopImmediatePropagation();close();}},true);})();</script>
-<script>(function(){const b=document.getElementById('mailBtn');if(!b)return;const t=b.querySelector('.mail-txt'),orig=t.textContent;let h=0;
-b.addEventListener('click',e=>{e.preventDefault();
-  let p;try{p=navigator.clipboard&&navigator.clipboard.writeText('callingchoir@gmail.com');}catch(_){p=null;}
-  if(p)p.then(()=>{t.textContent=b.dataset.copied;clearTimeout(h);h=setTimeout(()=>{t.textContent=orig;},1500);}).catch(()=>{});
-  location.href=b.href;});})();</script>
+<script>(function(){const b=document.getElementById('mailBtn'),o=document.getElementById('mailOpen');if(!b)return;const t=b.querySelector('.mail-txt'),orig=t.textContent;let h=0;
+const fine=()=>matchMedia('(hover: hover) and (pointer: fine)').matches;
+b.addEventListener('click',e=>{let p=null;try{p=navigator.clipboard&&navigator.clipboard.writeText('callingchoir@gmail.com');}catch(_){p=null;}
+  if(!fine())return;e.preventDefault();
+  const show=()=>{if(o){o.classList.add('on');}};
+  if(p)p.then(()=>{t.textContent=b.dataset.copied;clearTimeout(h);h=setTimeout(()=>{t.textContent=orig;},1500);show();}).catch(show);else show();});})();</script>
 </body>
 </html>
 
