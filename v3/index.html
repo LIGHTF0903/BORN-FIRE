@@ -180,29 +180,35 @@ section{padding:clamp(72px,11vw,128px) 0}
   .thumb.soon{font-size:10px;text-align:center;padding:0 8px}
 }
 
-/* ---------- PLAYLIST PANEL (next to the title track) ---------- */
-.top{display:grid;gap:16px;margin-bottom:16px}
-.top .feature{margin-bottom:0}
-.plist{background:var(--bg-2);border:1px solid var(--line);border-radius:20px;display:flex;flex-direction:column;overflow:hidden}
-.plist__head{display:flex;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--line);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);font-weight:700}
-.plist__head span:first-child{color:var(--fire-2)}
-.plist__list{list-style:none;margin:0;padding:6px;flex:1;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.2) transparent}
-.prow{all:unset;box-sizing:border-box;display:grid;grid-template-columns:22px 64px 1fr;gap:12px;align-items:center;width:100%;padding:7px 10px;border-radius:12px;cursor:pointer;transition:background .15s ease}
-.prow:hover,.prow:focus-visible{background:rgba(255,255,255,.06)}
-.prow:focus-visible{outline:2px solid var(--fire-2);outline-offset:-2px}
-.prow[disabled]{cursor:default;opacity:.5} .prow[disabled]:hover{background:none}
-.prow.is-title{background:rgba(255,90,31,.12)}
-.prow__n{font-family:Anton,sans-serif;font-size:14px;color:var(--fire);text-align:right}
-.prow__img{width:64px;aspect-ratio:16/9;border-radius:6px;background:#000 center/cover no-repeat}
-.prow__img.soon{background:var(--bg-3)}
-.prow__t{min-width:0}
-.prow__name{display:block;font-weight:700;font-size:14px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.prow__credit{display:block;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-@media (min-width:900px){
-  .top{grid-template-columns:minmax(0,2fr) minmax(0,1fr)}
-  .plist{position:relative}
-  .plist__list{position:absolute;inset:45px 0 0 0}
-}
+/* ---------- COVERFLOW TRACKLIST ---------- */
+.flow{--cw:300px;--ch:420px;--gap:250px;position:relative;outline:none;user-select:none;-webkit-user-select:none}
+.flow__stage{position:relative;height:calc(var(--ch) + 40px);perspective:1400px;touch-action:pan-y;cursor:grab;overflow:hidden;
+  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 8%,#000 92%,transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 8%,#000 92%,transparent 100%)}
+.flow__stage.dragging{cursor:grabbing}
+.fcard{all:unset;box-sizing:border-box;position:absolute;left:50%;top:20px;width:var(--cw);height:var(--ch);margin-left:calc(var(--cw) / -2);
+  border-radius:22px;overflow:hidden;background:#111 50% 50%/auto 124% no-repeat;cursor:pointer;
+  box-shadow:0 30px 60px -20px rgba(0,0,0,.8);transform-style:preserve-3d;will-change:transform}
+.flow.anim .fcard{transition:transform .5s cubic-bezier(.2,.7,.2,1),opacity .5s ease,filter .5s ease}
+.fcard::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.35) 0%,rgba(0,0,0,0) 22%,rgba(0,0,0,0) 45%,rgba(0,0,0,.82) 100%)}
+.fcard__n{position:absolute;z-index:1;top:16px;left:0;right:0;text-align:center;font-size:12px;letter-spacing:.2em;font-weight:700;color:rgba(255,255,255,.85)}
+.fcard__t{position:absolute;z-index:1;left:18px;right:18px;bottom:74px;text-align:center}
+.fcard__name{display:block;font-weight:800;font-size:22px;line-height:1.2;text-shadow:0 2px 12px rgba(0,0,0,.5)}
+.fcard__credit{display:block;margin-top:6px;font-size:13px;color:rgba(255,255,255,.75)}
+.fcard__badge{display:inline-block;margin-bottom:10px;background:var(--fire);color:#000;font-weight:800;font-size:10px;letter-spacing:.16em;padding:4px 8px;border-radius:4px}
+.fcard__play{position:absolute;z-index:1;left:50%;bottom:22px;transform:translateX(-50%);display:inline-flex;align-items:center;gap:8px;white-space:nowrap;
+  padding:10px 18px;border-radius:999px;background:#fff;color:#000;font-weight:700;font-size:14px;opacity:0;transition:opacity .3s ease}
+.fcard__play svg{width:12px;height:12px}
+.fcard.is-center .fcard__play{opacity:1}
+.fcard.soon{background:radial-gradient(90% 70% at 50% 110%,rgba(255,90,31,.5),rgba(255,90,31,0) 70%),var(--bg-3);cursor:default}
+.fcard.soon .fcard__play{display:none}
+.fcard:focus-visible{outline:2px solid var(--fire-2);outline-offset:4px}
+.flow__ctrl{display:flex;align-items:center;justify-content:center;gap:24px;margin-top:12px;position:relative}
+.flow__hint{position:absolute;left:0;top:50%;transform:translateY(-50%);margin:0;font-size:12px;line-height:1.5;color:var(--dim);max-width:30ch}
+.flow__nav{display:flex;align-items:center;gap:16px}
+.flow__count{font-size:14px;font-weight:700;letter-spacing:.08em;min-width:64px;text-align:center}
+.flow__count b{color:var(--fg)}
+@media (max-width:860px){.flow__hint{position:static;transform:none;text-align:center;max-width:none}.flow__ctrl{flex-direction:column-reverse;gap:12px}}
+@media (max-width:600px){.flow{--cw:230px;--ch:330px;--gap:170px}.fcard__name{font-size:18px}.fcard__t{bottom:66px}}
 
 /* ---------- MODAL PLAYER ---------- */
 .modal{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,.9);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
@@ -294,11 +300,17 @@ footer a{color:var(--muted);text-decoration:none} footer a:hover{color:var(--fg)
 <section id="tracks" style="padding-top:24px">
   <div class="wrap">
     <div class="head rv"><h2 class="display">Tracklist</h2><p>12곡 전부 공식 라이브 영상으로 볼 수 있어요. Tap a track to watch.</p></div>
-    <div class="top rv">
-      <button class="feature" id="feature" type="button"></button>
-      <aside class="plist" aria-label="플레이리스트"><div class="plist__head"><span>Playlist</span><span>12 Tracks</span></div><ol class="plist__list" id="plist"></ol></aside>
+    <div class="flow rv" id="flow" tabindex="0" role="region" aria-roledescription="carousel" aria-label="트랙 카드 넘기기">
+      <div class="flow__stage" id="flowStage"></div>
+      <div class="flow__ctrl">
+        <p class="flow__hint">드래그하거나 화살표로 넘기고, 가운데 카드를 누르면 재생돼요.<br>Drag to browse. Tap the middle card to play.</p>
+        <div class="flow__nav">
+          <button class="ibtn" id="flowPrev" type="button" aria-label="이전 곡">‹</button>
+          <span class="flow__count" id="flowCount" aria-live="polite">08 / 12</span>
+          <button class="ibtn" id="flowNext" type="button" aria-label="다음 곡">›</button>
+        </div>
+      </div>
     </div>
-    <ul class="grid" id="grid"></ul>
   </div>
 </section>
 
@@ -383,27 +395,59 @@ const TITLE = 7; // 모닥불
 const PLAY = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4l14 8-14 8z"/></svg>';
 const thumb = (id,q) => `https://i.ytimg.com/vi/${id}/${q||'hqdefault'}.jpg`;
 
-// Featured title track
-const ft = TRACKS[TITLE], feat = document.getElementById('feature');
-feat.style.backgroundImage = `url('${thumb(ft[3],'maxresdefault')}')`;
-feat.dataset.i = TITLE;
-feat.setAttribute('aria-label', `${ft[1]} 라이브 영상 재생`);
-feat.innerHTML = `<span class="feature__txt"><span><span class="badge">TITLE · ${ft[0]}</span><span class="feature__name">${ft[1]}</span><span class="feature__credit">${ft[2]}</span></span><span class="pbtn">${PLAY}</span></span>`;
-
-// Compact playlist of all tracks next to the title track
-document.getElementById('plist').innerHTML = TRACKS.map((t,i) => `
-  <li><button class="prow${i===TITLE?' is-title':''}" type="button" data-i="${i}" ${t[3]?`aria-label="${t[0]} ${t[1]} 재생"`:'disabled'}>
-    <span class="prow__n">${t[0]}</span>
-    <span class="prow__img${t[3]?'':' soon'}"${t[3]?` style="background-image:url('https://i.ytimg.com/vi/${t[3]}/mqdefault.jpg')"`:''}></span>
-    <span class="prow__t"><span class="prow__name">${t[1]}</span><span class="prow__credit">${t[3]?t[2]:'영상 준비 중'}</span></span>
-  </button></li>`).join('');
-
-// Grid of the other tracks
-document.getElementById('grid').innerHTML = TRACKS.map((t,i) => i===TITLE ? '' : `
-  <li class="rv"><button class="tcard" type="button" data-i="${i}" ${t[3]?`aria-label="${t[1]} 라이브 영상 재생"`:'disabled'}>
-    ${t[3] ? `<span class="thumb" style="background-image:url('${thumb(t[3])}')"><span class="pbtn">${PLAY}</span></span>` : `<span class="thumb soon">VIDEO SOON · 영상 준비 중</span>`}
-    <span class="tmeta"><span class="tnum">${t[0]}</span><span><span class="tname">${t[1]}</span><span class="tcredit">${t[2]}</span></span></span>
-  </button></li>`).join('');
+// Coverflow tracklist (starts on the title track)
+const flow=document.getElementById('flow'), fstage=document.getElementById('flowStage'), fcount=document.getElementById('flowCount');
+const N=TRACKS.length, PLAYSVG='<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4l14 8-14 8z"/></svg>';
+fstage.innerHTML = TRACKS.map((t,i)=>`
+  <button class="fcard${t[3]?'':' soon'}" type="button" data-i="${i}" ${t[3]?`style="background-image:url('https://i.ytimg.com/vi/${t[3]}/maxres2.jpg')"`:''} aria-label="${t[0]} ${t[1]}${t[3]?'':' (영상 준비 중)'}">
+    <span class="fcard__n">${t[0]}</span>
+    <span class="fcard__t">${i===TITLE?'<span class="fcard__badge">TITLE</span>':''}<span class="fcard__name">${t[1]}</span><span class="fcard__credit">${t[3]?t[2]:'영상 준비 중 · Video soon'}</span></span>
+    <span class="fcard__play">${PLAYSVG} 라이브 영상 보기</span>
+  </button>`).join('');
+const cards=[...fstage.children];
+let pos=TITLE;            // continuous position (index of the centred card)
+const wrap=d=>{d=((d%N)+N)%N;return d>N/2?d-N:d;};
+function layout(){
+  const gap=parseFloat(getComputedStyle(flow).getPropertyValue('--gap'))||250;
+  cards.forEach((c,i)=>{
+    const d=wrap(i-pos), a=Math.abs(d);
+    const x=d*gap*(1-Math.min(a,3)*0.06);
+    const rot=Math.max(-55,Math.min(55,-d*32));
+    const sc=1-Math.min(a,4)*0.11;
+    c.style.transform=`translateX(${x}px) translateZ(${-a*90}px) rotateY(${rot}deg) scale(${sc})`;
+    c.style.zIndex=100-Math.round(a*10);
+    c.style.opacity=a>3.6?0:1;
+    c.style.filter=`brightness(${1-Math.min(a,3)*0.18})`;
+    c.style.pointerEvents=a>3.2?'none':'';
+    c.classList.toggle('is-center',a<0.5);
+    c.tabIndex=a<0.5?0:-1;
+  });
+  const k=((Math.round(pos)%N)+N)%N;
+  fcount.innerHTML=`<b>${TRACKS[k][0]}</b> / ${String(N).padStart(2,'0')}`;
+}
+function go(target){flow.classList.add('anim');pos=target;layout();}
+const centre=()=>((Math.round(pos)%N)+N)%N;
+document.getElementById('flowPrev').onclick=()=>go(Math.round(pos)-1);
+document.getElementById('flowNext').onclick=()=>go(Math.round(pos)+1);
+flow.addEventListener('keydown',e=>{if(e.key==='ArrowRight'){e.preventDefault();go(Math.round(pos)+1);}if(e.key==='ArrowLeft'){e.preventDefault();go(Math.round(pos)-1);}
+  if(e.key==='Enter'&&e.target===flow)openTrack(centre());});
+// drag / swipe
+let drag=null;
+fstage.addEventListener('pointerdown',e=>{if(e.button!==0)return;drag={x:e.clientX,y:e.clientY,p:pos,moved:false,id:e.pointerId};});
+addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-drag.x;
+  if(!drag.moved){if(Math.abs(dx)<6)return;if(Math.abs(e.clientY-drag.y)>Math.abs(dx)){drag=null;return;}drag.moved=true;flow.classList.remove('anim');fstage.classList.add('dragging');try{fstage.setPointerCapture(drag.id);}catch(_){}}
+  const gap=parseFloat(getComputedStyle(flow).getPropertyValue('--gap'))||250;pos=drag.p-dx/gap;layout();});
+addEventListener('pointerup',e=>{if(!drag)return;const moved=drag.moved;drag=null;fstage.classList.remove('dragging');if(moved){flow.dataset.justDragged='1';setTimeout(()=>delete flow.dataset.justDragged,50);go(Math.round(pos));}});
+addEventListener('pointercancel',()=>{if(drag){drag=null;fstage.classList.remove('dragging');go(Math.round(pos));}});
+// horizontal wheel / trackpad swipe (vertical wheel keeps scrolling the page)
+let wheelAcc=0,wheelT;
+fstage.addEventListener('wheel',e=>{if(Math.abs(e.deltaX)<=Math.abs(e.deltaY))return;e.preventDefault();wheelAcc+=e.deltaX;
+  clearTimeout(wheelT);if(Math.abs(wheelAcc)>60){go(Math.round(pos)+Math.sign(wheelAcc));wheelAcc=0;}wheelT=setTimeout(()=>wheelAcc=0,200);},{passive:false});
+// click: side card -> bring to centre, centre card -> play
+fstage.addEventListener('click',e=>{if(flow.dataset.justDragged)return;const c=e.target.closest('.fcard');if(!c)return;const i=+c.dataset.i;
+  if(c.classList.contains('is-center')){openTrack(i);}else{go(Math.round(pos)+wrap(i-pos));}});
+addEventListener('resize',layout);
+layout();
 
 // Modal player
 const modal=document.getElementById('modal'), mf=document.getElementById('m-frame'), mt=document.getElementById('m-title');
@@ -419,7 +463,7 @@ function openTrack(i){
 }
 function closeModal(){modal.classList.remove('on');mf.innerHTML='';document.body.style.overflow='';if(lastFocus)lastFocus.focus();}
 function step(d){const k=playable.indexOf(cur);openTrack(playable[(k+d+playable.length)%playable.length]);}
-document.addEventListener('click',e=>{const b=e.target.closest('.tcard,.feature,.prow');if(b&&!b.disabled)openTrack(+b.dataset.i);});
+
 document.getElementById('m-close').onclick=closeModal;
 document.getElementById('m-prev').onclick=()=>step(-1);
 document.getElementById('m-next').onclick=()=>step(1);
