@@ -10,6 +10,9 @@
 <meta name="description" content="BORN FIRE (CALLING GOSPEL LIVE SHOW VOL.1) — 힙합 가스펠 쇼콰이어 콜링콰이어(Calling Choir) 첫 정규 라이브 앨범. Korea's first hip-hop gospel show choir. Recorded live in Seoul. 전곡 라이브 영상 공개.">
 <meta name="keywords" content="Calling Choir, 콜링콰이어, BORN FIRE, 본파이어, 모닥불, gospel, hip-hop gospel, show choir, Korean gospel, K-gospel, live album, CCM">
 <link rel="canonical" href="https://lightf0903.github.io/BORN-FIRE/">
+<link rel="alternate" hreflang="ko" href="https://lightf0903.github.io/BORN-FIRE/">
+<link rel="alternate" hreflang="en" href="https://lightf0903.github.io/BORN-FIRE/en/">
+<link rel="alternate" hreflang="x-default" href="https://lightf0903.github.io/BORN-FIRE/">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 
 <!-- OG / 링크 미리보기 (카톡·인스타 DM) -->
@@ -129,7 +132,10 @@ section{padding:clamp(72px,11vw,128px) 0}
 .nav__sub{display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border-radius:999px;background:var(--yt);color:#fff;
   font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap;box-shadow:0 6px 20px -8px rgba(255,0,51,.8)}
 .nav__sub svg{width:16px;height:16px}
-@media (max-width:640px){.nav{gap:12px;padding:0 16px}.nav__links{display:none}.nav__sub{margin-left:auto}}
+.lang{display:inline-flex;align-items:center;border:1px solid rgba(255,255,255,.25);border-radius:999px;font-size:12px;font-weight:700;letter-spacing:.08em;overflow:hidden;white-space:nowrap}
+.lang a,.lang span{padding:6px 10px;text-decoration:none;color:var(--fg);opacity:.7}
+.lang [aria-current]{background:var(--fg);color:#000;opacity:1}
+@media (max-width:640px){.nav{gap:10px;padding:0 16px}.nav__links{display:none}.lang{margin-left:auto}}
 
 /* ---------- A. MANIFESTO ---------- */
 .manifesto{text-align:center;padding-top:clamp(56px,9vw,104px)}
@@ -301,6 +307,7 @@ footer a{color:var(--muted);text-decoration:none} footer a:hover{color:var(--fg)
 <nav class="nav" id="nav" aria-label="메뉴">
   <a class="nav__logo" href="#stage">Born Fire</a>
   <div class="nav__links"><a href="#tracks">Tracks</a><a href="#about">About</a><a href="#credits">Credits</a></div>
+  <div class="lang" aria-label="언어 · Language"><span aria-current="true">KO</span><a href="en/" hreflang="en" lang="en">EN</a></div>
   <a class="nav__sub" href="https://www.youtube.com/@Callingchoir?sub_confirmation=1" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.5 15.6V8.4l6.3 3.6z"/></svg>구독</a>
 </nav>
 
