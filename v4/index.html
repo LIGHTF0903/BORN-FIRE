@@ -146,7 +146,9 @@ section{padding:clamp(72px,11vw,128px) 0}
 /* ---------- B. TRACKS ---------- */
 .head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:28px;flex-wrap:wrap}
 .head h2{margin:0;font-size:clamp(40px,7vw,76px)}
-.head p{margin:0;color:var(--muted);font-size:14px;max-width:34ch}
+.head p{margin:0;color:var(--muted);font-size:14px}
+.ln{display:block;text-wrap:balance}
+@media (min-width:861px){.ln{white-space:nowrap}}
 .feature{all:unset;box-sizing:border-box;position:relative;display:block;width:100%;aspect-ratio:16/9;border-radius:20px;overflow:hidden;cursor:pointer;
   background:#000 center/cover no-repeat;margin-bottom:16px}
 .feature::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 40%,rgba(0,0,0,.85) 100%)}
@@ -232,11 +234,11 @@ section{padding:clamp(72px,11vw,128px) 0}
 @media (max-width:600px){.more{flex-direction:column;align-items:stretch;text-align:center}.more__btns{flex-direction:column}}
 @media (max-width:600px){.fpend__btn{padding:9px 14px;font-size:13px}.fpend__next{font-size:16px}.fpend{gap:6px}}
 .flow__ctrl{display:flex;align-items:center;justify-content:center;gap:24px;margin-top:12px;position:relative}
-.flow__hint{position:absolute;left:0;top:50%;transform:translateY(-50%);margin:0;font-size:12px;line-height:1.5;color:var(--dim);max-width:30ch}
+.flow__hint{position:absolute;left:0;top:50%;transform:translateY(-50%);margin:0;font-size:12px;line-height:1.6;color:var(--dim)}
 .flow__nav{display:flex;align-items:center;gap:16px}
 .flow__count{font-size:14px;font-weight:700;letter-spacing:.08em;min-width:64px;text-align:center}
 .flow__count b{color:var(--fg)}
-@media (max-width:860px){.flow__hint{position:static;transform:none;text-align:center;max-width:none}.flow__ctrl{flex-direction:column-reverse;gap:12px}}
+@media (max-width:1180px){.flow__hint{position:static;transform:none;text-align:center;max-width:none}.flow__ctrl{flex-direction:column-reverse;gap:12px}}
 @media (max-width:600px){.flow{--cw:230px;--ch:330px;--gap:170px}.fcard__name{font-size:18px}.fcard__t{bottom:66px}}
 
 /* ---------- MODAL PLAYER ---------- */
@@ -278,7 +280,7 @@ section{padding:clamp(72px,11vw,128px) 0}
 .outro .wrap{position:relative}
 .outro h2{margin:0;font-size:clamp(56px,13vw,150px)}
 .outro h2 span{background:linear-gradient(180deg,#fff 0%,var(--fire-2) 50%,var(--fire) 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
-.outro p{color:var(--muted);margin:18px auto 0;max-width:36ch}
+.outro p{color:var(--muted);margin:18px auto 0}
 .outro__btns{display:flex;flex-direction:column;gap:12px;justify-content:center;margin-top:36px}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:17px 30px;border-radius:999px;font-weight:800;font-size:16px;text-decoration:none;border:1px solid transparent;transition:transform .15s ease}
 .btn:active{transform:scale(.98)} .btn svg{width:22px;height:22px}
@@ -328,7 +330,7 @@ footer a{color:var(--muted);text-decoration:none} footer a:hover{color:var(--fg)
 
 <section id="tracks" style="padding-top:24px">
   <div class="wrap">
-    <div class="head rv"><h2 class="display">Tracklist</h2><p>12곡 전부 공식 라이브 영상으로 볼 수 있어요. Tap a track to watch.</p></div>
+    <div class="head rv"><h2 class="display">Tracklist</h2><p><span class="ln">12곡 전부 공식 라이브 영상으로 볼 수 있어요.</span><span class="ln">Tap a track to watch.</span></p></div>
     <div class="flow rv" id="flow" tabindex="0" role="region" aria-roledescription="carousel" aria-label="트랙 카드 넘기기">
       <div class="flow__stage" id="flowStage"></div>
       <div class="fplayer" id="fplayer" hidden><div class="fplayer__frame" id="fplayerFrame"></div>
@@ -348,7 +350,7 @@ footer a{color:var(--muted);text-decoration:none} footer a:hover{color:var(--fg)
         <a href="https://www.youtube.com/@Callingchoir?sub_confirmation=1" target="_blank" rel="noopener">구독하기 · Subscribe</a>
       </div>
       <div class="flow__ctrl">
-        <p class="flow__hint">드래그하거나 화살표로 넘기고, 가운데 카드를 누르면 재생돼요.<br>Drag to browse. Tap the middle card to play.</p>
+        <p class="flow__hint"><span class="ln">드래그하거나 화살표로 넘기고, 가운데 카드를 누르면 재생돼요.</span><span class="ln">Drag to browse. Tap the middle card to play.</span></p>
         <div class="flow__nav">
           <button class="ibtn" id="flowPrev" type="button" aria-label="이전 곡">‹</button>
           <span class="flow__count" id="flowCount" aria-live="polite">08 / 12</span>
@@ -357,7 +359,7 @@ footer a{color:var(--muted);text-decoration:none} footer a:hover{color:var(--fg)
       </div>
     </div>
     <div class="more rv">
-      <p class="more__txt"><b>공연의 더 많은 순간은 유튜브와 인스타그램에서</b><br><span>More moments from Calling Choir on YouTube &amp; Instagram.</span></p>
+      <p class="more__txt"><b class="ln">공연의 더 많은 순간은 유튜브와 인스타그램에서</b><span class="ln">More moments from Calling Choir on YouTube &amp; Instagram.</span></p>
       <div class="more__btns">
         <a class="btn btn-yt" href="https://www.youtube.com/@Callingchoir?sub_confirmation=1" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.5 15.6V8.4l6.3 3.6z"/></svg>유튜브 · YouTube</a>
         <a class="btn btn-ig" href="https://www.instagram.com/calling.showchoir/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.6" cy="6.4" r="1.2" fill="currentColor" stroke="none"/></svg>인스타그램 · Instagram</a>
@@ -402,7 +404,7 @@ footer a{color:var(--muted);text-decoration:none} footer a:hover{color:var(--fg)
 <section class="outro" id="follow">
   <div class="wrap rv">
     <h2 class="display">Follow<br><span>the fire</span></h2>
-    <p>새 무대, 비하인드, 공연 일정은 여기서 가장 먼저 올라가요.</p>
+    <p><span class="ln">새 무대, 비하인드, 공연 일정은 여기서 가장 먼저 올라가요.</span></p>
     <div class="outro__btns">
       <a class="btn btn-yt" href="https://www.youtube.com/@Callingchoir?sub_confirmation=1" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.5 15.6V8.4l6.3 3.6z"/></svg>유튜브 구독하기</a>
       <a class="btn btn-ig" href="https://www.instagram.com/calling.showchoir/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.6" cy="6.4" r="1.2" fill="currentColor" stroke="none"/></svg>인스타그램 팔로우</a>

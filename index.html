@@ -145,7 +145,9 @@ section{padding:clamp(72px,11vw,128px) 0}
 /* ---------- B. TRACKS ---------- */
 .head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:28px;flex-wrap:wrap}
 .head h2{margin:0;font-size:clamp(40px,7vw,76px)}
-.head p{margin:0;color:var(--muted);font-size:14px;max-width:34ch}
+.head p{margin:0;color:var(--muted);font-size:14px}
+.ln{display:block;text-wrap:balance}
+@media (min-width:861px){.ln{white-space:nowrap}}
 .feature{all:unset;box-sizing:border-box;position:relative;display:block;width:100%;aspect-ratio:16/9;border-radius:20px;overflow:hidden;cursor:pointer;
   background:#000 center/cover no-repeat;margin-bottom:16px}
 .feature::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 40%,rgba(0,0,0,.85) 100%)}
@@ -218,7 +220,7 @@ section{padding:clamp(72px,11vw,128px) 0}
 .outro .wrap{position:relative}
 .outro h2{margin:0;font-size:clamp(56px,13vw,150px)}
 .outro h2 span{background:linear-gradient(180deg,#fff 0%,var(--fire-2) 50%,var(--fire) 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
-.outro p{color:var(--muted);margin:18px auto 0;max-width:36ch}
+.outro p{color:var(--muted);margin:18px auto 0}
 .outro__btns{display:flex;flex-direction:column;gap:12px;justify-content:center;margin-top:36px}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:17px 30px;border-radius:999px;font-weight:800;font-size:16px;text-decoration:none;border:1px solid transparent;transition:transform .15s ease}
 .btn:active{transform:scale(.98)} .btn svg{width:22px;height:22px}
@@ -268,7 +270,7 @@ footer a{color:var(--muted);text-decoration:none} footer a:hover{color:var(--fg)
 
 <section id="tracks" style="padding-top:24px">
   <div class="wrap">
-    <div class="head rv"><h2 class="display">Tracklist</h2><p>12곡 전부 공식 라이브 영상으로 볼 수 있어요. Tap a track to watch.</p></div>
+    <div class="head rv"><h2 class="display">Tracklist</h2><p><span class="ln">12곡 전부 공식 라이브 영상으로 볼 수 있어요.</span><span class="ln">Tap a track to watch.</span></p></div>
     <button class="feature rv" id="feature" type="button"></button>
     <ul class="grid" id="grid"></ul>
   </div>
@@ -310,7 +312,7 @@ footer a{color:var(--muted);text-decoration:none} footer a:hover{color:var(--fg)
 <section class="outro" id="follow">
   <div class="wrap rv">
     <h2 class="display">Follow<br><span>the fire</span></h2>
-    <p>새 무대, 비하인드, 공연 일정은 여기서 가장 먼저 올라가요.</p>
+    <p><span class="ln">새 무대, 비하인드, 공연 일정은 여기서 가장 먼저 올라가요.</span></p>
     <div class="outro__btns">
       <a class="btn btn-yt" href="https://www.youtube.com/@Callingchoir?sub_confirmation=1" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.5 15.6V8.4l6.3 3.6z"/></svg>유튜브 구독하기</a>
       <a class="btn btn-ig" href="https://www.instagram.com/calling.showchoir/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.6" cy="6.4" r="1.2" fill="currentColor" stroke="none"/></svg>인스타그램 팔로우</a>
