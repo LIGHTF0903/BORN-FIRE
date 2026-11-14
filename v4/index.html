@@ -421,6 +421,12 @@ function playInline(i){const t=TRACKS[i];if(!t||!t[3])return;if(window.muteStage
   fplayer.hidden=false;}
 function stopInline(){if(fplayer.hidden)return;fpFrame.innerHTML='';fplayer.hidden=true;}
 document.getElementById('fplayerClose').onclick=stopInline;
+// ESC closes the inline player from anywhere on the page
+addEventListener('keydown',e=>{if(e.key==='Escape'&&!fplayer.hidden&&!document.getElementById('modal').classList.contains('on'))stopInline();});
+// Clicking inside the YouTube player moves keyboard focus into it (a separate site), so the page stops hearing ESC.
+// After such a click, hand focus back to the page (clicks on the video controls still work).
+addEventListener('blur',()=>{setTimeout(()=>{const a=document.activeElement;
+  if(!fplayer.hidden&&a&&a.tagName==='IFRAME'&&fplayer.contains(a)&&!document.fullscreenElement){a.blur();window.focus();flow.focus({preventScroll:true});}},120);});
 function layout(){
   const gap=parseFloat(getComputedStyle(flow).getPropertyValue('--gap'))||250;
   cards.forEach((c,i)=>{
