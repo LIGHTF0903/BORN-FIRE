@@ -578,13 +578,21 @@ fstage.addEventListener('pointerdown',e=>{if(e.button!==0)return;drag={x:e.clien
 addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-drag.x;
   if(!drag.moved){if(Math.abs(dx)<6)return;if(Math.abs(e.clientY-drag.y)>Math.abs(dx)){drag=null;return;}drag.moved=true;drag.wasPlaying=!fplayer.hidden;if(drag.wasPlaying){try{inl&&inl.pauseVideo();}catch(_){}fplayer.style.visibility='hidden';}flow.classList.remove('anim');fstage.classList.add('dragging');try{fstage.setPointerCapture(drag.id);}catch(_){}}
   const gap=parseFloat(getComputedStyle(flow).getPropertyValue('--gap'))||250;pos=drag.p-dx/gap;layout();});
-addEventListener('pointerup',e=>{if(!drag)return;const moved=drag.moved,wasPlaying=drag.wasPlaying;drag=null;fstage.classList.remove('dragging');
-  if(moved){flow.dataset.justDragged='1';setTimeout(()=>delete flow.dataset.justDragged,50);
-    if(wasPlaying){fplayer.style.visibility='';pos=Math.round(pos);const k=((pos%N)+N)%N;
-      if(k===inlIdx&&inl){flow.classList.add('anim');layout();try{inl.playVideo();}catch(_){}}
-      else if(TRACKS[k][3]){flow.classList.add('anim');layout();playInline(k);}else{stopInline();go(pos);}}
-    else go(Math.round(pos));}});
-addEventListener('pointercancel',()=>{if(drag){drag=null;fstage.classList.remove('dragging');go(Math.round(pos));}});
+// One place ends every drag: finger lifted, or the browser/OS cancelled it (edge-swipe, scroll takeover, app switch).
+// A cancelled drag snaps back to the card it started on; a hidden-while-dragging video is always shown again.
+function endDrag(cancelled){if(!drag)return;const moved=drag.moved,wasPlaying=drag.wasPlaying,start=drag.p;drag=null;fstage.classList.remove('dragging');
+  if(!moved)return;
+  flow.dataset.justDragged='1';setTimeout(()=>delete flow.dataset.justDragged,50);
+  if(cancelled)pos=start;
+  if(wasPlaying){fplayer.style.visibility='';pos=Math.round(pos);const k=((pos%N)+N)%N;
+    if(k===inlIdx&&inl){flow.classList.add('anim');layout();try{inl.playVideo();}catch(_){}}
+    else if(TRACKS[k][3]){flow.classList.add('anim');layout();playInline(k);}else{stopInline();go(pos);}}
+  else go(Math.round(pos));}
+addEventListener('pointerup',()=>endDrag(false));
+addEventListener('pointercancel',()=>endDrag(true));
+fstage.addEventListener('lostpointercapture',()=>endDrag(true));
+addEventListener('blur',()=>endDrag(true));
+document.addEventListener('visibilitychange',()=>{if(document.hidden)endDrag(true);});
 // horizontal wheel / trackpad swipe (vertical wheel keeps scrolling the page)
 let wheelAcc=0,wheelT;
 fstage.addEventListener('wheel',e=>{if(Math.abs(e.deltaX)<=Math.abs(e.deltaY))return;e.preventDefault();wheelAcc+=e.deltaX;
