@@ -673,9 +673,10 @@ function close(){if(!d.classList.contains('on')||d.classList.contains('out'))ret
 o.addEventListener('click',open);d.addEventListener('click',e=>{if(!e.target.closest('.lsn__list a'))close();});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&d.classList.contains('in')){e.stopImmediatePropagation();close();}},true);})();</script>
 <script>(function(){const b=document.getElementById('mailBtn');if(!b)return;const t=b.querySelector('.mail-txt'),orig=t.textContent;let h=0;
-b.addEventListener('click',async e=>{if(!matchMedia('(hover: hover) and (pointer: fine)').matches)return;e.preventDefault();
-try{await navigator.clipboard.writeText('callingchoir@gmail.com');t.textContent=b.dataset.copied;clearTimeout(h);h=setTimeout(()=>{t.textContent=orig;},1500);}
-catch(_){location.href=b.href;}});})();</script>
+b.addEventListener('click',e=>{e.preventDefault();
+  let p;try{p=navigator.clipboard&&navigator.clipboard.writeText('callingchoir@gmail.com');}catch(_){p=null;}
+  if(p)p.then(()=>{t.textContent=b.dataset.copied;clearTimeout(h);h=setTimeout(()=>{t.textContent=orig;},1500);}).catch(()=>{});
+  location.href=b.href;});})();</script>
 </body>
 </html>
 
