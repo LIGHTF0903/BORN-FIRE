@@ -199,6 +199,7 @@ section{padding:clamp(72px,11vw,128px) 0}
 .fcard::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.35) 0%,rgba(0,0,0,0) 22%,rgba(0,0,0,0) 45%,rgba(0,0,0,.82) 100%)}
 .fcard__n{position:absolute;z-index:1;top:16px;left:0;right:0;text-align:center;font-size:12px;letter-spacing:.2em;font-weight:700;color:rgba(255,255,255,.85)}
 .fcard__t{position:absolute;z-index:1;left:18px;right:18px;bottom:74px;text-align:center}
+.tl{display:inline-block}.tl--p{display:block}
 .fcard__name{display:block;font-weight:800;font-size:22px;line-height:1.2;text-shadow:0 2px 12px rgba(0,0,0,.5)}
 .fcard__credit{display:block;margin-top:6px;font-size:13px;color:rgba(255,255,255,.75)}
 .fcard__badge{display:inline-block;margin-bottom:10px;background:var(--fire);color:#000;font-weight:800;font-size:10px;letter-spacing:.16em;padding:4px 8px;border-radius:4px}
@@ -244,7 +245,7 @@ section{padding:clamp(72px,11vw,128px) 0}
 .flow__count{font-size:14px;font-weight:700;letter-spacing:.08em;min-width:64px;text-align:center}
 .flow__count b{color:var(--fg)}
 @media (max-width:1180px){.flow__hint{position:static;transform:none;text-align:center;max-width:none}.flow__ctrl{flex-direction:column-reverse;gap:12px}}
-@media (max-width:600px){.flow{--cw:230px;--ch:330px;--gap:170px}.fcard__name{font-size:18px}.fcard__t{bottom:66px}}
+@media (max-width:600px){.flow{--cw:230px;--ch:330px;--gap:170px}.fcard__name{font-size:18px}.fcard__name .tl--p{font-size:.85em}.fcard__t{bottom:66px}}
 
 /* ---------- MODAL PLAYER ---------- */
 .modal{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,.9);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
@@ -437,6 +438,8 @@ footer a{color:var(--muted);text-decoration:none} footer a:hover{color:var(--fg)
 </div>
 
 <script>
+// Title lines: a trailing (…) goes on its own line so a break never falls inside it
+const tl=s=>{const m=s.match(/^(.*\S)\s+(\([^()]*\))$/);return m?`<span class="tl">${m[1]}</span><span class="tl tl--p">${m[2]}</span>`:`<span class="tl">${s}</span>`;};
 const TRACKS = [
   ["01","Born to Rise","Solo. MINA","piGta7dxUCo"],
   ["02","Get Up","Feat. Sooyong Yoon","1viWq7LlsVo"],
@@ -462,7 +465,7 @@ const N=TRACKS.length, PLAYSVG='<svg viewBox="0 0 24 24" fill="currentColor"><pa
 fstage.innerHTML = TRACKS.map((t,i)=>`
   <button class="fcard${t[3]?'':' soon'}" type="button" data-i="${i}" ${t[3]?`style="background:#111 url('assets/cards/${t[0]}.jpg') 50% 50%/cover no-repeat"`:''} aria-label="${t[0]} ${t[1]}${t[3]?'':' (영상 준비 중)'}">
     <span class="fcard__n">${t[0]}</span>
-    <span class="fcard__t">${i===TITLE?'<span class="fcard__badge">TITLE</span>':''}<span class="fcard__name">${t[1]}</span><span class="fcard__credit">${t[3]?t[2]:'영상 준비 중 · Video soon'}</span></span>
+    <span class="fcard__t">${i===TITLE?'<span class="fcard__badge">TITLE</span>':''}<span class="fcard__name">${tl(t[1])}</span><span class="fcard__credit">${t[3]?t[2]:'영상 준비 중 · Video soon'}</span></span>
     <span class="fcard__play">${PLAYSVG} 라이브 영상 보기</span>
   </button>`).join('');
 const cards=[...fstage.children];
@@ -576,7 +579,7 @@ function openTrack(i){
   if(window.muteStage) window.muteStage();
   cur=i;
   mf.innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${t[3]}?autoplay=1&rel=0&playsinline=1" allow="accelerometer; autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen title="${t[1]} — 콜링콰이어 라이브"></iframe>`;
-  mt.innerHTML=`${t[0]}. ${t[1]}<small>${t[2]}</small>`;
+  mt.innerHTML=`${t[0]}. ${tl(t[1])}<small>${t[2]}</small>`;
   if(!modal.classList.contains('on')){lastFocus=document.activeElement;modal.classList.add('on');document.body.style.overflow='hidden';document.getElementById('m-close').focus();}
 }
 function closeModal(){modal.classList.remove('on');mf.innerHTML='';document.body.style.overflow='';if(lastFocus)lastFocus.focus();}
