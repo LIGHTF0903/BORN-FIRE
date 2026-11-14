@@ -203,8 +203,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&d.classList.contain
 
 // Email: copy address (PC) / open mail app
 (function(){const b=document.getElementById('mailBtn'),o=document.getElementById('mailOpen');if(!b)return;const t=b.querySelector('.mail-txt'),orig=t.textContent;let h=0;
-const fine=()=>matchMedia('(hover: hover) and (pointer: fine)').matches;
 b.addEventListener('click',e=>{let p=null;try{p=navigator.clipboard&&navigator.clipboard.writeText('callingchoir@gmail.com');}catch(_){p=null;}
-  if(!fine())return;e.preventDefault();
+  e.preventDefault();  // same on PC and phones: copy + show 'open in mail app' link
   const show=()=>{if(o){o.classList.add('on');}};
   if(p)p.then(()=>{t.textContent=b.dataset.copied;clearTimeout(h);h=setTimeout(()=>{t.textContent=orig;},1500);show();}).catch(show);else show();});})();
