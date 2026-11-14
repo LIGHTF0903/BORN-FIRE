@@ -405,7 +405,9 @@ document.querySelectorAll('.rv').forEach(el=>io.observe(el));
       playerVars:{autoplay:1,mute:1,controls:0,start:START,playsinline:1,rel:0,modestbranding:1,disablekb:1,iv_load_policy:3,fs:0},
       events:{
         onReady:e=>{ready=true;e.target.mute();if(e.target.getPlayerState()!==YT.PlayerState.PLAYING)e.target.playVideo();},
-        onStateChange:e=>{if(e.data===YT.PlayerState.PLAYING&&!revealT)revealT=setTimeout(()=>stage.classList.add('playing'),1200);
+        onStateChange:e=>{if(e.data===YT.PlayerState.PLAYING&&!revealT){const t0=e.target.getCurrentTime();
+                            // YouTube flashes its own play/pause bezel right after playback starts; keep the poster on top until it is gone
+                            revealT=setInterval(()=>{if(e.target.getCurrentTime()-t0>4.5){stage.classList.add('playing');clearInterval(revealT);}},250);}
                           if(e.data===YT.PlayerState.ENDED){e.target.seekTo(START,true);e.target.playVideo();}}
       }});
   };
