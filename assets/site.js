@@ -75,8 +75,11 @@ addEventListener('keydown',e=>{
 addEventListener('blur',()=>{setTimeout(()=>{const a=document.activeElement;
   if(!fplayer.hidden&&a&&a.tagName==='IFRAME'&&fplayer.contains(a)&&!document.fullscreenElement){a.blur();window.focus();flow.focus({preventScroll:true});}},120);});
 let gap=250;  // card spacing (CSS --gap), refreshed on every layout()
+// --gap can be a calc() (landscape phones); a hidden probe resolves it to pixels
+const gapProbe=document.createElement('i');gapProbe.setAttribute('aria-hidden','true');
+gapProbe.style.cssText='position:absolute;visibility:hidden;pointer-events:none;height:0;width:var(--gap)';flow.appendChild(gapProbe);
 function layout(){
-  gap=parseFloat(getComputedStyle(flow).getPropertyValue('--gap'))||250;
+  gap=gapProbe.offsetWidth||250;
   cards.forEach((c,i)=>{
     const d=wrap(i-pos), a=Math.abs(d);
     const x=d*gap*(1-Math.min(a,3)*0.06);
