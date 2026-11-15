@@ -220,9 +220,9 @@ footer a{color:var(--muted);text-decoration:none} footer a:hover{color:var(--fg)
   .stage::after{background:linear-gradient(180deg,rgba(0,0,0,.35) 0%,rgba(0,0,0,0) 22%,rgba(0,0,0,0) 88%,rgba(10,7,8,.6) 100%)}
   .flow{--ch:calc(100svh - 130px);--cw:calc((100svh - 130px) * .714);--gap:calc((100svh - 130px) * .6)}
   .fcard__name{font-size:16px}.fcard__credit{font-size:11px}
-  /* text keeps its original right-hand column; the height-limited photo moves to the inner edge of its column, next to the text */
+  /* text keeps its original right-hand column; the height-limited photo sits in the middle of its column */
   .about__grid{grid-template-columns:5fr 6fr}
-  .about__img{aspect-ratio:4/5;height:min(calc(100svh - 100px),420px);width:auto;max-height:none;justify-self:end}
+  .about__img{aspect-ratio:4/5;height:min(calc(100svh - 100px),420px);width:auto;max-height:none;justify-self:center}
   .lsn{padding:12px}
   .lsn__box{max-width:680px;max-height:calc(100svh - 24px);padding:0;display:grid;grid-template-columns:200px 1fr;grid-template-areas:"c l" "h l" "s l";column-gap:24px;align-content:center;align-items:start}
   .lsn__cover{grid-area:c;width:160px;height:160px;margin:0 auto 12px}
