@@ -43,7 +43,9 @@ function playInline(i){const t=TRACKS[i];if(!t||!t[3])return;if(window.pauseStag
     playerVars:{autoplay:1,rel:0,playsinline:1,modestbranding:1},events:{onReady:e=>e.target.playVideo(),onStateChange:onInlState}});
     const f=fpFrame.querySelector('iframe');if(f)f.title=`${t[1]} — ${PAGE.live}`;};
   clearInterval(ytWait);if(window.YT&&YT.Player)mk();else{ytWait=setInterval(()=>{if(window.YT&&YT.Player){clearInterval(ytWait);mk();}},100);}}
-let inl=null, inlVol=100, ytWait=0;  // ytWait: pending wait for the YouTube API (cancelled on close or another track)  // volume tracked here: getVolume() lags right after setVolume()
+// inlVol: volume tracked here while keys are pressed (getVolume() lags right after setVolume()); after a 1s pause it is
+// re-read from the player, so a volume set with YouTube's own slider is the starting point; ytWait: pending wait for the YouTube API
+let inl=null, inlVol=100, inlVolAt=0, ytWait=0;
 function stopInline(){clearInterval(ytWait);if(fplayer.hidden)return;if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});try{inl&&inl.destroy();}catch(_){}inl=null;fpFrame.innerHTML='';fplayer.hidden=true;fpend.hidden=true;if(window.resumeStage)window.resumeStage();}
 // Click anywhere outside the open video closes it (the < > buttons switch videos instead)
 document.addEventListener('click',e=>{if(fplayer.hidden||performance.now()-openedAt<300||flow.dataset.justDragged)return;  // a drag's trailing click must not close the video
@@ -62,10 +64,10 @@ addEventListener('keydown',e=>{
   if(k===' '||k==='k'){p.getPlayerState()===1?p.pauseVideo():p.playVideo();}
   else if(k==='arrowleft')seek(t()-5); else if(k==='arrowright')seek(t()+5);
   else if(k==='j')seek(t()-10); else if(k==='l')seek(t()+10);
-  else if(k==='arrowup'){if(p.isMuted())p.unMute();inlVol=Math.min(100,inlVol+5);p.setVolume(inlVol);}
-  else if(k==='arrowdown'){inlVol=Math.max(0,inlVol-5);p.setVolume(inlVol);}
+  else if(k==='arrowup'||k==='arrowdown'){if(performance.now()-inlVolAt>1000)inlVol=p.getVolume();inlVolAt=performance.now();
+    if(k==='arrowup'){if(p.isMuted())p.unMute();inlVol=Math.min(100,inlVol+5);}else inlVol=Math.max(0,inlVol-5);p.setVolume(inlVol);}
   else if(k==='m'){p.isMuted()?p.unMute():p.mute();}
-  else if(k==='f'){if(document.fullscreenElement)document.exitFullscreen();else (fpFrame.querySelector('iframe')||fplayer).requestFullscreen().catch(()=>{});}
+  else if(k==='f'){if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});else{const el=fpFrame.querySelector('iframe')||fplayer;if(el.requestFullscreen)el.requestFullscreen().catch(()=>{});}}  // iPhone Safari has no element fullscreen
   else if(/^[0-9]$/.test(k))seek(d()*(+k)/10);
   else hit=false;
   if(hit){e.preventDefault();e.stopImmediatePropagation();}
@@ -78,6 +80,7 @@ let gap=250;  // card spacing (CSS --gap), re-measured on resize
 // --gap can be a calc() (landscape phones); a hidden probe resolves it to pixels
 const gapProbe=document.createElement('i');gapProbe.style.cssText='position:absolute;visibility:hidden;width:var(--gap)';flow.appendChild(gapProbe);
 const measureGap=()=>{gap=gapProbe.offsetWidth||250;};
+let shownK=-1;  // counter is rewritten only when the centre card changes (it is aria-live)
 function layout(){
   cards.forEach((c,i)=>{
     const d=wrap(i-pos), a=Math.abs(d);
@@ -92,11 +95,11 @@ function layout(){
     c.classList.toggle('is-center',a<0.5);
     c.tabIndex=a<0.5?0:-1;
   });
-  const k=centre();
+  const k=centre();if(k===shownK)return;shownK=k;
   fcount.innerHTML=`<b>${TRACKS[k][0]}</b> / ${String(N).padStart(2,'0')}`;
 }
-function go(target,keepPlaying){
-  const moving=Math.round(target)!==Math.round(pos), playing=keepPlaying||!fplayer.hidden;
+function go(target){
+  const moving=Math.round(target)!==Math.round(pos), playing=!fplayer.hidden;
   if(moving&&playing){ // skip cards without a video while a video is playing
     const dir=Math.sign(Math.round(target)-Math.round(pos))||1;let k=Math.round(target),guard=0;
     while(!TRACKS[idx(k)][3]&&guard++<N)k+=dir;target=k;}
@@ -155,14 +158,15 @@ document.querySelectorAll('.rv').forEach(el=>io.observe(el));
   const SAVE=!!(navigator.connection&&navigator.connection.saveData);
   if(SAVE)stage.classList.add('still');
   let player=null, ready=false;
-  const paused=()=>player.getPlayerState()===YT.PlayerState.PAUSED;
+  // not playing: paused, or never started (autoplay blocked: unstarted/cued)
+  const stopped=()=>{const s=player.getPlayerState();return s!==YT.PlayerState.PLAYING&&s!==YT.PlayerState.BUFFERING;};
   window.onYouTubeIframeAPIReady=function(){
     if(SAVE)return;
     player=new YT.Player('stage-player',{videoId:VID,host:'https://www.youtube-nocookie.com',
       playerVars:Object.assign({autoplay:1,mute:1,controls:0,start:START,playsinline:1,rel:0,modestbranding:1,disablekb:1,iv_load_policy:3,fs:0},
         matchMedia('(hover: hover) and (pointer: fine)').matches?{vq:'hd1080'}:{}),  // PC: ask for 1080p; phones/tablets: YouTube picks automatically
       events:{
-        onReady:e=>{ready=true;e.target.mute();},  // autoplay=1 starts it; extra playVideo() calls make YouTube flash its play/pause icon
+        onReady:e=>{ready=true;e.target.mute();e.target.getIframe().tabIndex=-1;},  // autoplay=1 starts it; extra playVideo() calls make YouTube flash its play/pause icon; tabIndex: decorative (aria-hidden), kept out of the Tab order
         onStateChange:e=>{if(e.data===YT.PlayerState.PLAYING)stage.classList.add('playing');
                           if(e.data===YT.PlayerState.ENDED){holdUntil=Date.now()+5000;wake();e.target.seekTo(START,true);e.target.playVideo();}}
       }});
@@ -171,7 +175,7 @@ document.querySelectorAll('.rv').forEach(el=>io.observe(el));
   btn.addEventListener('click',()=>{
     if(!ready)return;
     const unmute=!stage.classList.contains('unmuted');
-    if(unmute){player.unMute();lastVol=vol();player.setVolume(lastVol);if(paused())player.playVideo();}else{player.mute();}
+    if(unmute){player.unMute();lastVol=vol();player.setVolume(lastVol);if(stopped())player.playVideo();}else{player.mute();}
     stage.classList.toggle('unmuted',unmute);btn.setAttribute('aria-pressed',String(unmute));
     btn.setAttribute('aria-label',unmute?PAGE.mute:PAGE.unmute);
   });
@@ -203,7 +207,11 @@ const RM=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;let t=0;
 function open(){clearTimeout(t);d.classList.remove('out');d.classList.add('on');d.removeAttribute('aria-hidden');requestAnimationFrame(()=>requestAnimationFrame(()=>d.classList.add('in')));bx.focus({preventScroll:true});}
 function close(){if(!d.classList.contains('on')||d.classList.contains('out'))return;d.classList.remove('in');d.classList.add('out');o.focus({preventScroll:true});t=setTimeout(()=>{d.classList.remove('on','out');d.setAttribute('aria-hidden','true');},RM()?0:300);}
 o.addEventListener('click',open);d.addEventListener('click',e=>{if(!e.target.closest('.lsn__list a'))close();});
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&d.classList.contains('in')){e.stopImmediatePropagation();close();}},true);})();
+// Esc closes; Tab stays inside the open popup (aria-modal)
+document.addEventListener('keydown',e=>{if(!d.classList.contains('in'))return;
+  if(e.key==='Escape'){e.stopImmediatePropagation();close();return;}
+  if(e.key!=='Tab')return;const a=d.querySelectorAll('.lsn__list a'),f=a[0],l=a[a.length-1],c=document.activeElement;
+  if(e.shiftKey?(c===f||!bx.contains(c)||c===bx):(c===l||!bx.contains(c))){e.preventDefault();(e.shiftKey?l:f).focus();}},true);})();
 
 // Email (PC and phones alike): copy the address, then reveal the 'open in mail app' link
 (function(){const b=document.getElementById('mailBtn'),o=document.getElementById('mailOpen');if(!b)return;const t=b.querySelector('.mail-txt'),orig=t.textContent;let h=0;
