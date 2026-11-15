@@ -107,7 +107,7 @@ section{padding:clamp(72px,11vw,128px) 0}
 .fcard.soon{background:radial-gradient(90% 70% at 50% 110%,rgba(255,90,31,.5),rgba(255,90,31,0) 70%),var(--bg-3);cursor:default}
 .fcard.soon .fcard__play{display:none}
 .fcard:focus-visible{outline:2px solid var(--fire-2);outline-offset:4px}
-.fplayer{position:absolute;z-index:300;left:50%;top:calc(20px + var(--ch) / 2);aspect-ratio:16/9;
+.fplayer{position:absolute;z-index:50;left:50%;top:calc(20px + var(--ch) / 2);aspect-ratio:16/9;
   width:min(calc(var(--ch) * 16 / 9), 100%);transform:translate(-50%,-50%);border-radius:22px;overflow:hidden;background:#000;
   box-shadow:0 30px 80px -20px rgba(0,0,0,.9);animation:fpIn .45s cubic-bezier(.2,.7,.2,1)}
 .fplayer[hidden]{display:none}
@@ -226,6 +226,7 @@ footer a{color:var(--muted);text-decoration:none} footer a:hover{color:var(--fg)
   #tracks .head{margin-bottom:1svh}
   .fcard{top:2svh}
   .flow__stage{height:calc(var(--ch) + 2svh + 20px)}
+  .fplayer{top:calc(2svh + var(--ch) / 2)}
   /* text keeps its original right-hand column; the photo takes ~72% of the column width (less only if the full
      screen height can't fit it; lvh so it doesn't resize while scrolling), centred in the column */
   .about__grid{grid-template-columns:5fr 6fr}
