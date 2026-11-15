@@ -222,7 +222,7 @@ footer a{color:var(--muted);text-decoration:none} footer a:hover{color:var(--fg)
   .fcard__name{font-size:16px}.fcard__credit{font-size:11px}
   /* text keeps its original right-hand column; the height-limited photo sits in the middle of its column */
   .about__grid{grid-template-columns:5fr 6fr}
-  .about__img{aspect-ratio:4/5;height:min(calc(100svh - 100px),420px);width:auto;max-height:none;justify-self:center}
+  .about__img{aspect-ratio:4/5;width:88%;height:auto;max-height:440px;justify-self:center}
   .lsn{padding:12px}
   .lsn__box{max-width:680px;max-height:calc(100svh - 24px);padding:0;display:grid;grid-template-columns:200px 1fr;grid-template-areas:"c l" "h l" "s l";column-gap:24px;align-content:center;align-items:start}
   .lsn__cover{grid-area:c;width:160px;height:160px;margin:0 auto 12px}
