@@ -30,15 +30,17 @@ let openedAt=0;
 const fpend=document.getElementById('fpend');
 let inlIdx=-1;
 function nextPlayable(i){for(let k=1;k<=N;k++){const j=(i+k)%N;if(TRACKS[j][3])return j;}return i;}
-function syncExtras(i){inlIdx=i;fpend.hidden=true;
+// hiding the end screen while one of its buttons has focus would drop focus to the page top; hand it to the centre card
+const hideEnd=()=>{if(fpend.contains(document.activeElement))cards[centre()].focus({preventScroll:true});fpend.hidden=true;};
+function syncExtras(i){inlIdx=i;hideEnd();
   const n=TRACKS[nextPlayable(i)];document.getElementById('fpendNext').textContent=n[0]+'. '+n[1];}
-function onInlState(e){if(e.data===YT.PlayerState.ENDED){fpend.hidden=false;}else if(e.data===YT.PlayerState.PLAYING){fpend.hidden=true;}}
+function onInlState(e){if(e.data===YT.PlayerState.ENDED){fpend.hidden=false;}else if(e.data===YT.PlayerState.PLAYING){hideEnd();}}
 document.getElementById('fpendGo').onclick=()=>{const j=nextPlayable(inlIdx);go(Math.round(pos)+wrap(j-pos));};
-document.getElementById('fpendReplay').onclick=()=>{fpend.hidden=true;try{inl.seekTo(0,true);inl.playVideo();}catch(_){}};
+document.getElementById('fpendReplay').onclick=()=>{hideEnd();try{inl.seekTo(0,true);inl.playVideo();}catch(_){}};
 function playInline(i){const t=TRACKS[i];if(!t||!t[3])return;if(window.pauseStage)window.pauseStage();openedAt=performance.now();syncExtras(i);
   if(!fplayer.hidden&&inl&&inl.loadVideoById){inl.loadVideoById(t[3]);return;}
   fpFrame.innerHTML='<div id="fpYT"></div>';fplayer.hidden=false;inl=null;
-  if(matchMedia('(orientation:landscape) and (max-height:500px)').matches)requestAnimationFrame(()=>fplayer.scrollIntoView({block:'center',behavior:'smooth'}));  // sideways phone: bring the video fully into view
+  if(matchMedia('(orientation:landscape) and (max-height:500px)').matches)requestAnimationFrame(()=>fplayer.scrollIntoView({block:'center',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'}));  // sideways phone: bring the video fully into view
   const mk=()=>{inl=new YT.Player('fpYT',{videoId:t[3],host:'https://www.youtube-nocookie.com',
     playerVars:{autoplay:1,rel:0,playsinline:1,modestbranding:1},events:{onReady:e=>e.target.playVideo(),onStateChange:onInlState}});
     const f=fpFrame.querySelector('iframe');if(f)f.title=`${t[1]} — ${PAGE.live}`;};
@@ -57,7 +59,7 @@ document.addEventListener('click',e=>{if(fplayer.hidden||performance.now()-opene
 addEventListener('keydown',e=>{
   if(fplayer.hidden||e.ctrlKey||e.metaKey||e.altKey)return;
   const tag=(e.target.tagName||'');if(tag==='INPUT'||tag==='TEXTAREA')return;
-  if((e.key===' '||e.key==='Enter')&&e.target.closest&&e.target.closest('button,a[href],[role="button"],summary,select'))return;
+  if((e.key===' '||e.key==='Enter')&&e.target.closest&&e.target.closest('button,a[href],[role="button"],summary,select')&&!(e.key===' '&&e.target.classList.contains('fcard')))return;  // Space on the focused card pauses (its click would restart the video)
   if(e.key==='Escape'){stopInline();return;}
   const p=inl;if(!p||!p.getPlayerState)return;
   const k=e.key.toLowerCase(), t=()=>p.getCurrentTime()||0, d=()=>p.getDuration()||0, seek=x=>p.seekTo(Math.max(0,Math.min(d(),x)),true);
@@ -115,7 +117,7 @@ flow.addEventListener('keydown',e=>{if(!fplayer.hidden)return;if(e.key==='ArrowR
 let drag=null;
 fstage.addEventListener('pointerdown',e=>{if(e.button!==0)return;drag={x:e.clientX,y:e.clientY,p:pos,moved:false,id:e.pointerId};});
 addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-drag.x;
-  if(!drag.moved){if(Math.abs(dx)<6)return;if(Math.abs(e.clientY-drag.y)>Math.abs(dx)){drag=null;return;}drag.moved=true;drag.wasPlaying=!fplayer.hidden;if(drag.wasPlaying){try{const s=inl&&inl.getPlayerState&&inl.getPlayerState();drag.running=s===1||s===3;inl&&inl.pauseVideo();}catch(_){}fplayer.style.visibility='hidden';}flow.classList.remove('anim');fstage.classList.add('dragging');try{fstage.setPointerCapture(drag.id);}catch(_){}}
+  if(!drag.moved){if(Math.abs(dx)<6)return;if(Math.abs(e.clientY-drag.y)>Math.abs(dx)){drag=null;return;}drag.moved=true;drag.wasPlaying=!fplayer.hidden;if(drag.wasPlaying){try{const s=inl&&inl.getPlayerState&&inl.getPlayerState();drag.running=s!==2&&s!==0;inl&&inl.pauseVideo();}catch(_){}fplayer.style.visibility='hidden';}flow.classList.remove('anim');fstage.classList.add('dragging');try{fstage.setPointerCapture(drag.id);}catch(_){}}  // running: only a paused/ended video stays stopped after the drag (a just-loaded one is still unstarted)
   pos=drag.p-dx/gap;layout();});
 // One place ends every drag: finger lifted, or the browser/OS cancelled it (edge-swipe, scroll takeover, app switch).
 // A cancelled drag snaps back to the card it started on; a hidden-while-dragging video is always shown again.
