@@ -125,6 +125,7 @@ section{padding:clamp(72px,11vw,128px) 0}
 .fpend__btn--main{background:#fff;color:#000}
 .fpend__btn--yt{background:var(--yt);color:#fff}
 .fpend__replay{all:unset;cursor:pointer;margin-top:4px;font-size:13px;color:var(--muted)} .fpend__replay:hover{color:var(--fg)}
+.fpend__btn:focus-visible,.fpend__replay:focus-visible{outline:2px solid var(--fire-2);outline-offset:3px}  /* all:unset removed the browser's keyboard focus ring */
 .btn-listen{cursor:pointer;font-family:inherit;background:linear-gradient(135deg,var(--fire),var(--fire-2));color:#000;box-shadow:0 12px 34px -12px rgba(255,90,31,.8)}
 .btn-listen svg{width:20px;height:20px}
 .lsn__bg{position:absolute;inset:0;background:#0a0706 center/cover no-repeat;opacity:0;transition:opacity .5s cubic-bezier(.22,1,.36,1);will-change:opacity}
@@ -210,7 +211,7 @@ footer a{color:var(--muted);text-decoration:none} footer a:hover{color:var(--fg)
 /* reveal on scroll */
 .rv{opacity:0;transform:translateY(24px);transition:opacity .8s ease,transform .8s ease}
 .rv.in{opacity:1;transform:none}
-@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}.rv{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}.rv{opacity:1;transform:none}}
 /* Phones held sideways (short screens): fit each part to the screen height. Portrait and desktop are unaffected. */
 @media (orientation:landscape) and (max-height:500px){
   /* iPhone Safari: 100svh is the height WITH the toolbar showing; once it hides, the visible screen is taller and a dark

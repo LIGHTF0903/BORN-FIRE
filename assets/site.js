@@ -46,7 +46,8 @@ function playInline(i){const t=TRACKS[i];if(!t||!t[3])return;if(window.pauseStag
 // inlVol: volume tracked here while keys are pressed (getVolume() lags right after setVolume()); after a 1s pause it is
 // re-read from the player, so a volume set with YouTube's own slider is the starting point; ytWait: pending wait for the YouTube API
 let inl=null, inlVol=100, inlVolAt=0, ytWait=0;
-function stopInline(){clearInterval(ytWait);if(fplayer.hidden)return;if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});try{inl&&inl.destroy();}catch(_){}inl=null;fpFrame.innerHTML='';fplayer.hidden=true;fpend.hidden=true;if(window.resumeStage)window.resumeStage();}
+function stopInline(){clearInterval(ytWait);if(fplayer.hidden)return;if(fplayer.contains(document.activeElement))cards[centre()].focus({preventScroll:true});  // focus on a hidden button would be lost
+  if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});try{inl&&inl.destroy();}catch(_){}inl=null;fpFrame.innerHTML='';fplayer.hidden=true;fpend.hidden=true;if(window.resumeStage)window.resumeStage();}
 // Click anywhere outside the open video closes it (the < > buttons switch videos instead)
 document.addEventListener('click',e=>{if(fplayer.hidden||performance.now()-openedAt<300||flow.dataset.justDragged)return;  // a drag's trailing click must not close the video
 
@@ -114,16 +115,16 @@ flow.addEventListener('keydown',e=>{if(!fplayer.hidden)return;if(e.key==='ArrowR
 let drag=null;
 fstage.addEventListener('pointerdown',e=>{if(e.button!==0)return;drag={x:e.clientX,y:e.clientY,p:pos,moved:false,id:e.pointerId};});
 addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-drag.x;
-  if(!drag.moved){if(Math.abs(dx)<6)return;if(Math.abs(e.clientY-drag.y)>Math.abs(dx)){drag=null;return;}drag.moved=true;drag.wasPlaying=!fplayer.hidden;if(drag.wasPlaying){try{inl&&inl.pauseVideo();}catch(_){}fplayer.style.visibility='hidden';}flow.classList.remove('anim');fstage.classList.add('dragging');try{fstage.setPointerCapture(drag.id);}catch(_){}}
+  if(!drag.moved){if(Math.abs(dx)<6)return;if(Math.abs(e.clientY-drag.y)>Math.abs(dx)){drag=null;return;}drag.moved=true;drag.wasPlaying=!fplayer.hidden;if(drag.wasPlaying){try{const s=inl&&inl.getPlayerState&&inl.getPlayerState();drag.running=s===1||s===3;inl&&inl.pauseVideo();}catch(_){}fplayer.style.visibility='hidden';}flow.classList.remove('anim');fstage.classList.add('dragging');try{fstage.setPointerCapture(drag.id);}catch(_){}}
   pos=drag.p-dx/gap;layout();});
 // One place ends every drag: finger lifted, or the browser/OS cancelled it (edge-swipe, scroll takeover, app switch).
 // A cancelled drag snaps back to the card it started on; a hidden-while-dragging video is always shown again.
-function endDrag(cancelled){if(!drag)return;const moved=drag.moved,wasPlaying=drag.wasPlaying,start=drag.p;drag=null;fstage.classList.remove('dragging');
+function endDrag(cancelled){if(!drag)return;const moved=drag.moved,wasPlaying=drag.wasPlaying,running=drag.running,start=drag.p;drag=null;fstage.classList.remove('dragging');
   if(!moved)return;
   flow.dataset.justDragged='1';setTimeout(()=>delete flow.dataset.justDragged,50);
   if(cancelled)pos=start;
   if(wasPlaying){fplayer.style.visibility='';pos=Math.round(pos);const k=idx(pos);
-    if(k===inlIdx&&inl){flow.classList.add('anim');layout();try{inl.playVideo();}catch(_){}}
+    if(k===inlIdx&&inl){flow.classList.add('anim');layout();if(running)try{inl.playVideo();}catch(_){}}  // a video paused (or finished) before the drag stays as it was
     else if(TRACKS[k][3]){flow.classList.add('anim');layout();playInline(k);}else{stopInline();go(pos);}}
   else go(Math.round(pos));}
 addEventListener('pointerup',()=>endDrag(false));
