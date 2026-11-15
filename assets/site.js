@@ -74,12 +74,11 @@ addEventListener('keydown',e=>{
 // After such a click, hand focus back to the page (clicks on the video controls still work).
 addEventListener('blur',()=>{setTimeout(()=>{const a=document.activeElement;
   if(!fplayer.hidden&&a&&a.tagName==='IFRAME'&&fplayer.contains(a)&&!document.fullscreenElement){a.blur();window.focus();flow.focus({preventScroll:true});}},120);});
-let gap=250;  // card spacing (CSS --gap), refreshed on every layout()
+let gap=250;  // card spacing (CSS --gap), re-measured on resize
 // --gap can be a calc() (landscape phones); a hidden probe resolves it to pixels
-const gapProbe=document.createElement('i');gapProbe.setAttribute('aria-hidden','true');
-gapProbe.style.cssText='position:absolute;visibility:hidden;pointer-events:none;height:0;width:var(--gap)';flow.appendChild(gapProbe);
+const gapProbe=document.createElement('i');gapProbe.style.cssText='position:absolute;visibility:hidden;width:var(--gap)';flow.appendChild(gapProbe);
+const measureGap=()=>{gap=gapProbe.offsetWidth||250;};
 function layout(){
-  gap=gapProbe.offsetWidth||250;
   cards.forEach((c,i)=>{
     const d=wrap(i-pos), a=Math.abs(d);
     const x=d*gap*(1-Math.min(a,3)*0.06);
@@ -136,8 +135,8 @@ fstage.addEventListener('wheel',e=>{if(Math.abs(e.deltaX)<=Math.abs(e.deltaY))re
 // click: side card -> bring to centre, centre card -> play
 fstage.addEventListener('click',e=>{if(flow.dataset.justDragged)return;const c=e.target.closest('.fcard');if(!c)return;const i=+c.dataset.i;
   if(c.classList.contains('is-center')){playInline(i);}else{go(Math.round(pos)+wrap(i-pos));}});
-addEventListener('resize',layout);
-layout();
+addEventListener('resize',()=>{measureGap();layout();});
+measureGap();layout();
 
 // Nav turns solid after the video
 const nav=document.getElementById('nav');
@@ -205,9 +204,9 @@ function close(){if(!d.classList.contains('on')||d.classList.contains('out'))ret
 o.addEventListener('click',open);d.addEventListener('click',e=>{if(!e.target.closest('.lsn__list a'))close();});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&d.classList.contains('in')){e.stopImmediatePropagation();close();}},true);})();
 
-// Email: copy address (PC) / open mail app
+// Email (PC and phones alike): copy the address, then reveal the 'open in mail app' link
 (function(){const b=document.getElementById('mailBtn'),o=document.getElementById('mailOpen');if(!b)return;const t=b.querySelector('.mail-txt'),orig=t.textContent;let h=0;
 b.addEventListener('click',e=>{let p=null;try{p=navigator.clipboard&&navigator.clipboard.writeText('callingchoir@gmail.com');}catch(_){p=null;}
-  e.preventDefault();  // same on PC and phones: copy + show 'open in mail app' link
+  e.preventDefault();
   const show=()=>{if(o){o.classList.add('on');}};
   if(p)p.then(()=>{t.textContent=b.dataset.copied;clearTimeout(h);h=setTimeout(()=>{t.textContent=orig;},1500);show();}).catch(show);else show();});})();
