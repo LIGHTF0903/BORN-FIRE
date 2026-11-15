@@ -220,9 +220,10 @@ footer a{color:var(--muted);text-decoration:none} footer a:hover{color:var(--fg)
   .stage::after{background:linear-gradient(180deg,rgba(0,0,0,.35) 0%,rgba(0,0,0,0) 22%,rgba(0,0,0,0) 88%,rgba(10,7,8,.6) 100%)}
   .flow{--ch:calc(100svh - 130px);--cw:calc((100svh - 130px) * .714);--gap:calc((100svh - 130px) * .6)}
   .fcard__name{font-size:16px}.fcard__credit{font-size:11px}
-  /* text keeps its original right-hand column; the height-limited photo sits in the middle of its column */
+  /* text keeps its original right-hand column; the photo takes ~72% of the column width (less only if the visible
+     screen height can't fit it), centred in the column */
   .about__grid{grid-template-columns:5fr 6fr}
-  .about__img{aspect-ratio:4/5;width:88%;height:auto;max-height:440px;justify-self:center}
+  .about__img{aspect-ratio:4/5;height:auto;max-height:none;justify-self:center;width:min(72%,calc((100svh - 80px) * .8));width:min(72%,calc((100dvh - 80px) * .8))}
   .lsn{padding:12px}
   .lsn__box{max-width:680px;max-height:calc(100svh - 24px);padding:0;display:grid;grid-template-columns:200px 1fr;grid-template-areas:"c l" "h l" "s l";column-gap:24px;align-content:center;align-items:start}
   .lsn__cover{grid-area:c;width:160px;height:160px;margin:0 auto 12px}
