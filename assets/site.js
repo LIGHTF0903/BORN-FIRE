@@ -42,9 +42,9 @@ function playInline(i){const t=TRACKS[i];if(!t||!t[3])return;if(window.pauseStag
   const mk=()=>{inl=new YT.Player('fpYT',{videoId:t[3],host:'https://www.youtube-nocookie.com',
     playerVars:{autoplay:1,rel:0,playsinline:1,modestbranding:1},events:{onReady:e=>e.target.playVideo(),onStateChange:onInlState}});
     const f=fpFrame.querySelector('iframe');if(f)f.title=`${t[1]} — ${PAGE.live}`;};
-  if(window.YT&&YT.Player)mk();else{const iv=setInterval(()=>{if(window.YT&&YT.Player){clearInterval(iv);mk();}},100);}}
-let inl=null, inlVol=100;  // volume tracked here: getVolume() lags right after setVolume()
-function stopInline(){if(fplayer.hidden)return;if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});try{inl&&inl.destroy();}catch(_){}inl=null;fpFrame.innerHTML='';fplayer.hidden=true;fpend.hidden=true;if(window.resumeStage)window.resumeStage();}
+  clearInterval(ytWait);if(window.YT&&YT.Player)mk();else{ytWait=setInterval(()=>{if(window.YT&&YT.Player){clearInterval(ytWait);mk();}},100);}}
+let inl=null, inlVol=100, ytWait=0;  // ytWait: pending wait for the YouTube API (cancelled on close or another track)  // volume tracked here: getVolume() lags right after setVolume()
+function stopInline(){clearInterval(ytWait);if(fplayer.hidden)return;if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});try{inl&&inl.destroy();}catch(_){}inl=null;fpFrame.innerHTML='';fplayer.hidden=true;fpend.hidden=true;if(window.resumeStage)window.resumeStage();}
 // Click anywhere outside the open video closes it (the < > buttons switch videos instead)
 document.addEventListener('click',e=>{if(fplayer.hidden||performance.now()-openedAt<300||flow.dataset.justDragged)return;  // a drag's trailing click must not close the video
 
@@ -101,6 +101,7 @@ function go(target,keepPlaying){
     const dir=Math.sign(Math.round(target)-Math.round(pos))||1;let k=Math.round(target),guard=0;
     while(!TRACKS[idx(k)][3]&&guard++<N)k+=dir;target=k;}
   flow.classList.add('anim');pos=target;layout();
+  if(document.activeElement&&document.activeElement.classList.contains('fcard'))cards[centre()].focus({preventScroll:true});  // keyboard focus follows the centre card
   if(moving&&playing)playInline(centre());}
 document.getElementById('flowPrev').onclick=()=>go(Math.round(pos)-1);
 document.getElementById('flowNext').onclick=()=>go(Math.round(pos)+1);
