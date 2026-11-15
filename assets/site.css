@@ -220,6 +220,11 @@ footer a{color:var(--muted);text-decoration:none} footer a:hover{color:var(--fg)
   .stage::after{background:linear-gradient(180deg,rgba(0,0,0,.35) 0%,rgba(0,0,0,0) 22%,rgba(0,0,0,0) 88%,rgba(10,7,8,.6) 100%)}
   .flow{--ch:calc(100svh - 130px);--cw:calc((100svh - 130px) * .714);--gap:calc((100svh - 130px) * .65)}
   .fcard__name{font-size:16px}.fcard__credit{font-size:11px}
+  /* tracklist: tighter band above/below the heading so the centre card (with its play button) fits on screen */
+  #tracks{padding-top:8px!important}
+  #tracks .head{margin-bottom:1svh}
+  .fcard{top:2svh}
+  .flow__stage{height:calc(var(--ch) + 2svh + 20px)}
   /* text keeps its original right-hand column; the photo takes ~72% of the column width (less only if the visible
      screen height can't fit it), centred in the column */
   .about__grid{grid-template-columns:5fr 6fr}
