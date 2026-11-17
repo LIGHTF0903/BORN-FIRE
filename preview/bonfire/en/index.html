@@ -72,7 +72,7 @@
 <link rel="preconnect" href="https://i.ytimg.com">
 <link rel="stylesheet" href="../../../assets/fonts/fonts.css">
 
-<link rel="stylesheet" href="../bonfire.css?v=1">
+<link rel="stylesheet" href="../bonfire.css?v=2">
 </head>
 <body>
 <nav class="nav" id="nav" aria-label="Menu">
@@ -84,8 +84,9 @@
 
 <header class="stage" id="stage">
   <div id="stage-player" class="stage__video" aria-hidden="true"></div>
-  <p class="stage__logo" aria-hidden="true">Born Fire</p>
-  <canvas class="fx stage__sparks" id="heroSparks" aria-hidden="true"></canvas>
+  <canvas class="fx bokeh" id="heroBokeh" aria-hidden="true"></canvas>
+  <div class="stage__logo" aria-hidden="true"><span class="foil">Born Fire</span></div>
+  <div class="curtain" aria-hidden="true"><i class="flare"></i></div>
   <span class="stage__tag">2026</span>
   <button class="stage__sound" id="stage-sound" type="button" aria-label="Unmute" aria-pressed="false">
     <svg class="off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="m22 9-6 6M16 9l6 6"/></svg>
@@ -96,10 +97,9 @@
     <a class="stage__down" href="#album">Scroll<i></i></a>
   </div>
 </header>
-<div class="fireline" aria-hidden="true"><canvas class="fx" id="edgeFire"></canvas></div>
 
 <section class="manifesto" id="album">
-  <canvas class="fx sparks" aria-hidden="true"></canvas>
+  <canvas class="fx bokeh" aria-hidden="true"></canvas>
   <div class="wrap">
     <svg class="arch" viewBox="0 0 600 760" aria-hidden="true"><defs><linearGradient id="archGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd48a" stop-opacity=".9"/><stop offset=".7" stop-color="#ff7a2e" stop-opacity=".35"/><stop offset="1" stop-color="#ff5a1f" stop-opacity="0"/></linearGradient></defs>
       <path pathLength="1" d="M40 760 V330 C40 170 160 60 300 10 C440 60 560 170 560 330 V760"/>
@@ -112,12 +112,13 @@
 </section>
 
 <section id="tracks">
+  <div class="tback" id="tback" aria-hidden="true"><i></i><i></i></div>
   <div class="wrap">
     <div class="pyre" id="flow" tabindex="0" role="region" aria-roledescription="carousel" aria-label="Track cards">
       <div class="head rv"><h2 class="display">Tracklist</h2><p><span class="ln">All 12 songs have an official live video.</span><span class="ln">Tap a track to watch.</span></p></div>
       <div class="scene" id="scene">
         <div class="floor" aria-hidden="true"></div>
-        <div class="world" id="world"><div class="ring" id="ring"></div><div class="core" aria-hidden="true"><canvas class="fx" id="coreFire"></canvas></div></div>
+        <div class="world" id="world"><div class="ring" id="ring"></div></div>
       </div>
       <div class="front" id="front" aria-live="polite"><div class="front__in"><div><span id="frontBadge"></span><p class="front__name" id="frontName"></p><p class="front__credit" id="frontCredit"></p></div>
         <button class="front__play" id="frontPlay" type="button"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 4l14 8-14 8z"/></svg> Watch live</button></div></div>
@@ -143,7 +144,7 @@
 
 <section class="about" id="about">
   <div class="wrap about__grid">
-    <div class="burn rv" id="burn" data-src="../../../assets/cards/about-en.jpg" data-pos="50% 50%" role="img" aria-label="Calling Choir live on stage"><div class="burn__img" style="background-image:url('../../../assets/cards/about-en.jpg')"></div></div>
+    <div class="aimg" id="aimg" role="img" aria-label="Calling Choir live on stage"><div class="aimg__in" style="background-image:url('../../../assets/cards/about-en.jpg')"></div></div>
     <div class="rv">
       <p class="kicker">The Album</p>
       <h2 class="display">Born Fire</h2>
@@ -175,9 +176,9 @@
 </section>
 
 <section class="outro" id="follow">
-  <canvas class="fx sparks" aria-hidden="true"></canvas>
+  <canvas class="fx bokeh" aria-hidden="true"></canvas>
   <div class="wrap rv">
-    <div class="heat" id="heat"><h2 class="display">Follow<br><span>the fire</span></h2><p class="display heat__hot outro-h" aria-hidden="true">Follow<br><span>the fire</span></p></div>
+    <h2 class="display">Follow<br><span class="gold">the fire</span></h2>
     <p><span class="ln">God's sparks, flying beyond the church walls</span></p>
     <p class="outro__label">Bookings &amp; Inquiries</p>
     <div class="outro__btns outro__btns--contact">
@@ -216,7 +217,9 @@
   </div>
   <button class="th__x" id="thClose" type="button" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M5 5l14 14M19 5 5 19"/></svg></button>
 </div>
-<div class="th__ring" id="thRing" aria-hidden="true"></div>
+<div class="ghost" id="ghost" aria-hidden="true"></div>
+<div class="leak" id="leak" aria-hidden="true"><i></i></div>
+<div class="grain" aria-hidden="true"></div>
 
 <script>
 const TRACKS = [
@@ -236,6 +239,6 @@ const TRACKS = [
 const PAGE={"base": "../../../", "soon": "video coming soon", "soonCredit": "Video coming soon", "watch": "Watch live", "live": "Calling Choir live", "mute": "Mute", "unmute": "Unmute"};
 </script>
 <div class="lsn" id="lsn" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="lsnH"><div class="lsn__bg" style="background-image:url('../../../assets/listen/cover-bg.jpg')"></div><div class="lsn__box" tabindex="-1"><img class="lsn__cover" src="../../../assets/listen/cover.jpg" alt="BORN FIRE album cover" width="180" height="180" decoding="async"><p class="lsn__h" id="lsnH">BORN FIRE</p><p class="lsn__s">Calling Choir · 1st Live Album</p><ul class="lsn__list"><li><a href="https://open.spotify.com/album/0cTEyc6zbd7491sONgo6AF" target="_blank" rel="noopener"><span class="lsn__ic"><img src="../../../assets/listen/spotify.png" alt="" width="34" height="34" decoding="async"></span><span class="lsn__nm">Spotify</span><span class="lsn__go">LISTEN</span></a></li><li><a href="https://music.apple.com/album/6817239744" target="_blank" rel="noopener"><span class="lsn__ic"><img src="../../../assets/listen/apple.png" alt="" width="34" height="34" decoding="async"></span><span class="lsn__nm">Apple Music</span><span class="lsn__go">LISTEN</span></a></li><li><a href="https://music.youtube.com/playlist?list=OLAK5uy_lo-ZxPGHuMaW61B3PE5z5JjQrNsaUyKjw" target="_blank" rel="noopener"><span class="lsn__ic"><img src="../../../assets/listen/ytm.png" alt="" width="34" height="34" decoding="async"></span><span class="lsn__nm">YouTube Music</span><span class="lsn__go">LISTEN</span></a></li><li><a href="https://www.melon.com/album/detail.htm?albumId=14606099" target="_blank" rel="noopener"><span class="lsn__ic"><img src="../../../assets/listen/melon.png" alt="" width="34" height="34" decoding="async"></span><span class="lsn__nm">Melon</span><span class="lsn__go">LISTEN</span></a></li><li><a href="https://www.genie.co.kr/detail/albumInfo?axnm=88196741" target="_blank" rel="noopener"><span class="lsn__ic"><img src="../../../assets/listen/genie.png" alt="" width="34" height="34" decoding="async"></span><span class="lsn__nm">Genie</span><span class="lsn__go">LISTEN</span></a></li><li><a href="https://music.bugs.co.kr/album/20843188" target="_blank" rel="noopener"><span class="lsn__ic"><img src="../../../assets/listen/bugs.png" alt="" width="34" height="34" decoding="async"></span><span class="lsn__nm">Bugs</span><span class="lsn__go">LISTEN</span></a></li><li><a href="https://www.music-flo.com/detail/album/463772852/albumtrack" target="_blank" rel="noopener"><span class="lsn__ic"><img src="../../../assets/listen/flo.png" alt="" width="34" height="34" decoding="async"></span><span class="lsn__nm">FLO</span><span class="lsn__go">LISTEN</span></a></li><li><a href="https://vibe.naver.com/album/38808816" target="_blank" rel="noopener"><span class="lsn__ic"><img src="../../../assets/listen/vibe.png" alt="" width="34" height="34" decoding="async"></span><span class="lsn__nm">VIBE</span><span class="lsn__go">LISTEN</span></a></li></ul></div></div>
-<script src="../bonfire.js?v=1"></script>
+<script src="../bonfire.js?v=2"></script>
 </body>
 </html>
