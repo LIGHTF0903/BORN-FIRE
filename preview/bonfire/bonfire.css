@@ -88,12 +88,12 @@ canvas.embers{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer
 /* ---------- FIRE TAPE (two bands of kinetic type under the stage) ---------- */
 
 /* ---------- MANIFESTO (a breathing fire glow; the headline rises; the orange words flow) ---------- */
-.manifesto{text-align:center;padding-top:clamp(70px,9vw,120px);overflow:hidden}
+.manifesto{text-align:center;padding-top:clamp(56px,9vw,104px);overflow:hidden}
 .manifesto::before{content:"";position:absolute;left:50%;top:50%;width:min(900px,120vw);height:min(560px,90vw);translate:-50% -50%;pointer-events:none;
   background:radial-gradient(closest-side,rgba(255,90,31,.24),rgba(255,90,31,0));animation:breath 6s ease-in-out infinite}
 @keyframes breath{0%,100%{opacity:.7;scale:1}50%{opacity:1;scale:1.08}}
 .manifesto .wrap{position:relative}
-.manifesto.in .manifesto h1{position:relative;margin:0 auto;max-width:16ch;font-weight:800;font-size:clamp(34px,6.4vw,78px);line-height:1.18;letter-spacing:-.02em}
+.manifesto h1{position:relative;margin:0 auto;max-width:16ch;font-weight:800;font-size:clamp(32px,6.2vw,72px);line-height:1.18;letter-spacing:-.02em}
 .manifesto h1 em{font-style:normal;background:var(--fx-grad);background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:flowg 6s ease-in-out infinite alternate}
 @keyframes flowg{from{background-position:0% 50%}to{background-position:100% 50%}}
 /* iPhone Safari doesn't paint a background-clip:text gradient into inline-block children (.nw), so give them their own */
@@ -105,9 +105,9 @@ canvas.embers{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer
 .manifesto.in .kicker{opacity:1;transform:none;transition-delay:.1s}
 .manifesto.in .en{opacity:1;transform:none;transition-delay:1.2s}
 .manifesto.in .go{opacity:1;transform:none;transition-delay:1.45s}
-.manifesto .en{margin:20px auto 0;color:var(--muted);font-size:clamp(14px,1.6vw,17px);text-wrap:balance}
+.manifesto .en{margin:18px auto 0;color:var(--muted);font-size:clamp(14px,1.6vw,17px);text-wrap:balance}
 .manifesto .en span{display:inline-block}
-.manifesto .go{display:inline-flex;align-items:center;gap:10px;margin-top:38px;padding:15px 28px;border-radius:999px;text-decoration:none;font-weight:700;font-size:15px;
+.manifesto .go{display:inline-flex;align-items:center;gap:10px;margin-top:36px;padding:14px 26px;border-radius:999px;text-decoration:none;font-weight:700;font-size:15px;
   border:1.5px solid transparent;background:linear-gradient(var(--bg),var(--bg)) padding-box,conic-gradient(from var(--fxa),var(--fire),var(--fire-2),#fff3,var(--fire)) border-box;
   box-shadow:0 0 34px -8px rgba(255,90,31,.7);animation:spin 4s linear infinite;transition:opacity 1s ease,transform 1s var(--ease)}
 .manifesto .go:hover{background:linear-gradient(#1a100c,#1a100c) padding-box,conic-gradient(from var(--fxa),var(--fire),var(--fire-2),#fff3,var(--fire)) border-box}
@@ -215,19 +215,19 @@ canvas.embers{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer
 @media (min-width:860px){.about__grid{grid-template-columns:5fr 6fr}.strip li{flex:1 1 25%}.strip li+li{border-left:1px solid var(--line);padding-left:16px}}
 
 /* ---------- CREDITS (end credits of the show) ---------- */
-.credits{background:var(--bg-2);border-bottom:1px solid var(--line);text-align:center;overflow:hidden}
+.credits{background:var(--bg-2);border-bottom:1px solid var(--line);overflow:hidden}
 .credits::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:linear-gradient(90deg,transparent,var(--fire),var(--fire-2),transparent);
   background-size:50% 100%;background-repeat:no-repeat;animation:fline 5s linear infinite;box-shadow:0 0 14px rgba(255,90,31,.8)}
 @keyframes fline{from{background-position:-50% 0}to{background-position:150% 0}}
 .credits::after{content:"";position:absolute;right:-10%;bottom:-40%;width:60%;height:90%;pointer-events:none;background:radial-gradient(closest-side,rgba(255,90,31,.14),rgba(255,90,31,0))}
 .credits .wrap{position:relative;z-index:1}
 .credits h2{margin:0 0 40px;font-size:clamp(34px,5vw,56px)}
-.cgrid{display:grid;grid-template-columns:1fr;gap:26px;margin:0 auto;max-width:860px}
-.cgrid div{opacity:0;transform:translateY(12px);transition:opacity .9s ease,transform .9s var(--ease)}
+.cgrid{display:grid;grid-template-columns:1fr;margin:0}
+.cgrid div{padding:16px 0;border-top:1px solid var(--line);opacity:0;transform:translateY(12px);transition:opacity .9s ease,transform .9s var(--ease)}
 .cgrid.in div{opacity:1;transform:none}
 .cgrid dt{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--fire-2);font-weight:700}
 .cgrid dd{margin:6px 0 0;font-size:clamp(18px,1.9vw,22px);font-weight:700}
-@media (min-width:760px){.cgrid{grid-template-columns:1fr 1fr;column-gap:56px;row-gap:34px}.cgrid div:last-child{grid-column:1/-1}}
+@media (min-width:760px){.cgrid{grid-template-columns:1fr 1fr;column-gap:48px}}
 
 /* ---------- OUTRO (the fire rises; stage lights aim up behind the headline) ---------- */
 .outro{text-align:center;overflow:hidden}
@@ -314,12 +314,6 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-betw
 .display.shine{background:linear-gradient(100deg,#f6efe9 0%,#f6efe9 40%,#fff6d8 47%,var(--fire-2) 50%,#fff6d8 53%,#f6efe9 60%,#f6efe9 100%);
   background-size:300% 100%;background-position:100% 50%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:sweepT 5.5s ease-in-out infinite}
 @keyframes sweepT{0%,55%{background-position:100% 50%}100%{background-position:0% 50%}}
-/* buttons: a light sweep (always on the fire buttons, on hover for the rest) */
-.btn,.nav__sub{position:relative;overflow:hidden;isolation:isolate}
-.btn::after,.nav__sub::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(105deg,transparent 35%,rgba(255,255,255,.45) 50%,transparent 65%);translate:-120% 0}
-.btn-listen::after,.btn-mail::after{animation:btnS 3.6s ease-in-out infinite}
-.btn:hover::after,.nav__sub:hover::after{animation:btnS .9s ease-out}
-@keyframes btnS{0%{translate:-120% 0}45%,100%{translate:120% 0}}
 .btn-listen,.btn-mail{box-shadow:0 12px 40px -10px rgba(255,90,31,.95),0 0 0 1px rgba(255,200,120,.35) inset}
 
 /* ---------- LISTEN POPUP (same as the live page) ---------- */
@@ -361,9 +355,6 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-betw
   .stage__logo{top:58px;font-size:min(11vw,19svh)}
   .stage__foot{bottom:12px}
   section{padding:14svh 0}
-  .manifesto{padding-top:12svh}
-  .manifesto h1{font-size:min(6vw,12svh)}
-  .manifesto .en{margin-top:12px}.manifesto .go{margin-top:20px;padding:11px 22px}
     #tracks{padding-top:70px}
   .pyre{--ch:calc(100svh - 175px);--cw:calc(var(--ch) / 1.4);grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);grid-template-areas:"head scene" "front scene" "ctrl scene";align-content:center;column-gap:12px}
   .pyre>.head{align-self:end}
@@ -382,7 +373,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-betw
   .aimg{aspect-ratio:9/10;justify-self:center;width:min(72%,calc((100lvh - 80px) * .8))}
   .credits{padding:8svh 0}
   .credits h2{margin-bottom:16px}
-  .cgrid{grid-template-columns:1fr 1fr;column-gap:32px;row-gap:12px}
+  .cgrid{grid-template-columns:1fr 1fr;column-gap:32px}.cgrid div{padding:8px 0}
   .cgrid dd{margin-top:2px;font-size:16px}
   .outro h2{font-size:min(13vw,22svh)}
   .outro p{margin-top:10px}
