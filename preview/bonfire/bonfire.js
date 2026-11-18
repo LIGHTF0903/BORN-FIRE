@@ -21,50 +21,37 @@ const wrapD=d=>{d=idx(d);return d>N/2?d-N:d;};
 function whileVisible(el,start,stop){new IntersectionObserver(es=>{es[0].isIntersecting?start():stop();},{rootMargin:'80px'}).observe(el);}
 
 /* =====================================================================================
-   1. Bokeh: out-of-focus embers drifting up, like sparks caught in a long lens. Nothing reacts to the pointer.
+   1. Rising embers (canvas), drawn only while their section is on screen
    ===================================================================================== */
-function bokeh(cv,opt){if(RM||!cv||!cv.getContext)return{start(){},stop(){}};
-  const g=cv.getContext('2d');let W=0,H=0,ps=[],raf=0;
-  const size=()=>{W=cv.clientWidth;H=cv.clientHeight;cv.width=Math.round(W*DPR);cv.height=Math.round(H*DPR);g.setTransform(DPR,0,0,DPR,0,0);};
-  const mk=init=>{const far=Math.random();  // far = small, sharp-ish and slow; near = big, soft and faint
-    return{x:Math.random()*W,y:init?Math.random()*H:H+30,r:1.2+far*far*opt.max,v:.18+(1-far)*.25+far*.35,w:Math.random()*6.3,ws:.004+Math.random()*.008,
-      a:(.55-far*.32)*opt.alpha,l:init?Math.random()*400:0,L:500+Math.random()*700,hue:Math.random()};};
-  function loop(){g.clearRect(0,0,W,H);g.globalCompositeOperation='lighter';
-    const want=opt.count(W);while(ps.length<want)ps.push(mk(true));
-    for(let k=0;k<ps.length;k++){const p=ps[k];p.l++;p.w+=p.ws;p.y-=p.v;p.x+=Math.sin(p.w)*.35;
-      const life=Math.min(1,p.l/90)*Math.min(1,(p.L-p.l)/120);const a=Math.max(0,life)*p.a*(opt.fade?Math.min(1,p.y/(H*opt.fade)):1);
-      if(a>0.004){const gr=g.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*2.2);
-        const c=p.hue>.7?'255,226,180':p.hue>.3?'255,176,96':'255,128,52';
-        gr.addColorStop(0,`rgba(${c},${a})`);gr.addColorStop(.45,`rgba(${c},${a*.55})`);gr.addColorStop(1,`rgba(${c},0)`);
-        g.fillStyle=gr;g.beginPath();g.arc(p.x,p.y,p.r*2.2,0,6.29);g.fill();}
-      if(p.l>p.L||p.y<-40)ps[k]=mk(false);}
-    raf=requestAnimationFrame(loop);}
-  addEventListener('resize',()=>{if(raf)size();});
-  return{start(){if(!raf){size();loop();}},stop(){cancelAnimationFrame(raf);raf=0;}};}
+function embers(cv,density){if(RM||!cv||!cv.getContext)return;const host=cv.parentElement;
+  const ctx=cv.getContext('2d');let W=0,H=0,P=[],on=false,raf=0;
+  const spawn=(p,init)=>{p.x=Math.random()*W;p.y=init?Math.random()*H:H+10;p.r=.6+Math.random()*2.2;p.vy=.25+Math.random()*.9;p.vx=(Math.random()-.5)*.3;
+    p.ph=Math.random()*6.28;p.max=.5+Math.random()*.5;p.h=18+Math.random()*28;return p;};
+  const size=()=>{W=host.clientWidth;H=host.clientHeight;cv.width=W*DPR;cv.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0);
+    const n=Math.round(Math.min(90,Math.max(24,W*H/density)));P=Array.from({length:n},(_,i)=>spawn(P[i]||{},true));};
+  const tick=()=>{raf=on?requestAnimationFrame(tick):0;ctx.clearRect(0,0,W,H);ctx.globalCompositeOperation='lighter';
+    for(const p of P){p.ph+=.03;p.x+=p.vx+Math.sin(p.ph)*.35;p.y-=p.vy;const f=Math.max(0,Math.min(1,p.y/H));
+      const a=p.max*(0.25+0.75*f)*(0.7+0.3*Math.sin(p.ph*3));
+      const gr=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*4);gr.addColorStop(0,`hsla(${p.h+20},100%,75%,${a})`);gr.addColorStop(.35,`hsla(${p.h},100%,55%,${a*.6})`);gr.addColorStop(1,`hsla(${p.h},100%,50%,0)`);
+      ctx.fillStyle=gr;ctx.beginPath();ctx.arc(p.x,p.y,p.r*4,0,6.283);ctx.fill();
+      if(p.y<-20||p.x<-20||p.x>W+20)spawn(p,false);}};
+  const go=v=>{on=v&&!document.hidden;if(on&&!raf)raf=requestAnimationFrame(tick);};
+  let vis=false;new IntersectionObserver(es=>{vis=es[0].isIntersecting;go(vis);}).observe(host);
+  document.addEventListener('visibilitychange',()=>go(vis));
+  let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(size,150);});size();}
 
 /* =====================================================================================
-   2. Stage: black, then a warm light streak crosses and the live video comes up; the logo is gold foil
+   2. Stage: the lights come on one by one (a light cue), then the logo burns
    ===================================================================================== */
 (function(){const stage=document.getElementById('stage');
-  const go=()=>stage.classList.add('open');
+  const go=()=>stage.classList.add('cue');
   if(RM){go();return;}
-  (document.fonts?Promise.race([document.fonts.load('40px "Pinyon Script"'),new Promise(r=>setTimeout(r,1200))]):Promise.resolve()).then(()=>requestAnimationFrame(go));
-  const b=bokeh(document.getElementById('heroBokeh'),{count:W=>W<700?12:22,max:9,alpha:.8,fade:.25});
-  whileVisible(stage,b.start,b.stop);})();
+  (document.fonts?Promise.race([document.fonts.load('40px "Pinyon Script"'),new Promise(r=>setTimeout(r,1200))]):Promise.resolve()).then(()=>setTimeout(go,250));
+  embers(document.getElementById('heroEmbers'),FINE?16000:12000);})();
 
-/* =====================================================================================
-   3. Film light leak: one warm pass as each part of the show begins (once per part)
-   ===================================================================================== */
-(function(){if(RM)return;const leak=document.getElementById('leak');let busy=0;
-  const pass=()=>{if(Date.now()<busy)return;busy=Date.now()+1800;leak.classList.remove('go');void leak.offsetWidth;leak.classList.add('go');};
-  leak.addEventListener('animationend',()=>leak.classList.remove('go'));
-  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){io.unobserve(e.target);pass();}}),{rootMargin:'0px 0px -45% 0px'});
-  ['album','tracks','about','follow'].forEach(id=>{const el=document.getElementById(id);if(el)io.observe(el);});})();
-
-/* manifesto: the arch draws itself, the headline comes into focus */
+/* manifesto: the headline rises */
 (function(){const sec=document.getElementById('album');
-  new IntersectionObserver((es,o)=>{if(es[0].isIntersecting){sec.classList.add('in');o.disconnect();}},{rootMargin:'0px 0px -15% 0px'}).observe(sec);
-  const b=bokeh(sec.querySelector('.bokeh'),{count:W=>W<700?8:14,max:7,alpha:.55});whileVisible(sec,b.start,b.stop);})();
+  new IntersectionObserver((es,o)=>{if(es[0].isIntersecting){sec.classList.add('in');o.disconnect();}},{rootMargin:'0px 0px -15% 0px'}).observe(sec);})();
 
 /* =====================================================================================
    4. Tracklist: a reflective carousel; the song in front fills the room behind it
@@ -203,17 +190,26 @@ addEventListener('blur',()=>{setTimeout(()=>{const a=document.activeElement;
   if(th.classList.contains('on')&&a&&a.tagName==='IFRAME'&&th.contains(a)&&!document.fullscreenElement){a.blur();window.focus();thX.focus({preventScroll:true});}},120);});
 
 /* =====================================================================================
-   6. About: the photo opens like a shutter, with one pass of warm light
+   6. About: gentle tilt under the mouse; credits roll in; the closing lights aim up when it comes into view
    ===================================================================================== */
-(function(){const el=document.getElementById('aimg');if(!el)return;
-  new IntersectionObserver((es,o)=>{if(es[0].isIntersecting){el.classList.add('in');o.disconnect();}},{rootMargin:'0px 0px -18% 0px'}).observe(el);})();
-
-/* =====================================================================================
-   7. Credits roll in; the closing section has soft embers behind a gold headline
-   ===================================================================================== */
+(function(){const img=document.getElementById('aimg');if(!img||!FINE||RM)return;
+  img.addEventListener('mousemove',e=>{const r=img.getBoundingClientRect(),px=(e.clientX-r.left)/r.width-.5,py=(e.clientY-r.top)/r.height-.5;
+    img.style.setProperty('--ry',(px*8).toFixed(2)+'deg');img.style.setProperty('--rx',(-py*8).toFixed(2)+'deg');});
+  img.addEventListener('mouseleave',()=>{img.style.setProperty('--ry','0deg');img.style.setProperty('--rx','0deg');});})();
 (function(){const cg=document.querySelector('.cgrid');[...cg.children].forEach((d,i)=>d.style.transitionDelay=(i*.12)+'s');
   new IntersectionObserver((es,o)=>{if(es[0].isIntersecting){cg.classList.add('in');o.disconnect();}},{rootMargin:'0px 0px -10% 0px'}).observe(cg);})();
-(function(){const sec=document.getElementById('follow');const b=bokeh(sec.querySelector('.bokeh'),{count:W=>W<700?14:26,max:10,alpha:.7});whileVisible(sec,b.start,b.stop);})();
+(function(){const sec=document.getElementById('follow'),rig=sec.querySelector('.rig');
+  embers(sec.querySelector('canvas.embers'),9000);
+  new IntersectionObserver((es,o)=>{if(es[0].isIntersecting){rig.classList.add('cue');o.disconnect();}},{rootMargin:'0px 0px -30% 0px'}).observe(sec);})();
+
+/* whole page: section-title light sweep, scroll progress line, warm glow under the mouse */
+document.querySelectorAll('.about .display, .credits .display').forEach(h=>h.classList.add('shine'));
+(function(){const bar=document.getElementById('pbar');
+  const prog=()=>{const m=document.documentElement.scrollHeight-innerHeight;bar.style.transform=`scaleX(${m>0?Math.min(1,scrollY/m):0})`;};
+  addEventListener('scroll',prog,{passive:true});addEventListener('resize',prog);prog();
+  if(RM||!FINE)return;const g=document.getElementById('cglow');let x=0,y=0,raf=0;
+  addEventListener('mousemove',e=>{x=e.clientX;y=e.clientY;g.classList.add('on');if(!raf)raf=requestAnimationFrame(()=>{raf=0;g.style.transform=`translate(${x}px,${y}px)`;});},{passive:true});
+  document.addEventListener('mouseleave',()=>g.classList.remove('on'));})();
 
 /* ---------- nav + reveals ---------- */
 const nav=document.getElementById('nav');

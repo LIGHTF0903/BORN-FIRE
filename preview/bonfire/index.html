@@ -72,7 +72,7 @@
 <link rel="preconnect" href="https://i.ytimg.com">
 <link rel="stylesheet" href="../../assets/fonts/fonts.css">
 
-<link rel="stylesheet" href="bonfire.css?v=2">
+<link rel="stylesheet" href="bonfire.css?v=3">
 </head>
 <body>
 <nav class="nav" id="nav" aria-label="메뉴">
@@ -84,9 +84,9 @@
 
 <header class="stage" id="stage">
   <div id="stage-player" class="stage__video" aria-hidden="true"></div>
-  <canvas class="fx bokeh" id="heroBokeh" aria-hidden="true"></canvas>
-  <div class="stage__logo" aria-hidden="true"><span class="foil">Born Fire</span></div>
-  <div class="curtain" aria-hidden="true"><i class="flare"></i></div>
+  <canvas class="fx embers" id="heroEmbers" aria-hidden="true"></canvas>
+  <div class="rig" aria-hidden="true"><i class="beam b1"></i><i class="beam b2"></i><i class="beam b3"></i><i class="beam b4"></i><i class="beam b5"></i></div>
+  <p class="stage__logo" aria-hidden="true">Born Fire</p>
   <span class="stage__tag">2026</span>
   <button class="stage__sound" id="stage-sound" type="button" aria-label="소리 켜기 / Unmute" aria-pressed="false">
     <svg class="off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="m22 9-6 6M16 9l6 6"/></svg>
@@ -97,13 +97,10 @@
     <a class="stage__down" href="#album">Scroll<i></i></a>
   </div>
 </header>
+<div class="marq" aria-hidden="true"><div class="marq__band marq__band--a"><div class="marq__row"><span>Born Fire</span><span>Calling Choir</span><span>1st Live Album</span><span>Hip-Hop Gospel</span><span>Live in Seoul</span><span>2026</span><span>Born Fire</span><span>Calling Choir</span><span>1st Live Album</span><span>Hip-Hop Gospel</span><span>Live in Seoul</span><span>2026</span><span>Born Fire</span><span>Calling Choir</span><span>1st Live Album</span><span>Hip-Hop Gospel</span><span>Live in Seoul</span><span>2026</span><span>Born Fire</span><span>Calling Choir</span><span>1st Live Album</span><span>Hip-Hop Gospel</span><span>Live in Seoul</span><span>2026</span></div></div><div class="marq__band marq__band--b"><div class="marq__row"><span>Born Fire</span><span>Calling Choir</span><span>1st Live Album</span><span>Hip-Hop Gospel</span><span>Live in Seoul</span><span>2026</span><span>Born Fire</span><span>Calling Choir</span><span>1st Live Album</span><span>Hip-Hop Gospel</span><span>Live in Seoul</span><span>2026</span><span>Born Fire</span><span>Calling Choir</span><span>1st Live Album</span><span>Hip-Hop Gospel</span><span>Live in Seoul</span><span>2026</span><span>Born Fire</span><span>Calling Choir</span><span>1st Live Album</span><span>Hip-Hop Gospel</span><span>Live in Seoul</span><span>2026</span></div></div></div>
 
 <section class="manifesto" id="album">
-  <canvas class="fx bokeh" aria-hidden="true"></canvas>
   <div class="wrap">
-    <svg class="arch" viewBox="0 0 600 760" aria-hidden="true"><defs><linearGradient id="archGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd48a" stop-opacity=".9"/><stop offset=".7" stop-color="#ff7a2e" stop-opacity=".35"/><stop offset="1" stop-color="#ff5a1f" stop-opacity="0"/></linearGradient></defs>
-      <path pathLength="1" d="M40 760 V330 C40 170 160 60 300 10 C440 60 560 170 560 330 V760"/>
-      <path pathLength="1" d="M90 760 V345 C90 210 190 115 300 70 C410 115 510 210 510 345 V760"/></svg>
     <p class="kicker">Calling Choir · 1st Live Album</p>
     <h1>교회 밖으로 날아가는<br><em>하나님의 불씨들</em></h1>
     <p class="en"><span>God’s sparks, flying beyond the church walls.</span><br><span>Korea’s first hip-hop gospel show choir.</span></p>
@@ -144,7 +141,7 @@
 
 <section class="about" id="about">
   <div class="wrap about__grid">
-    <div class="aimg" id="aimg" role="img" aria-label="콜링콰이어 라이브 무대"><div class="aimg__in" style="background-image:url('../../assets/cards/about.jpg')"></div></div>
+    <div class="aimg rv" id="aimg" role="img" aria-label="콜링콰이어 라이브 무대"><div class="aimg__in" style="background-image:url('../../assets/cards/about.jpg')"></div></div>
     <div class="rv">
       <p class="kicker">The Album</p>
       <h2 class="display">Born Fire</h2>
@@ -176,9 +173,10 @@
 </section>
 
 <section class="outro" id="follow">
-  <canvas class="fx bokeh" aria-hidden="true"></canvas>
+  <canvas class="fx embers" aria-hidden="true"></canvas>
+  <div class="rig rig--up" aria-hidden="true"><i class="beam b1"></i><i class="beam b2"></i><i class="beam b3"></i><i class="beam b4"></i></div>
   <div class="wrap rv">
-    <h2 class="display">Follow<br><span class="gold">the fire</span></h2>
+    <h2 class="display">Follow<br><span class="flow-t">the fire</span></h2>
     <p><span class="ln">교회 밖으로 날아가는 하나님의 불씨들</span></p>
     <p class="outro__label">섭외 · 문의</p>
     <div class="outro__btns outro__btns--contact">
@@ -218,8 +216,9 @@
   <button class="th__x" id="thClose" type="button" aria-label="닫기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M5 5l14 14M19 5 5 19"/></svg></button>
 </div>
 <div class="ghost" id="ghost" aria-hidden="true"></div>
-<div class="leak" id="leak" aria-hidden="true"><i></i></div>
 <div class="grain" aria-hidden="true"></div>
+<div class="pbar" id="pbar" aria-hidden="true"></div>
+<div class="cglow" id="cglow" aria-hidden="true"></div>
 
 <script>
 const TRACKS = [
@@ -239,6 +238,6 @@ const TRACKS = [
 const PAGE={"base": "../../", "soon": "영상 준비 중", "soonCredit": "영상 준비 중 · Video soon", "watch": "라이브 영상 보기", "live": "콜링콰이어 라이브", "mute": "소리 끄기 / Mute", "unmute": "소리 켜기 / Unmute"};
 </script>
 <div class="lsn" id="lsn" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="lsnH"><div class="lsn__bg" style="background-image:url('../../assets/listen/cover-bg.jpg')"></div><div class="lsn__box" tabindex="-1"><img class="lsn__cover" src="../../assets/listen/cover.jpg" alt="BORN FIRE album cover" width="180" height="180" decoding="async"><p class="lsn__h" id="lsnH">BORN FIRE</p><p class="lsn__s">콜링콰이어 · 첫 정규 라이브 앨범</p><ul class="lsn__list"><li><a href="https://www.melon.com/album/detail.htm?albumId=14606099" target="_blank" rel="noopener"><span class="lsn__ic"><img src="../../assets/listen/melon.png" alt="" width="34" height="34" decoding="async"></span><span class="lsn__nm">멜론</span><span class="lsn__go">듣기</span></a></li><li><a href="https://www.genie.co.kr/detail/albumInfo?axnm=88196741" target="_blank" rel="noopener"><span class="lsn__ic"><img src="../../assets/listen/genie.png" alt="" width="34" height="34" decoding="async"></span><span class="lsn__nm">지니</span><span class="lsn__go">듣기</span></a></li><li><a href="https://music.bugs.co.kr/album/20843188" target="_blank" rel="noopener"><span class="lsn__ic"><img src="../../assets/listen/bugs.png" alt="" width="34" height="34" decoding="async"></span><span class="lsn__nm">벅스</span><span class="lsn__go">듣기</span></a></li><li><a href="https://www.music-flo.com/detail/album/463772852/albumtrack" target="_blank" rel="noopener"><span class="lsn__ic"><img src="../../assets/listen/flo.png" alt="" width="34" height="34" decoding="async"></span><span class="lsn__nm">플로</span><span class="lsn__go">듣기</span></a></li><li><a href="https://vibe.naver.com/album/38808816" target="_blank" rel="noopener"><span class="lsn__ic"><img src="../../assets/listen/vibe.png" alt="" width="34" height="34" decoding="async"></span><span class="lsn__nm">바이브</span><span class="lsn__go">듣기</span></a></li><li><a href="https://music.apple.com/album/6817239744" target="_blank" rel="noopener"><span class="lsn__ic"><img src="../../assets/listen/apple.png" alt="" width="34" height="34" decoding="async"></span><span class="lsn__nm">Apple Music</span><span class="lsn__go">듣기</span></a></li><li><a href="https://open.spotify.com/album/0cTEyc6zbd7491sONgo6AF" target="_blank" rel="noopener"><span class="lsn__ic"><img src="../../assets/listen/spotify.png" alt="" width="34" height="34" decoding="async"></span><span class="lsn__nm">Spotify</span><span class="lsn__go">듣기</span></a></li><li><a href="https://music.youtube.com/playlist?list=OLAK5uy_lo-ZxPGHuMaW61B3PE5z5JjQrNsaUyKjw" target="_blank" rel="noopener"><span class="lsn__ic"><img src="../../assets/listen/ytm.png" alt="" width="34" height="34" decoding="async"></span><span class="lsn__nm">YouTube Music</span><span class="lsn__go">듣기</span></a></li></ul></div></div>
-<script src="bonfire.js?v=2"></script>
+<script src="bonfire.js?v=3"></script>
 </body>
 </html>
