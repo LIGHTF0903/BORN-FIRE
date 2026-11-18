@@ -116,23 +116,29 @@ new IntersectionObserver((es,o)=>{if(!es[0].isIntersecting)return;o.disconnect()
    ===================================================================================== */
 const th=document.getElementById('th'), thBg=document.getElementById('thBg'), ghost=document.getElementById('ghost'), fplayer=document.getElementById('fplayer'), fpFrame=document.getElementById('fplayerFrame');
 const fpend=document.getElementById('fpend'), thT=document.getElementById('thTitle'), thC=document.getElementById('thCredit'), thX=document.getElementById('thClose');
-let inl=null, cur=-1, ytWait=0, thT0=0, opener=null;
+let mkT=0, inl=null, cur=-1, ytWait=0, thT0=0, opener=null;
 function nextPlayable(i,dir=1){for(let s=1;s<=N;s++){const j=idx(i+dir*s);if(TRACKS[j][3])return j;}return i;}
 const hideEnd=()=>{if(fpend.contains(document.activeElement))thX.focus({preventScroll:true});fpend.hidden=true;};
-function onInlState(e){if(e.data===YT.PlayerState.ENDED)fpend.hidden=false;else if(e.data===YT.PlayerState.PLAYING)hideEnd();}
+// the video is shown once it really plays (or after a moment if the browser waits for a tap), so there is no black box in between
+let liveT=0;const goLive=()=>{clearTimeout(liveT);fplayer.classList.add('live');};
+function onInlState(e){if(e.data===YT.PlayerState.ENDED)fpend.hidden=false;else if(e.data===YT.PlayerState.PLAYING){hideEnd();goLive();}}
 function play(i){const t=TRACKS[i];if(!t||!t[3])return;if(window.pauseStage)window.pauseStage();cur=i;hideEnd();
   const n=TRACKS[nextPlayable(i)];document.getElementById('fpendNext').textContent=n[0]+'. '+n[1];
   thT.innerHTML=`<span style="color:var(--fire-2)">${t[0]}</span>&nbsp; ${badge(i)}${tl(t[1])}`;thC.innerHTML=credit(i);thBg.style.backgroundImage=`url('${photo(i)}')`;
   if(th.dataset.closing)return;
-  if(!th.classList.contains('on')){opener=document.activeElement;
+  clearTimeout(liveT);fplayer.classList.remove('live');fplayer.style.backgroundImage=`url('${photo(i)}')`;
+  let wait=0;
+  if(!th.classList.contains('on')){opener=document.activeElement;wait=RM?0:720;
     thT0=performance.now();th.classList.add('on');th.removeAttribute('aria-hidden');document.documentElement.classList.add('th-open');
     grow(cards[i].querySelector('.card__f'),i,true);thX.focus({preventScroll:true});}
-  if(inl&&inl.loadVideoById){inl.loadVideoById(t[3]);return;}
+  if(inl&&inl.loadVideoById){inl.loadVideoById(t[3]);liveT=setTimeout(goLive,2500);return;}
   fpFrame.innerHTML='<div id="fpYT"></div>';inl=null;
   const mk=()=>{inl=new YT.Player('fpYT',{videoId:t[3],host:'https://www.youtube-nocookie.com',
-    playerVars:Object.assign({autoplay:1,rel:0,playsinline:1,modestbranding:1},window.__MUTE_CARDS?{mute:1}:{}),events:{onReady:e=>e.target.playVideo(),onStateChange:onInlState}});
+    playerVars:Object.assign({autoplay:1,rel:0,playsinline:1,modestbranding:1},window.__MUTE_CARDS?{mute:1}:{}),events:{onReady:e=>{e.target.playVideo();clearTimeout(liveT);liveT=setTimeout(goLive,1500);},onStateChange:onInlState}});
     const f=fpFrame.querySelector('iframe');if(f)f.title=`${t[1]} — ${PAGE.live}`;};
-  clearInterval(ytWait);if(window.YT&&YT.Player)mk();else{ytWait=setInterval(()=>{if(window.YT&&YT.Player){clearInterval(ytWait);mk();}},100);}}
+  // the player is built after the photo has settled, so building it never stutters the animation
+  clearInterval(ytWait);clearTimeout(mkT);const start=()=>{if(cur!==i||!th.classList.contains('on')||th.dataset.closing)return;if(window.YT&&YT.Player)mk();else{ytWait=setInterval(()=>{if(window.YT&&YT.Player){clearInterval(ytWait);mk();}},100);}};
+  if(wait)mkT=setTimeout(start,wait);else start();}
 // the card's photo lifts out and grows to the player's place (open), or shrinks back onto the card (close)
 let growT=0;
 function grow(cardEl,i,open){clearTimeout(growT);
@@ -144,12 +150,14 @@ function grow(cardEl,i,open){clearTimeout(growT);
   if(RM||!visible){if(open){th.classList.add('in');}else{th.classList.remove('in');done();}return;}
   ghost.style.backgroundImage=`url('${photo(i)}')`;
   const from=open?c:p, to=open?p:c;
-  ghost.classList.remove('go');Object.assign(ghost.style,box(from),{borderRadius:open?'12px':'14px',opacity:'1'});
+  const pr=getComputedStyle(fplayer).borderTopLeftRadius||'14px';
+  ghost.classList.remove('go');Object.assign(ghost.style,box(from),{borderRadius:open?'12px':pr,opacity:'1'});
   if(!open)th.classList.remove('in');
   void ghost.offsetWidth;ghost.classList.add('go');
-  Object.assign(ghost.style,box(to),{borderRadius:open?'14px':'12px'});
-  growT=setTimeout(()=>{if(open){th.classList.add('in');ghost.style.opacity='0';growT=setTimeout(done,360);}else done();},open?650:620);}
-function closeTh(){if(!th.classList.contains('on')||th.dataset.closing)return;th.dataset.closing='1';clearInterval(ytWait);
+  Object.assign(ghost.style,box(to),{borderRadius:open?pr:'12px'});
+  // open: the player (already showing the same photo) appears under the photo first, then the photo lifts away, so nothing dips
+  growT=setTimeout(()=>{if(open){th.classList.add('in');growT=setTimeout(()=>{ghost.style.opacity='0';growT=setTimeout(done,320);},360);}else done();},open?800:780);}
+function closeTh(){if(!th.classList.contains('on')||th.dataset.closing)return;th.dataset.closing='1';clearInterval(ytWait);clearTimeout(mkT);clearTimeout(liveT);
   if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});
   document.documentElement.classList.remove('th-open');
   try{inl&&inl.destroy();}catch(_){}inl=null;fpFrame.innerHTML='';fpend.hidden=true;
