@@ -3,7 +3,7 @@
 Promo landing page for **BORN FIRE (CALLING GOSPEL LIVE SHOW VOL.1)**, the debut live album by Calling Choir (콜링콰이어).
 Single static `index.html` (no build step). Every track in the tracklist plays its official live video inline.
 
-Live: https://bornfire.callingchoir.com/
+Live: https://lightf0903.github.io/BORN-FIRE/
 
 ## Editing
 
