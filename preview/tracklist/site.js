@@ -92,7 +92,7 @@ function play(i){const t=TRACKS[i];if(!t||!t[3])return;if(window.pauseStage)wind
   if(th.dataset.closing)return;
   clearTimeout(liveT);fplayer.classList.remove('live');fplayer.style.backgroundImage=`url('${photo(i)}')`;
   let wait=0;
-  if(!th.classList.contains('on')){opener=document.activeElement;wait=RM?0:520;
+  if(!th.classList.contains('on')){opener=document.activeElement;wait=0;
     thT0=performance.now();th.classList.add('on');th.removeAttribute('aria-hidden');document.documentElement.classList.add('th-open');
     grow(cards[i].querySelector('.card__f'),i,true);thX.focus({preventScroll:true});}
   if(inl&&inl.loadVideoById){inl.loadVideoById(t[3]);goLive();return;}
@@ -121,7 +121,9 @@ function grow(cardEl,i,open){clearTimeout(growT);
   void ghost.offsetWidth;ghost.classList.add('go');
   Object.assign(ghost.style,box(to),{borderRadius:open?pr:'12px'});
   // open: the player (already showing the same photo) appears under the photo first, then the photo lifts away, so nothing dips
-  growT=setTimeout(()=>{if(open){th.classList.add('in');growT=setTimeout(()=>{ghost.style.opacity='0';growT=setTimeout(done,240);},180);}else done();},open?540:520);}
+  // open: when the photo is nearly in place (~85%), the player (YouTube, loaded or not) takes over while the photo fades
+  if(open){growT=setTimeout(()=>{th.classList.add('in');ghost.style.opacity='0';growT=setTimeout(done,420);},300);}
+  else growT=setTimeout(done,620);}
 function closeTh(){if(!th.classList.contains('on')||th.dataset.closing)return;th.dataset.closing='1';clearInterval(ytWait);clearTimeout(mkT);clearTimeout(liveT);
   if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});
   document.documentElement.classList.remove('th-open');
@@ -156,8 +158,6 @@ addEventListener('keydown',e=>{
   else hit=false;
   if(hit){e.preventDefault();e.stopImmediatePropagation();}
 },true);
-addEventListener('blur',()=>{setTimeout(()=>{const a=document.activeElement;
-  if(th.classList.contains('on')&&a&&a.tagName==='IFRAME'&&th.contains(a)&&!document.fullscreenElement){a.blur();window.focus();thX.focus({preventScroll:true});}},120);});
 
 // Nav turns solid after the video
 const nav=document.getElementById('nav');
