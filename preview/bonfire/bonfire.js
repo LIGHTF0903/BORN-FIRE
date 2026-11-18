@@ -41,7 +41,7 @@ function embers(cv,density){if(RM||!cv||!cv.getContext)return;const host=cv.pare
   let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(size,150);});size();}
 
 /* =====================================================================================
-   2. Stage: the lights come on one by one (a light cue), then the logo burns
+   2. Stage: the logo burns in
    ===================================================================================== */
 (function(){const stage=document.getElementById('stage');
   const go=()=>stage.classList.add('cue');
@@ -58,8 +58,7 @@ function embers(cv,density){if(RM||!cv||!cv.getContext)return;const host=cv.pare
    ===================================================================================== */
 const pyre=document.getElementById('flow'), scene=document.getElementById('scene'), ringEl=document.getElementById('ring');
 ringEl.innerHTML=TRACKS.map((t,i)=>`<button class="card${t[3]?'':' soon'}" type="button" data-i="${i}" tabindex="-1" aria-label="${t[0]} ${t[1]}${t[3]?'':' ('+PAGE.soon+')'}">
-  <span class="card__f" style="background-image:url('${photo(i)}')"><span class="card__n">${t[0]}</span><span class="card__badge">${badge(i)}</span></span>
-  <span class="card__sheen"></span></button>`).join('');
+  <span class="card__f" style="background-image:url('${photo(i)}')"><span class="card__n">${t[0]}</span><span class="card__badge">${badge(i)}</span></span></button>`).join('');
 const cards=[...ringEl.children];
 const fName=document.getElementById('frontName'), fCredit=document.getElementById('frontCredit'), fBadge=document.getElementById('frontBadge'), fPlay=document.getElementById('frontPlay'), fcount=document.getElementById('flowCount'), front=document.getElementById('front');
 const back=[...document.getElementById('tback').children];let backOn=0;
@@ -74,7 +73,7 @@ function render(){const gap=cw*.74, far=cw*.46;
     c.style.opacity=(a>3.6?0:a>2.6?3.6-a:1)*(spread<1?Math.min(1,spread*1.4+(a<.5?1:0)):1);
     c.style.zIndex=String(100-Math.round(a*10));c.style.visibility=a>3.7?'hidden':'visible';
     c.style.setProperty('--k',Math.min(.72,a*.26).toFixed(3));
-    const isF=a<.5;if(isF!==c.classList.contains('is-front')){c.classList.toggle('is-front',isF);c.tabIndex=isF?0:-1;if(isF&&shown>=0&&!RM){c.classList.remove('shine');void c.offsetWidth;c.classList.add('shine');}}});
+    const isF=a<.5;if(isF!==c.classList.contains('is-front')){c.classList.toggle('is-front',isF);c.tabIndex=isF?0:-1;}});
   const f=frontIdx();if(f!==shown)showFront(f);}
 function showFront(i){const first=shown<0;shown=i;
   // the room behind: cross-fade to this song's photo
@@ -198,9 +197,8 @@ addEventListener('blur',()=>{setTimeout(()=>{const a=document.activeElement;
   img.addEventListener('mouseleave',()=>{img.style.setProperty('--ry','0deg');img.style.setProperty('--rx','0deg');});})();
 (function(){const cg=document.querySelector('.cgrid');[...cg.children].forEach((d,i)=>d.style.transitionDelay=(i*.12)+'s');
   new IntersectionObserver((es,o)=>{if(es[0].isIntersecting){cg.classList.add('in');o.disconnect();}},{rootMargin:'0px 0px -10% 0px'}).observe(cg);})();
-(function(){const sec=document.getElementById('follow'),rig=sec.querySelector('.rig');
-  embers(sec.querySelector('canvas.embers'),9000);
-  new IntersectionObserver((es,o)=>{if(es[0].isIntersecting){rig.classList.add('cue');o.disconnect();}},{rootMargin:'0px 0px -30% 0px'}).observe(sec);})();
+(function(){const sec=document.getElementById('follow');
+  embers(sec.querySelector('canvas.embers'),9000);})();
 
 /* whole page: section-title light sweep, scroll progress line, warm glow under the mouse */
 document.querySelectorAll('.about .display, .credits .display').forEach(h=>h.classList.add('shine'));
