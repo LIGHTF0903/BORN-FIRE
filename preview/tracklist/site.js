@@ -42,7 +42,7 @@ function render(){const gap=cw*.74, far=cw*.46;
 function showFront(i){const first=shown<0;shown=i;
   // the room behind: cross-fade to this song's photo
   const nb=back[backOn^1];nb.style.backgroundImage=`url('${photo(i)}')`;nb.classList.add('on');back[backOn].classList.remove('on');backOn^=1;
-  const set=()=>{fBadge.innerHTML=badge(i);fName.innerHTML=tl(TRACKS[i][1]);fCredit.innerHTML=credit(i);fPlay.hidden=!TRACKS[i][3];front.classList.remove('swap');};
+  const set=()=>{fBadge.innerHTML=badge(i);if(fName)fName.innerHTML=tl(TRACKS[i][1]);fCredit.innerHTML=credit(i);fPlay.hidden=!TRACKS[i][3];front.classList.remove('swap');};
   fcount.innerHTML=`<b>${TRACKS[i][0]}</b> / ${String(N).padStart(2,'0')}`;
   if(first||RM){set();return;}front.classList.add('swap');clearTimeout(showFront.t);showFront.t=setTimeout(set,180);}
 function tick(){pos+=(target-pos)*.12;if(Math.abs(target-pos)<.002&&!drag){pos=target;render();raf=0;return;}render();raf=requestAnimationFrame(tick);}
