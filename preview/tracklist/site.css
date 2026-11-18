@@ -182,16 +182,16 @@ html.th-open{overflow:hidden}
 .th{position:fixed;inset:0;z-index:95;display:flex;align-items:center;justify-content:center;visibility:hidden;pointer-events:none;
   background:radial-gradient(ellipse at center,#160b08,#040202);opacity:0;transition:opacity .55s ease,visibility 0s .55s}
 .th.on{visibility:visible;pointer-events:auto;opacity:1;transition:opacity .55s ease}
-.th__inner{opacity:0;transition:opacity .35s ease}
+.th__inner{opacity:0;transition:opacity .2s ease}
 .th.in .th__inner{opacity:1}
 .th.on.fading{opacity:0}
 .th__bg{position:absolute;inset:-40px;background:#000 center/cover no-repeat;filter:blur(40px) saturate(1.3) brightness(.35);opacity:.9}
 .th__inner{position:relative;z-index:2;width:min(92vw,calc((100svh - 200px) * 16 / 9),1240px)}
 .fplayer{position:relative;width:100%;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#000;box-shadow:0 40px 120px -30px rgba(0,0,0,.95),0 0 80px -20px rgba(255,110,30,.45)}
 .fplayer__frame,.fplayer__frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
-/* the song photo waits in the player, and the video fades in over it once it is actually playing */
+/* the song photo sits in the player; the YouTube player fades in over it as soon as it is created */
 .fplayer{background-position:center;background-size:cover;background-repeat:no-repeat}
-.fplayer__frame{opacity:0;transition:opacity .7s ease}
+.fplayer__frame{opacity:0;transition:opacity .3s ease}
 .fplayer.live .fplayer__frame{opacity:1}
 .th__bar{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:20px;margin-top:20px}
 .th__meta{min-width:0;text-align:center}
@@ -226,7 +226,7 @@ html.th-open{overflow:hidden}
 .ghost{position:fixed;z-index:97;left:0;top:0;width:0;height:0;border-radius:12px;background:#000 50% 50%/cover no-repeat;pointer-events:none;visibility:hidden;
   box-shadow:0 40px 120px -30px rgba(0,0,0,.95),0 0 80px -20px rgba(255,110,30,.45)}
 /* a gentle ease-in-out, so the photo lifts off the card softly and settles softly in the player */
-.ghost.go{visibility:visible;--gE:cubic-bezier(.5,0,.15,1);transition:left .8s var(--gE),top .8s var(--gE),width .8s var(--gE),height .8s var(--gE),border-radius .8s var(--gE),opacity .3s ease}
+.ghost.go{visibility:visible;--gE:cubic-bezier(.5,0,.15,1);transition:left .52s var(--gE),top .52s var(--gE),width .52s var(--gE),height .52s var(--gE),border-radius .52s var(--gE),opacity .22s ease}
 
 /* ---------- C. ABOUT ---------- */
 .about__grid{display:grid;gap:clamp(28px,5vw,64px);align-items:center}

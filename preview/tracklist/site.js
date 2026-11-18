@@ -83,7 +83,7 @@ const fpend=document.getElementById('fpend'), thT=document.getElementById('thTit
 let mkT=0, inl=null, cur=-1, ytWait=0, thT0=0, opener=null;
 function nextPlayable(i,dir=1){for(let s=1;s<=N;s++){const j=idx(i+dir*s);if(TRACKS[j][3])return j;}return i;}
 const hideEnd=()=>{if(fpend.contains(document.activeElement))thX.focus({preventScroll:true});fpend.hidden=true;};
-// the video is shown once it really plays (or after a moment if the browser waits for a tap), so there is no black box in between
+// the player shows as soon as it is created (the song photo stays underneath while YouTube loads)
 let liveT=0;const goLive=()=>{clearTimeout(liveT);fplayer.classList.add('live');};
 function onInlState(e){if(e.data===YT.PlayerState.ENDED)fpend.hidden=false;else if(e.data===YT.PlayerState.PLAYING){hideEnd();goLive();}}
 function play(i){const t=TRACKS[i];if(!t||!t[3])return;if(window.pauseStage)window.pauseStage();cur=i;hideEnd();
@@ -92,14 +92,15 @@ function play(i){const t=TRACKS[i];if(!t||!t[3])return;if(window.pauseStage)wind
   if(th.dataset.closing)return;
   clearTimeout(liveT);fplayer.classList.remove('live');fplayer.style.backgroundImage=`url('${photo(i)}')`;
   let wait=0;
-  if(!th.classList.contains('on')){opener=document.activeElement;wait=RM?0:720;
+  if(!th.classList.contains('on')){opener=document.activeElement;wait=RM?0:520;
     thT0=performance.now();th.classList.add('on');th.removeAttribute('aria-hidden');document.documentElement.classList.add('th-open');
     grow(cards[i].querySelector('.card__f'),i,true);thX.focus({preventScroll:true});}
-  if(inl&&inl.loadVideoById){inl.loadVideoById(t[3]);liveT=setTimeout(goLive,2500);return;}
+  if(inl&&inl.loadVideoById){inl.loadVideoById(t[3]);goLive();return;}
   fpFrame.innerHTML='<div id="fpYT"></div>';inl=null;
   const mk=()=>{inl=new YT.Player('fpYT',{videoId:t[3],host:'https://www.youtube-nocookie.com',
     playerVars:Object.assign({autoplay:1,rel:0,playsinline:1,modestbranding:1},window.__MUTE_CARDS?{mute:1}:{}),events:{onReady:e=>{e.target.playVideo();clearTimeout(liveT);liveT=setTimeout(goLive,1500);},onStateChange:onInlState}});
-    const f=fpFrame.querySelector('iframe');if(f)f.title=`${t[1]} — ${PAGE.live}`;};
+    const f=fpFrame.querySelector('iframe');if(f)f.title=`${t[1]} — ${PAGE.live}`;
+    goLive();};  // the YouTube player shows right away, even while it is still loading
   // the player is built after the photo has settled, so building it never stutters the animation
   clearInterval(ytWait);clearTimeout(mkT);const start=()=>{if(cur!==i||!th.classList.contains('on')||th.dataset.closing)return;if(window.YT&&YT.Player)mk();else{ytWait=setInterval(()=>{if(window.YT&&YT.Player){clearInterval(ytWait);mk();}},100);}};
   if(wait)mkT=setTimeout(start,wait);else start();}
@@ -120,7 +121,7 @@ function grow(cardEl,i,open){clearTimeout(growT);
   void ghost.offsetWidth;ghost.classList.add('go');
   Object.assign(ghost.style,box(to),{borderRadius:open?pr:'12px'});
   // open: the player (already showing the same photo) appears under the photo first, then the photo lifts away, so nothing dips
-  growT=setTimeout(()=>{if(open){th.classList.add('in');growT=setTimeout(()=>{ghost.style.opacity='0';growT=setTimeout(done,320);},360);}else done();},open?800:780);}
+  growT=setTimeout(()=>{if(open){th.classList.add('in');growT=setTimeout(()=>{ghost.style.opacity='0';growT=setTimeout(done,240);},180);}else done();},open?540:520);}
 function closeTh(){if(!th.classList.contains('on')||th.dataset.closing)return;th.dataset.closing='1';clearInterval(ytWait);clearTimeout(mkT);clearTimeout(liveT);
   if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});
   document.documentElement.classList.remove('th-open');
@@ -157,7 +158,6 @@ addEventListener('keydown',e=>{
 },true);
 addEventListener('blur',()=>{setTimeout(()=>{const a=document.activeElement;
   if(th.classList.contains('on')&&a&&a.tagName==='IFRAME'&&th.contains(a)&&!document.fullscreenElement){a.blur();window.focus();thX.focus({preventScroll:true});}},120);});
-
 
 // Nav turns solid after the video
 const nav=document.getElementById('nav');
