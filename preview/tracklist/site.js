@@ -22,7 +22,7 @@ const wrapD=d=>{d=idx(d);return d>N/2?d-N:d;};
    ===================================================================================== */
 const pyre=document.getElementById('flow'), scene=document.getElementById('scene'), ringEl=document.getElementById('ring');
 ringEl.innerHTML=TRACKS.map((t,i)=>`<button class="card${t[3]?'':' soon'}" type="button" data-i="${i}" tabindex="-1" aria-label="${t[0]} ${t[1]}${t[3]?'':' ('+PAGE.soon+')'}">
-  <span class="card__f" style="background-image:url('${photo(i)}')"><span class="card__n">${t[0]}</span><span class="card__t"><span class="card__badge">${badge(i)}</span><span class="card__name">${tl(t[1])}</span></span></span></button>`).join('');
+  <span class="card__f" style="background-image:url('${photo(i)}')"></span><span class="card__n">${t[0]}</span><span class="card__t"><span class="card__badge">${badge(i)}</span><span class="card__name">${tl(t[1])}</span></span></button>`).join('');
 const cards=[...ringEl.children];
 const fName=document.getElementById('frontName'), fCredit=document.getElementById('frontCredit'), fBadge=document.getElementById('frontBadge'), fPlay=document.getElementById('frontPlay'), fcount=document.getElementById('flowCount'), front=document.getElementById('front');
 const back=[...document.getElementById('tback').children];let backOn=0;

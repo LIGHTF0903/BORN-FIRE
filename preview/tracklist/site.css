@@ -134,12 +134,13 @@ html.th-open{overflow:hidden}
 .scene.dragging{cursor:grabbing}
 .world{position:absolute;left:50%;top:calc(var(--ch) * .12);width:0;height:0;transform-style:preserve-3d}
 .ring{position:absolute;left:0;top:0;transform-style:preserve-3d}
-.card{all:unset;box-sizing:border-box;position:absolute;left:calc(var(--cw) / -2);top:0;width:var(--cw);height:var(--ch);cursor:pointer;will-change:transform,opacity;
-  -webkit-box-reflect:below 8px linear-gradient(transparent 62%,rgba(255,255,255,.22))}
-.card__f{position:absolute;inset:0;border-radius:12px;overflow:hidden;background:#111 50% 50%/cover no-repeat;box-shadow:0 0 0 1px rgba(255,255,255,.07),0 30px 60px -30px rgba(0,0,0,.9)}
+.card{all:unset;box-sizing:border-box;position:absolute;left:calc(var(--cw) / -2);top:0;width:var(--cw);height:var(--ch);cursor:pointer;will-change:transform,opacity}
+/* only the photo is mirrored on the floor; the number and title sit outside it */
+.card__f{-webkit-box-reflect:below 8px linear-gradient(transparent 62%,rgba(255,255,255,.22));position:absolute;inset:0;border-radius:12px;overflow:hidden;background:#111 50% 50%/cover no-repeat;box-shadow:0 0 0 1px rgba(255,255,255,.07),0 30px 60px -30px rgba(0,0,0,.9)}
 .card__f::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.35),rgba(0,0,0,0) 26%,rgba(0,0,0,0) 52%,rgba(0,0,0,.78))}
 .card__f::after{content:"";position:absolute;inset:0;background:rgba(6,3,3,var(--k,0))}
 .card.is-front .card__f{box-shadow:0 0 0 1px rgba(255,214,160,.28),0 34px 90px -26px rgba(255,120,40,.55),0 30px 60px -30px rgba(0,0,0,.9)}
+.card__n,.card__t{opacity:calc(1 - var(--k,0))}
 .card__n{position:absolute;z-index:2;top:12px;left:0;right:0;text-align:center;font-size:11px;letter-spacing:.24em;font-weight:700;color:rgba(255,255,255,.88)}
 .card__badge{display:block;transition:opacity .3s ease}
 /* the song title on each card, sized from the card width; a trailing (…) goes on its own line */
