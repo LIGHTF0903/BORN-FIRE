@@ -85,8 +85,6 @@ function tick(){pos+=(target-pos)*.12;if(Math.abs(target-pos)<.002&&!drag){pos=t
 const kick=()=>{if(!raf)raf=requestAnimationFrame(tick);};
 function goTo(i){target=target+wrapD(i-Math.round(target));kick();}
 const step=d=>{target=Math.round(target)+d;kick();};
-document.getElementById('flowPrev').onclick=()=>step(-1);
-document.getElementById('flowNext').onclick=()=>step(1);
 fPlay.onclick=()=>play(frontIdx());
 pyre.addEventListener('keydown',e=>{if(th.classList.contains('on'))return;
   if(e.key==='ArrowRight'){e.preventDefault();step(1);}else if(e.key==='ArrowLeft'){e.preventDefault();step(-1);}
