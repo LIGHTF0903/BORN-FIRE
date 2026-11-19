@@ -150,12 +150,13 @@ html.th-open{overflow:hidden}
 .card__name .tl{display:inline-block}.card__name .tl--p{display:block;font-size:.8em;font-weight:700;color:rgba(255,255,255,.85)}
 .card.is-front .card__badge{opacity:0}
 /* tap hint: the word TAP straddling the top-right corner of the centre card (half on, half off), pressing every 2.6s with amber click lines, until the carousel is first touched */
-.tap-hint{position:absolute;z-index:5;left:calc(50% + var(--cw) / 2);top:calc(var(--ch) * .12);transform:translate(-96%,-30%);font-size:clamp(11px,calc(var(--cw) * .08),19px);pointer-events:none;
+.tap-hint{position:absolute;z-index:5;left:calc(50% + var(--cw) / 2);top:calc(var(--ch) * .12);transform:translate(-97%,-34%) rotate(-8deg);font-size:clamp(13px,calc(var(--cw) * .104),24px);pointer-events:none;
   animation:tapIn .5s ease 1.4s both}
-.tap-hint b{display:block;font-family:Anton,Pretendard,sans-serif;font-weight:400;line-height:1;letter-spacing:.19em;margin-right:-.19em;color:#fff;
-  filter:drop-shadow(0 1px 2px rgba(0,0,0,.7)) drop-shadow(0 0 6px rgba(255,170,70,.55));transform-origin:50% 60%;animation:tapPress 2.6s ease-in-out infinite}
-.tap-hint svg{position:absolute;left:100%;bottom:62%;width:.95em;height:.95em;margin-left:.1em;overflow:visible;fill:none;stroke:rgb(255,205,130);stroke-width:2.2;stroke-linecap:round;
-  filter:drop-shadow(0 0 3px rgba(255,170,70,.9));opacity:0;animation:tapClick 2.6s ease-out infinite}
+.tap-hint b{display:block;font-family:Anton,Pretendard,sans-serif;font-weight:400;line-height:1.1;letter-spacing:.18em;margin-right:-.18em;
+  color:transparent;background:linear-gradient(180deg,rgba(255,246,225,1) 15%,rgba(255,165,70,1) 90%);-webkit-background-clip:text;background-clip:text;
+  filter:drop-shadow(0 1px 1.2px rgba(0,0,0,.75)) drop-shadow(0 0 4px rgba(255,140,40,.7));transform-origin:50% 60%;animation:tapPress 2.6s ease-in-out infinite}
+.tap-hint svg{position:absolute;left:100%;bottom:62%;width:.8em;height:.8em;margin-left:.08em;overflow:visible;fill:none;stroke:rgba(255,200,120,1);stroke-width:2;stroke-linecap:round;
+  filter:drop-shadow(0 0 4px rgba(255,140,40,.7));opacity:0;animation:tapClick 2.6s ease-out infinite}
 .pyre.touched .tap-hint{opacity:0;visibility:hidden;animation:none;transition:opacity .3s ease,visibility 0s .3s}
 @keyframes tapIn{from{opacity:0}to{opacity:1}}
 @keyframes tapPress{0%,62%{transform:scale(1)}68%{transform:scale(.84)}76%{transform:scale(1.04)}84%,100%{transform:scale(1)}}
