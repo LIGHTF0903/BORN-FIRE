@@ -24,7 +24,7 @@ const pyre=document.getElementById('flow'), scene=document.getElementById('scene
 ringEl.innerHTML=TRACKS.map((t,i)=>`<button class="card${t[3]?'':' soon'}" type="button" data-i="${i}" tabindex="-1" aria-label="${t[0]} ${t[1]}${t[3]?'':' ('+PAGE.soon+')'}">
   <span class="card__f" style="background-image:url('${photo(i)}')"></span><span class="card__n">${t[0]}</span><span class="card__t"><span class="card__badge">${badge(i)}</span><span class="card__name">${tl(t[1])}</span></span></button>`).join('');
 const cards=[...ringEl.children];
-const fName=document.getElementById('frontName'), fCredit=document.getElementById('frontCredit'), fBadge=document.getElementById('frontBadge'), fPlay=document.getElementById('frontPlay'), fcount=document.getElementById('flowCount'), front=document.getElementById('front');
+const fName=document.getElementById('frontName'), fCredit=document.getElementById('frontCredit'), fBadge=document.getElementById('frontBadge'), fcount=document.getElementById('flowCount'), front=document.getElementById('front');
 const back=[...document.getElementById('tback').children];let backOn=0;
 let pos=TITLE, target=TITLE, raf=0, shown=-1, drag=null, spread=RM?1:0, cw=200;
 const frontIdx=()=>idx(Math.round(pos));
@@ -42,21 +42,24 @@ function render(){const gap=cw*.74, far=cw*.46;
 function showFront(i){const first=shown<0;shown=i;
   // the room behind: cross-fade to this song's photo
   const nb=back[backOn^1];nb.style.backgroundImage=`url('${photo(i)}')`;nb.classList.add('on');back[backOn].classList.remove('on');backOn^=1;
-  const set=()=>{fBadge.innerHTML=badge(i);if(fName)fName.innerHTML=tl(TRACKS[i][1]);fCredit.innerHTML=credit(i);fPlay.hidden=!TRACKS[i][3];front.classList.remove('swap');};
+  const set=()=>{fBadge.innerHTML=badge(i);if(fName)fName.innerHTML=tl(TRACKS[i][1]);fCredit.innerHTML=credit(i);front.classList.remove('swap');};
   fcount.innerHTML=`<b>${TRACKS[i][0]}</b> / ${String(N).padStart(2,'0')}`;
   if(first||RM){set();return;}front.classList.add('swap');clearTimeout(showFront.t);showFront.t=setTimeout(set,180);}
 function tick(){pos+=(target-pos)*.12;if(Math.abs(target-pos)<.002&&!drag){pos=target;render();raf=0;return;}render();raf=requestAnimationFrame(tick);}
 const kick=()=>{if(!raf)raf=requestAnimationFrame(tick);};
-function goTo(i){target=target+wrapD(i-Math.round(target));kick();}
-const step=d=>{target=Math.round(target)+d;kick();};
-fPlay.onclick=()=>play(frontIdx());
+function goTo(i){touched();target=target+wrapD(i-Math.round(target));kick();}
+const step=d=>{touched();target=Math.round(target)+d;kick();};
+// the tap hint on the centre card goes away for good (until reload) once the carousel is touched in any way
+const touched=()=>pyre.classList.add('touched');
+// it sits over the centre card's top-right corner (outside the 3D cards, so nothing clips it)
+scene.insertAdjacentHTML('beforeend','<span class="tap-hint" aria-hidden="true"><b>TAP</b><svg viewBox="0 0 16 16"><path d="M2 9.5 3.5 4M6.5 11.5 11 7.5M7.5 15.5l5.5-.5"/></svg></span>');
 pyre.addEventListener('keydown',e=>{if(th.classList.contains('on'))return;
   if(e.key==='ArrowRight'){e.preventDefault();step(1);}else if(e.key==='ArrowLeft'){e.preventDefault();step(-1);}
   else if(e.key==='Enter'&&(e.target===pyre)){play(frontIdx());}});
 // drag / swipe: one card's spacing of movement moves one place; a flick carries on
 scene.addEventListener('pointerdown',e=>{if(e.button!==0)return;drag={x:e.clientX,y:e.clientY,p:pos,moved:false,id:e.pointerId,lx:e.clientX,lt:performance.now(),v:0};});
 addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-drag.x;
-  if(!drag.moved){if(Math.abs(dx)<6)return;if(Math.abs(e.clientY-drag.y)>Math.abs(dx)){drag=null;return;}drag.moved=true;scene.classList.add('dragging');try{scene.setPointerCapture(drag.id);}catch(_){}}
+  if(!drag.moved){if(Math.abs(dx)<6)return;if(Math.abs(e.clientY-drag.y)>Math.abs(dx)){drag=null;return;}drag.moved=true;touched();scene.classList.add('dragging');try{scene.setPointerCapture(drag.id);}catch(_){}}
   const now=performance.now();drag.v=(e.clientX-drag.lx)/Math.max(1,now-drag.lt);drag.lx=e.clientX;drag.lt=now;
   pos=target=drag.p-dx/(cw*.74);render();});
 function endDrag(cancel){if(!drag)return;const d=drag;drag=null;scene.classList.remove('dragging');if(!d.moved)return;
@@ -86,7 +89,7 @@ const hideEnd=()=>{if(fpend.contains(document.activeElement))thX.focus({preventS
 // the player shows as soon as it is created (the song photo stays underneath while YouTube loads)
 let liveT=0;const goLive=()=>{clearTimeout(liveT);fplayer.classList.add('live');};
 function onInlState(e){if(e.data===YT.PlayerState.ENDED)fpend.hidden=false;else if(e.data===YT.PlayerState.PLAYING){hideEnd();goLive();}}
-function play(i){const t=TRACKS[i];if(!t||!t[3])return;if(window.pauseStage)window.pauseStage();cur=i;hideEnd();
+function play(i){touched();const t=TRACKS[i];if(!t||!t[3])return;if(window.pauseStage)window.pauseStage();cur=i;hideEnd();
   const n=TRACKS[nextPlayable(i)];document.getElementById('fpendNext').textContent=n[0]+'. '+n[1];
   thT.innerHTML=`<span style="color:var(--fire-2)">${t[0]}</span>&nbsp; ${badge(i)}${tl(t[1])}`;thC.innerHTML=credit(i);thBg.style.backgroundImage=`url('${photo(i)}')`;
   if(th.dataset.closing)return;
