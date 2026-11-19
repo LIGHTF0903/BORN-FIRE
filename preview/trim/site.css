@@ -192,13 +192,17 @@ html.th-open{overflow:hidden}
 }
 @media (max-width:600px){.pyre{--cw:clamp(130px,42vw,176px)}.front{min-height:70px}.scene{margin-top:4px;height:calc(var(--ch) * 1.42)}}
 /* phones held upright: the intro fills one screen below the nav with its content centred, so the tracklist never
-   peeks in half-cut. The tracklist (title to 08 / 12) also fills its own screen: the cards are sized from the
-   screen height so there's no empty band under them, and the YouTube / Instagram box only starts below it. */
+   peeks in half-cut. The tracklist (title to 08 / 12) also fills its own screen (card size unchanged): the title and
+   the gaps grow with the screen height so there's no empty band, and the YouTube / Instagram box starts below it. */
 @media (max-width:600px) and (orientation:portrait){
   .manifesto{box-sizing:border-box;min-height:100svh;padding:60px 0 0;display:flex;flex-direction:column;justify-content:center}
+  /* the album cover sits above the intro text so the full-screen intro doesn't feel empty */
+  .manifesto .wrap::before{content:"";display:block;width:min(52vw,30svh,250px);aspect-ratio:1;margin:0 auto 4svh;border-radius:10px;
+    background:url(../../assets/listen/cover.jpg) center/cover;box-shadow:0 24px 60px -20px rgba(255,120,40,.55),0 0 0 1px rgba(255,255,255,.08)}
   #tracks{padding-top:60px;scroll-margin-top:-64px}
-  .pyre{--cw:clamp(130px,min(52vw,calc((100svh - 330px) / 1.7)),230px);box-sizing:border-box;min-height:calc(100svh - 60px);padding:1svh 0 3svh;align-content:center}
-  .pyre>.head{margin-bottom:2.5svh}.front{margin-top:calc(var(--ch) * -.12)}.pyre>.flow__ctrl{margin-top:2.5svh}
+  .pyre{box-sizing:border-box;min-height:calc(100svh - 60px);padding:1svh 0 3svh;align-content:center}
+  .pyre>.head{margin-bottom:4svh}.head h2{font-size:min(13vw,7svh)}.head p{margin-top:1.2svh}
+  .front{margin-top:calc(var(--ch) * -.1)}.pyre>.flow__ctrl{margin-top:3.5svh}
 }
 /* ---------- THEATRE (the card you tapped grows into the video) ---------- */
 .th{position:fixed;inset:0;z-index:95;display:flex;align-items:center;justify-content:center;visibility:hidden;pointer-events:none;
