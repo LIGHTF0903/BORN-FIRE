@@ -192,11 +192,13 @@ html.th-open{overflow:hidden}
 }
 @media (max-width:600px){.pyre{--cw:clamp(130px,42vw,176px)}.front{min-height:70px}.scene{margin-top:4px;height:calc(var(--ch) * 1.42)}}
 /* phones held upright: the intro fills one screen below the nav with its content centred, so the tracklist never
-   peeks in half-cut; the tracklist starts just under the nav and the song info sits up on the faded reflection */
+   peeks in half-cut. The tracklist (title to 08 / 12) also fills its own screen: the cards are sized from the
+   screen height so there's no empty band under them, and the YouTube / Instagram box only starts below it. */
 @media (max-width:600px) and (orientation:portrait){
   .manifesto{box-sizing:border-box;min-height:100svh;padding:60px 0 0;display:flex;flex-direction:column;justify-content:center}
-  #tracks{padding-top:calc(60px + 5svh);scroll-margin-top:-64px}
-  .front{margin-top:calc(var(--ch) * -.17)}
+  #tracks{padding-top:60px;scroll-margin-top:-64px}
+  .pyre{--cw:clamp(130px,min(52vw,calc((100svh - 330px) / 1.7)),230px);box-sizing:border-box;min-height:calc(100svh - 60px);padding:1svh 0 3svh;align-content:center}
+  .pyre>.head{margin-bottom:2.5svh}.front{margin-top:calc(var(--ch) * -.12)}.pyre>.flow__ctrl{margin-top:2.5svh}
 }
 /* ---------- THEATRE (the card you tapped grows into the video) ---------- */
 .th{position:fixed;inset:0;z-index:95;display:flex;align-items:center;justify-content:center;visibility:hidden;pointer-events:none;
