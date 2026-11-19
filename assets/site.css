@@ -202,6 +202,8 @@ html.th-open{overflow:hidden}
   /* the album cover sits above the intro text so the full-screen intro doesn't feel empty */
   .manifesto .wrap::before{content:"";display:block;width:min(52vw,30svh,250px);aspect-ratio:1;margin:0 auto 4svh;border-radius:10px;
     background:url(listen/cover.jpg) center/cover;box-shadow:0 24px 60px -20px rgba(255,120,40,.55),0 0 0 1px rgba(255,255,255,.08)}
+  /* the Scroll link on the video lands the intro a little higher (halfway between the default stop and flush under the nav) */
+  #album{scroll-margin-top:-32px}
   #tracks{padding-top:60px;scroll-margin-top:-64px}
   .pyre{box-sizing:border-box;min-height:calc(100svh - 60px);padding:1svh 0 3svh;align-content:center}
   .pyre>.head{margin-bottom:4svh}.head h2{font-size:min(13vw,7svh)}.head p{margin-top:1.2svh}
@@ -386,3 +388,7 @@ footer a{color:var(--muted);text-decoration:none} footer a:hover{color:var(--fg)
 .more .btn:hover{transform:translateY(-3px)}.more .btn:hover svg{filter:drop-shadow(0 0 26px currentColor)}
 .more .btn:focus-visible{outline:2px solid var(--fire-2);outline-offset:6px;border-radius:6px}
 @media (max-width:600px){.more .more__btns{gap:clamp(28px,10vw,48px)}.more .btn svg{width:40px;height:40px}.more .more__txt{margin-bottom:20px}}
+
+/* the video window has no visible close (X) button: tapping outside the video or Esc closes it.
+   The button stays for keyboard and screen-reader users and only shows when reached with the keyboard. */
+.th__x:not(:focus-visible){opacity:0;pointer-events:none;clip-path:inset(50%)}
