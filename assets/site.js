@@ -91,7 +91,7 @@ let liveT=0;const goLive=()=>{clearTimeout(liveT);fplayer.classList.add('live');
 function onInlState(e){if(e.data===YT.PlayerState.ENDED)fpend.hidden=false;else if(e.data===YT.PlayerState.PLAYING){hideEnd();goLive();}}
 function play(i){touched();const t=TRACKS[i];if(!t||!t[3])return;if(window.pauseStage)window.pauseStage();cur=i;hideEnd();
   const n=TRACKS[nextPlayable(i)];document.getElementById('fpendNext').textContent=n[0]+'. '+n[1];
-  thT.innerHTML=`<span style="color:var(--fire-2)">${t[0]}</span>&nbsp; ${badge(i)}${tl(t[1])}`;thC.innerHTML=credit(i);thBg.style.backgroundImage=`url('${photo(i)}')`;
+  const b=badge(i);thT.innerHTML=`${b?`<span class="th__b">${b}</span>`:''}<span style="color:var(--fire-2)">${t[0]}</span>&nbsp; ${tl(t[1])}`;thC.innerHTML=credit(i);thBg.style.backgroundImage=`url('${photo(i)}')`;
   if(th.dataset.closing)return;
   clearTimeout(liveT);fplayer.classList.remove('live');fplayer.style.backgroundImage=`url('${photo(i)}')`;
   let wait=0;
