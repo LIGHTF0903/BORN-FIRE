@@ -204,6 +204,27 @@ html.th-open{overflow:hidden}
   .pyre>.head{margin-bottom:4svh}.head h2{font-size:min(13vw,7svh)}.head p{margin-top:1.2svh}
   .front{margin-top:calc(var(--ch) * -.1)}.pyre>.flow__ctrl{margin-top:3.5svh}
 }
+/* PC: the intro fills one screen below the nav with its content centred, so the tracklist never peeks in under it;
+   the album cover sits above the text (text sizes unchanged), the cover sized from the screen height so it fits */
+@media (min-width:601px) and (min-height:501px){
+  .manifesto{box-sizing:border-box;min-height:100svh;padding:60px 0 2.5svh;display:flex;flex-direction:column;justify-content:center}
+  .manifesto .wrap::before{content:"";display:block;width:clamp(130px,calc(100svh - 520px),280px);aspect-ratio:1;margin:0 auto 3svh;border-radius:12px;
+    background:url(listen/cover.jpg) center/cover;box-shadow:0 30px 80px -24px rgba(255,120,40,.55),0 0 0 1px rgba(255,255,255,.08)}
+  /* PC: the jump to the tracklist is a plain orange text link with a down arrow (no button shape) */
+  .manifesto .go{gap:8px;margin-top:min(36px,4svh);padding:6px 2px;border:0;border-bottom:1px solid rgba(255,170,90,.45);border-radius:0;background:none;
+    letter-spacing:.04em;color:var(--fire-2);transition:border-color .2s ease,color .2s ease}
+  .manifesto .go:hover{background:none;color:#ffd29a;border-color:var(--fire-2)}
+  .manifesto .go i{display:none}
+  .manifesto .go::after{content:"\2193";font-size:1.1em;transition:transform .25s ease}
+  .manifesto .go:hover::after{transform:translateY(3px)}
+  /* the headline stays big and fills the screen; the cover gives way to it on shorter screens */
+  .manifesto h1{font-size:clamp(72px,min(6vw,12svh),86px)}
+  /* the English headline runs to three lines, so its cover is a little smaller, and left out on short screens */
+  /* the English headline runs to three lines, so it is a little smaller than the Korean one; the cover stays the same size */
+  html[lang=en] .manifesto h1{font-size:clamp(52px,min(4.2vw,8svh),64px)}
+}
+/* PC: the tracklist (title to 08 / 12) also takes its own screen, centred, so the YouTube / Instagram box starts below it */
+@media (min-width:601px) and (min-height:501px){#tracks .pyre{min-height:calc(100svh - 76px);align-content:center}#tracks .pyre>.head{margin-bottom:3svh}#tracks .pyre>.flow__ctrl{margin-top:3.5svh}}
 /* ---------- THEATRE (the card you tapped grows into the video) ---------- */
 .th{position:fixed;inset:0;z-index:95;display:flex;align-items:center;justify-content:center;visibility:hidden;pointer-events:none;
   background:radial-gradient(ellipse at center,#160b08,#040202);opacity:0;transition:opacity .55s ease,visibility 0s .55s}
@@ -356,3 +377,15 @@ footer a{color:var(--muted);text-decoration:none} footer a:hover{color:var(--fg)
   .front .badge{margin:0 0 4px}.front__name{font-size:16px}.front__credit{font-size:11px}
   .flow__ctrl{margin-top:4px;gap:4px}.flow__hint{font-size:10.5px;line-height:1.45}
 }
+
+/* ---------- more: icon row under the tracklist (no box, no button shapes) ---------- */
+.more{margin-top:clamp(36px,6svh,64px);padding:0;border:0;border-radius:0;background:none;display:block;text-align:center}
+.more .more__txt{margin:0 0 24px;font-size:15px;line-height:1.5;color:var(--muted);font-weight:400}
+.more .more__btns{display:flex;flex-direction:row;flex-wrap:nowrap;justify-content:center;gap:clamp(36px,7vw,96px)}
+.more .btn{display:flex;flex-direction:column;align-items:center;gap:12px;padding:4px 2px;border:0;border-radius:0;background:none;box-shadow:none;
+  color:#fff;font-family:inherit;font-size:14px;font-weight:600;letter-spacing:.02em;cursor:pointer;transition:transform .25s ease}
+.more .btn svg{width:46px;height:46px;filter:drop-shadow(0 0 16px currentColor);transition:filter .25s ease}
+.more .btn-yt svg{color:#ff3b3b}.more .btn-ig svg{color:#ff5fa2}.more .btn-listen svg{color:#ff9a3c}
+.more .btn:hover{transform:translateY(-3px)}.more .btn:hover svg{filter:drop-shadow(0 0 26px currentColor)}
+.more .btn:focus-visible{outline:2px solid var(--fire-2);outline-offset:6px;border-radius:6px}
+@media (max-width:600px){.more .more__btns{gap:clamp(28px,10vw,48px)}.more .btn svg{width:40px;height:40px}.more .more__txt{margin-bottom:20px}}
