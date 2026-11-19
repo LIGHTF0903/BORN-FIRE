@@ -22,7 +22,7 @@ const wrapD=d=>{d=idx(d);return d>N/2?d-N:d;};
    ===================================================================================== */
 const pyre=document.getElementById('flow'), scene=document.getElementById('scene'), ringEl=document.getElementById('ring');
 ringEl.innerHTML=TRACKS.map((t,i)=>`<button class="card${t[3]?'':' soon'}" type="button" data-i="${i}" tabindex="-1" aria-label="${t[0]} ${t[1]}${t[3]?'':' ('+PAGE.soon+')'}">
-  <span class="card__f" style="background-image:url('${photo(i)}')"></span><span class="card__n">${t[0]}</span><span class="card__tap" aria-hidden="true"><i></i><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l10.5-6.5z"/></svg></span><span class="card__t"><span class="card__badge">${badge(i)}</span><span class="card__name">${tl(t[1])}</span></span></button>`).join('');
+  <span class="card__f" style="background-image:url('${photo(i)}')"></span><span class="card__n">${t[0]}</span><span class="card__t"><span class="card__badge">${badge(i)}</span><span class="card__name">${tl(t[1])}</span></span></button>`).join('');
 const cards=[...ringEl.children];
 const fName=document.getElementById('frontName'), fCredit=document.getElementById('frontCredit'), fBadge=document.getElementById('frontBadge'), fcount=document.getElementById('flowCount'), front=document.getElementById('front');
 const back=[...document.getElementById('tback').children];let backOn=0;
@@ -51,6 +51,8 @@ function goTo(i){touched();target=target+wrapD(i-Math.round(target));kick();}
 const step=d=>{touched();target=Math.round(target)+d;kick();};
 // the tap hint on the centre card goes away for good (until reload) once the carousel is touched in any way
 const touched=()=>pyre.classList.add('touched');
+// it sits over the centre card's top-right corner (outside the 3D cards, so nothing clips it)
+scene.insertAdjacentHTML('beforeend','<span class="tap-hint" aria-hidden="true"><b>TAP</b><svg viewBox="0 0 16 16"><path d="M2 9.5 3.5 4M6.5 11.5 11 7.5M7.5 15.5l5.5-.5"/></svg></span>');
 pyre.addEventListener('keydown',e=>{if(th.classList.contains('on'))return;
   if(e.key==='ArrowRight'){e.preventDefault();step(1);}else if(e.key==='ArrowLeft'){e.preventDefault();step(-1);}
   else if(e.key==='Enter'&&(e.target===pyre)){play(frontIdx());}});
