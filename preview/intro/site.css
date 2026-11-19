@@ -207,14 +207,14 @@ html.th-open{overflow:hidden}
 /* PC: the intro fills one screen below the nav with its content centred, so the tracklist never peeks in under it;
    the album cover sits above the text (text sizes unchanged), the cover sized from the screen height so it fits */
 @media (min-width:601px) and (min-height:501px){
-  .manifesto{box-sizing:border-box;min-height:100svh;padding:60px 0 0;display:flex;flex-direction:column;justify-content:center}
-  .manifesto .wrap::before{content:"";display:block;width:clamp(130px,calc(100svh - 530px),320px);aspect-ratio:1;margin:0 auto 3svh;border-radius:12px;
+  .manifesto{box-sizing:border-box;min-height:100svh;padding:60px 0 2.5svh;display:flex;flex-direction:column;justify-content:center}
+  .manifesto .wrap::before{content:"";display:block;width:clamp(120px,calc(100svh - 580px),300px);aspect-ratio:1;margin:0 auto 3svh;border-radius:12px;
     background:url(../../assets/listen/cover.jpg) center/cover;box-shadow:0 30px 80px -24px rgba(255,120,40,.55),0 0 0 1px rgba(255,255,255,.08)}
   .manifesto .go{margin-top:min(36px,4svh)}
   /* the English headline runs to three lines, so its cover is a little smaller, and left out on short screens */
-  html[lang=en] .manifesto .wrap::before{width:min(320px,calc(100svh - 650px))}
+  html[lang=en] .manifesto .wrap::before{width:min(280px,calc(100svh - 690px))}
 }
-@media (min-width:601px) and (min-height:501px) and (max-height:799px){html[lang=en] .manifesto .wrap::before{display:none}}
+@media (min-width:601px) and (min-height:501px) and (max-height:839px){html[lang=en] .manifesto .wrap::before{display:none}}
 /* PC: the tracklist (title to 08 / 12) also takes its own screen, centred, so the YouTube / Instagram box starts below it */
 @media (min-width:601px) and (min-height:501px){#tracks .pyre{min-height:calc(100svh - 76px);align-content:center}#tracks .pyre>.head{margin-bottom:3svh}#tracks .pyre>.flow__ctrl{margin-top:3.5svh}}
 /* ---------- THEATRE (the card you tapped grows into the video) ---------- */
