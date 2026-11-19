@@ -191,6 +191,13 @@ html.th-open{overflow:hidden}
   @media (max-width:1180px){.pyre{--ch:min(calc(clamp(150px,16vw,232px) * 1.4),calc((100svh - 480px) / 1.28))}}
 }
 @media (max-width:600px){.pyre{--cw:clamp(130px,42vw,176px)}.front{min-height:70px}.scene{margin-top:4px;height:calc(var(--ch) * 1.42)}}
+/* phones held upright: the intro fills one screen below the nav with its content centred, so the tracklist never
+   peeks in half-cut; the tracklist starts just under the nav and the song info sits up on the faded reflection */
+@media (max-width:600px) and (orientation:portrait){
+  .manifesto{box-sizing:border-box;min-height:100svh;padding:60px 0 0;display:flex;flex-direction:column;justify-content:center}
+  #tracks{padding-top:calc(60px + 5svh);scroll-margin-top:-64px}
+  .front{margin-top:calc(var(--ch) * -.17)}
+}
 /* ---------- THEATRE (the card you tapped grows into the video) ---------- */
 .th{position:fixed;inset:0;z-index:95;display:flex;align-items:center;justify-content:center;visibility:hidden;pointer-events:none;
   background:radial-gradient(ellipse at center,#160b08,#040202);opacity:0;transition:opacity .55s ease,visibility 0s .55s}
