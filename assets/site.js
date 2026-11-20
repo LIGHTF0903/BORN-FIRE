@@ -247,7 +247,13 @@ b.addEventListener('click',e=>{let p=null;try{p=navigator.clipboard&&navigator.c
   document.addEventListener('click',e=>{if(e.defaultPrevented||e.button!==0||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey)return;
     const a=e.target.closest&&e.target.closest('a[href^="#"]');if(!a)return;const id=decodeURIComponent(a.getAttribute('href').slice(1));
     const el=id&&document.getElementById(id);if(!el)return;e.preventDefault();go(el);});
-  // Opened with #… already in the address (an old or shared link): the browser shows that section as before,
-  // then the #… is dropped from the address once the page has loaded
-  if(location.hash)addEventListener('load',()=>setTimeout(()=>history.replaceState(history.state,'',location.pathname+location.search),0),{once:true});
+  // Where the page opens (the <head> script switched off the browser's own scroll restoration and removed any #…):
+  // a refresh / back / forward returns to the spot the visitor left; an opened #… link shows that section; otherwise the top.
+  const KEY='bf-y:'+location.pathname, nt=(performance.getEntriesByType('navigation')[0]||{}).type;
+  addEventListener('pagehide',()=>{try{sessionStorage.setItem(KEY,String(Math.round(scrollY)));}catch(_){}});
+  let place=null;
+  if(window.BF_HASH){const el=document.getElementById(decodeURIComponent(window.BF_HASH));if(el)place=()=>el.scrollIntoView({behavior:'instant',block:'start'});}
+  else if(nt==='reload'||nt==='back_forward'){let y=null;try{y=sessionStorage.getItem(KEY);}catch(_){}if(y!==null&&+y>0)place=()=>scrollTo({top:+y,behavior:'instant'});}
+  if(place){let moved=false;const stop=()=>{moved=true;};['wheel','touchstart','keydown','mousedown'].forEach(ev=>addEventListener(ev,stop,{passive:true,once:true}));
+    place();addEventListener('load',()=>{if(!moved)place();},{once:true});}
 })();
