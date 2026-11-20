@@ -24,7 +24,7 @@ const pyre=document.getElementById('flow'), scene=document.getElementById('scene
 ringEl.innerHTML=TRACKS.map((t,i)=>`<button class="card${t[3]?'':' soon'}" type="button" data-i="${i}" tabindex="-1" aria-label="${t[0]} ${t[1]}${t[3]?'':' ('+PAGE.soon+')'}">
   <span class="card__f" style="background-image:url('${photo(i)}')"></span><span class="card__n">${t[0]}</span><span class="card__t"><span class="card__badge">${badge(i)}</span><span class="card__name">${tl(t[1])}</span></span></button>`).join('');
 const cards=[...ringEl.children];
-const fName=document.getElementById('frontName'), fCredit=document.getElementById('frontCredit'), fBadge=document.getElementById('frontBadge'), fcount=document.getElementById('flowCount'), front=document.getElementById('front');
+const fCredit=document.getElementById('frontCredit'), fBadge=document.getElementById('frontBadge'), fcount=document.getElementById('flowCount'), front=document.getElementById('front');
 const back=[...document.getElementById('tback').children];let backOn=0;
 let pos=TITLE, target=TITLE, raf=0, shown=-1, drag=null, spread=RM?1:0, cw=200;
 const frontIdx=()=>idx(Math.round(pos));
@@ -37,12 +37,14 @@ function render(){const gap=cw*.74, far=cw*.46;
     c.style.opacity=(a>3.6?0:a>2.6?3.6-a:1)*(spread<1?Math.min(1,spread*1.4+(a<.5?1:0)):1);
     c.style.zIndex=String(100-Math.round(a*10));c.style.visibility=a>3.7?'hidden':'visible';
     c.style.setProperty('--k',Math.min(.72,a*.26).toFixed(3));
-    const isF=a<.5;if(isF!==c.classList.contains('is-front')){c.classList.toggle('is-front',isF);c.tabIndex=isF?0:-1;}});
+    const isF=a<.5;if(isF!==c.classList.contains('is-front')){c.classList.toggle('is-front',isF);c.tabIndex=isF?0:-1;
+      // keyboard focus follows the front card, so ← / → then Enter plays the song now in front
+      if(isF&&cards.includes(document.activeElement))c.focus({preventScroll:true});}});
   const f=frontIdx();if(f!==shown)showFront(f);}
 function showFront(i){const first=shown<0;shown=i;
   // the room behind: cross-fade to this song's photo
   const nb=back[backOn^1];nb.style.backgroundImage=`url('${photo(i)}')`;nb.classList.add('on');back[backOn].classList.remove('on');backOn^=1;
-  const set=()=>{fBadge.innerHTML=badge(i);if(fName)fName.innerHTML=tl(TRACKS[i][1]);fCredit.innerHTML=credit(i);front.classList.remove('swap');};
+  const set=()=>{fBadge.innerHTML=badge(i);fCredit.innerHTML=credit(i);front.classList.remove('swap');};
   fcount.innerHTML=`<b>${TRACKS[i][0]}</b> / ${String(N).padStart(2,'0')}`;
   if(first||RM){set();return;}front.classList.add('swap');clearTimeout(showFront.t);showFront.t=setTimeout(set,180);}
 function tick(){pos+=(target-pos)*.12;if(Math.abs(target-pos)<.002&&!drag){pos=target;render();raf=0;return;}render();raf=requestAnimationFrame(tick);}
@@ -83,30 +85,28 @@ new IntersectionObserver((es,o)=>{if(!es[0].isIntersecting)return;o.disconnect()
    ===================================================================================== */
 const th=document.getElementById('th'), thBg=document.getElementById('thBg'), ghost=document.getElementById('ghost'), fplayer=document.getElementById('fplayer'), fpFrame=document.getElementById('fplayerFrame');
 const fpend=document.getElementById('fpend'), thT=document.getElementById('thTitle'), thC=document.getElementById('thCredit'), thX=document.getElementById('thClose');
-let mkT=0, inl=null, cur=-1, ytWait=0, thT0=0, opener=null;
+let inl=null, cur=-1, ytWait=0, thT0=0, opener=null;
 function nextPlayable(i,dir=1){for(let s=1;s<=N;s++){const j=idx(i+dir*s);if(TRACKS[j][3])return j;}return i;}
 const hideEnd=()=>{if(fpend.contains(document.activeElement))thX.focus({preventScroll:true});fpend.hidden=true;};
 // the player shows as soon as it is created (the song photo stays underneath while YouTube loads)
-let liveT=0;const goLive=()=>{clearTimeout(liveT);fplayer.classList.add('live');};
-function onInlState(e){if(e.data===YT.PlayerState.ENDED)fpend.hidden=false;else if(e.data===YT.PlayerState.PLAYING){hideEnd();goLive();}}
+const goLive=()=>fplayer.classList.add('live');
+function onInlState(e){if(e.data===YT.PlayerState.ENDED)fpend.hidden=false;else if(e.data===YT.PlayerState.PLAYING)hideEnd();}
 function play(i){touched();const t=TRACKS[i];if(!t||!t[3])return;if(window.pauseStage)window.pauseStage();cur=i;hideEnd();
   const n=TRACKS[nextPlayable(i)];document.getElementById('fpendNext').textContent=n[0]+'. '+n[1];
   const b=badge(i);thT.innerHTML=`${b?`<span class="th__b">${b}</span>`:''}<span style="color:var(--fire-2)">${t[0]}</span>&nbsp; ${tl(t[1])}`;thC.innerHTML=credit(i);thBg.style.backgroundImage=`url('${photo(i)}')`;
   if(th.dataset.closing)return;
-  clearTimeout(liveT);fplayer.classList.remove('live');fplayer.style.backgroundImage=`url('${photo(i)}')`;
-  let wait=0;
-  if(!th.classList.contains('on')){opener=document.activeElement;wait=0;
+  fplayer.classList.remove('live');fplayer.style.backgroundImage=`url('${photo(i)}')`;
+  if(!th.classList.contains('on')){opener=document.activeElement;
     thT0=performance.now();th.classList.add('on');th.removeAttribute('aria-hidden');document.documentElement.classList.add('th-open');
     grow(cards[i].querySelector('.card__f'),i,true);thX.focus({preventScroll:true});}
-  if(inl&&inl.loadVideoById){inl.loadVideoById(t[3]);goLive();return;}
+  const name=()=>{const f=fpFrame.querySelector('iframe');if(f)f.title=`${t[1]} — ${PAGE.live}`;};
+  if(inl&&inl.loadVideoById){inl.loadVideoById(t[3]);name();goLive();return;}
   fpFrame.innerHTML='<div id="fpYT"></div>';inl=null;
   const mk=()=>{inl=new YT.Player('fpYT',{videoId:t[3],host:'https://www.youtube-nocookie.com',
-    playerVars:Object.assign({autoplay:1,rel:0,playsinline:1,modestbranding:1},window.__MUTE_CARDS?{mute:1}:{}),events:{onReady:e=>{e.target.playVideo();clearTimeout(liveT);liveT=setTimeout(goLive,1500);},onStateChange:onInlState}});
-    const f=fpFrame.querySelector('iframe');if(f)f.title=`${t[1]} — ${PAGE.live}`;
-    goLive();};  // the YouTube player shows right away, even while it is still loading
-  // the player is built after the photo has settled, so building it never stutters the animation
-  clearInterval(ytWait);clearTimeout(mkT);const start=()=>{if(cur!==i||!th.classList.contains('on')||th.dataset.closing)return;if(window.YT&&YT.Player)mk();else{ytWait=setInterval(()=>{if(window.YT&&YT.Player){clearInterval(ytWait);mk();}},100);}};
-  if(wait)mkT=setTimeout(start,wait);else start();}
+    playerVars:Object.assign({autoplay:1,rel:0,playsinline:1,modestbranding:1},window.__MUTE_CARDS?{mute:1}:{}),events:{onReady:e=>e.target.playVideo(),onStateChange:onInlState}});
+    name();goLive();};  // the YouTube player shows right away, even while it is still loading
+  // until the YouTube API has loaded, wait for it (a new song or closing the window cancels the wait)
+  clearInterval(ytWait);if(window.YT&&YT.Player)mk();else ytWait=setInterval(()=>{if(window.YT&&YT.Player){clearInterval(ytWait);mk();}},100);}
 // the card's photo lifts out and grows to the player's place (open), or shrinks back onto the card (close)
 let growT=0;
 function grow(cardEl,i,open){clearTimeout(growT);
@@ -123,11 +123,10 @@ function grow(cardEl,i,open){clearTimeout(growT);
   if(!open)th.classList.remove('in');
   void ghost.offsetWidth;ghost.classList.add('go');
   Object.assign(ghost.style,box(to),{borderRadius:open?pr:'12px'});
-  // open: the player (already showing the same photo) appears under the photo first, then the photo lifts away, so nothing dips
   // open: when the photo is nearly in place (~85%), the player (YouTube, loaded or not) takes over while the photo fades
   if(open){growT=setTimeout(()=>{th.classList.add('in');ghost.style.opacity='0';growT=setTimeout(done,420);},300);}
   else growT=setTimeout(done,620);}
-function closeTh(){if(!th.classList.contains('on')||th.dataset.closing)return;th.dataset.closing='1';clearInterval(ytWait);clearTimeout(mkT);clearTimeout(liveT);
+function closeTh(){if(!th.classList.contains('on')||th.dataset.closing)return;th.dataset.closing='1';clearInterval(ytWait);
   if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});
   document.documentElement.classList.remove('th-open');
   try{inl&&inl.destroy();}catch(_){}inl=null;fpFrame.innerHTML='';fpend.hidden=true;
@@ -184,7 +183,7 @@ document.querySelectorAll('.rv').forEach(el=>io.observe(el));
     if(SAVE)return;
     player=new YT.Player('stage-player',{videoId:VID,host:'https://www.youtube-nocookie.com',
       playerVars:Object.assign({autoplay:1,mute:1,controls:0,start:START,playsinline:1,rel:0,modestbranding:1,disablekb:1,iv_load_policy:3,fs:0},
-        matchMedia('(hover: hover) and (pointer: fine)').matches?{vq:'hd1080'}:{}),  // PC: ask for 1080p; phones/tablets: YouTube picks automatically
+        FINE?{vq:'hd1080'}:{}),  // PC: ask for 1080p; phones/tablets: YouTube picks automatically
       events:{
         onReady:e=>{ready=true;e.target.mute();e.target.getIframe().tabIndex=-1;},  // autoplay=1 starts it; extra playVideo() calls make YouTube flash its play/pause icon; tabIndex: decorative (aria-hidden), kept out of the Tab order
         onStateChange:e=>{if(e.data===YT.PlayerState.PLAYING)stage.classList.add('playing');
@@ -252,7 +251,7 @@ b.addEventListener('click',e=>{let p=null;try{p=navigator.clipboard&&navigator.c
   const KEY='bf-y:'+location.pathname, nt=(performance.getEntriesByType('navigation')[0]||{}).type;
   addEventListener('pagehide',()=>{try{sessionStorage.setItem(KEY,String(Math.round(scrollY)));}catch(_){}});
   let place=null;
-  if(window.BF_HASH){const el=document.getElementById(decodeURIComponent(window.BF_HASH));if(el)place=()=>el.scrollIntoView({behavior:'instant',block:'start'});}
+  if(window.BF_HASH){let id=window.BF_HASH;try{id=decodeURIComponent(id);}catch(_){}const el=document.getElementById(id);if(el)place=()=>el.scrollIntoView({behavior:'instant',block:'start'});}
   else if(nt==='reload'||nt==='back_forward'){let y=null;try{y=sessionStorage.getItem(KEY);}catch(_){}if(y!==null&&+y>0)place=()=>scrollTo({top:+y,behavior:'instant'});}
   if(place){let moved=false;const stop=()=>{moved=true;};['wheel','touchstart','keydown','mousedown'].forEach(ev=>addEventListener(ev,stop,{passive:true,once:true}));
     place();addEventListener('load',()=>{if(!moved)place();},{once:true});}
