@@ -239,3 +239,15 @@ b.addEventListener('click',e=>{let p=null;try{p=navigator.clipboard&&navigator.c
   e.preventDefault();
   const show=()=>{if(o){o.classList.add('on');}};
   if(p)p.then(()=>{t.textContent=b.dataset.copied;clearTimeout(h);h=setTimeout(()=>{t.textContent=orig;},1500);show();}).catch(show);else show();});})();
+// In-page links (nav, Scroll, 'watch every song') scroll to their section without adding #… to the address,
+// so a refresh stays where the visitor was instead of jumping back to that section.
+(function(){
+  const go=el=>{if(!el.hasAttribute('tabindex')&&!el.matches('a[href],button,input,select,textarea'))el.setAttribute('tabindex','-1');
+    el.focus({preventScroll:true});el.scrollIntoView({block:'start'});};
+  document.addEventListener('click',e=>{if(e.defaultPrevented||e.button!==0||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey)return;
+    const a=e.target.closest&&e.target.closest('a[href^="#"]');if(!a)return;const id=decodeURIComponent(a.getAttribute('href').slice(1));
+    const el=id&&document.getElementById(id);if(!el)return;e.preventDefault();go(el);});
+  // Opened with #… already in the address (an old or shared link): the browser shows that section as before,
+  // then the #… is dropped from the address once the page has loaded
+  if(location.hash)addEventListener('load',()=>setTimeout(()=>history.replaceState(history.state,'',location.pathname+location.search),0),{once:true});
+})();

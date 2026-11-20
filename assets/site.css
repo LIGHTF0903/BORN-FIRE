@@ -392,3 +392,4 @@ footer a{color:var(--muted);text-decoration:none} footer a:hover{color:var(--fg)
 /* the video window has no visible close (X) button: tapping outside the video or Esc closes it.
    The button stays for keyboard and screen-reader users and only shows when reached with the keyboard. */
 .th__x:not(:focus-visible){opacity:0;pointer-events:none;clip-path:inset(50%)}
+section[tabindex="-1"]:focus,header[tabindex="-1"]:focus{outline:none}
