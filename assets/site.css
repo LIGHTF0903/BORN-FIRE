@@ -156,6 +156,8 @@ html.th-open{overflow:hidden}
 @keyframes tapClick{0%,64%{opacity:0;transform:scale(.6)}68%{opacity:1;transform:scale(1)}80%{opacity:0;transform:scale(1.15)}100%{opacity:0}}
 @media (prefers-reduced-motion:reduce){.tap-hint{animation:none}.tap-hint b{animation:none}.tap-hint svg{animation:none;opacity:0}}
 .card:focus-visible .card__f{outline:2px solid var(--fire-2);outline-offset:3px}
+/* keyboard focus on the whole carousel: the front song's title is underlined in orange (under its last line) */
+.pyre:focus-visible .card.is-front .card__name .tl:last-child{text-decoration:underline;text-decoration-color:var(--fire-2);text-underline-offset:6px}
 .front{position:relative;z-index:2;text-align:center;min-height:66px;margin-top:-4px}
 .front__in{transition:opacity .25s ease,transform .35s var(--ease)}
 .front.swap .front__in{opacity:0;transform:translateY(8px)}
