@@ -172,7 +172,9 @@ document.querySelectorAll('.rv').forEach(el=>io.observe(el));
 
 // Full-screen background live video (muted autoplay loop, tap to unmute)
 (function(){
-  const stage=document.getElementById('stage'), btn=document.getElementById('stage-sound'), VID=PAGE.hero||'jKdQVbeaqe4', START=PAGE.heroStart??140;
+  const stage=document.getElementById('stage'), btn=document.getElementById('stage-sound'), VID=PAGE.hero||'jKdQVbeaqe4',
+    // preview: phones held upright start where the owner's vertical cut starts (PAGE.heroStartUp)
+    START=(PAGE.heroStartUp!=null&&matchMedia('(max-width:600px) and (orientation:portrait)').matches)?PAGE.heroStartUp:(PAGE.heroStart??140);
   // Data-saver on (Android Chrome / Samsung Internet): keep the still poster (the .stage background) and never load the background video
   const SAVE=!!(navigator.connection&&navigator.connection.saveData);
   if(SAVE)stage.classList.add('still');
