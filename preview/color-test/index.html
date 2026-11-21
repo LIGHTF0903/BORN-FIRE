@@ -65,8 +65,9 @@
       const want=yt-S[k].off,d=v.currentTime-want,playing=pl.getPlayerState()===1;
       if(!playing){if(!v.paused)v.pause();if(Math.abs(d)>0.05)v.currentTime=want;continue;}
       if(v.paused){v.currentTime=want;const p=v.play();if(p)p.catch(()=>{});continue;}
-      if(Math.abs(d)>0.4){v.currentTime=want;v.playbackRate=1;}
-      else v.playbackRate=Math.abs(d)<0.03?1:(d>0?0.92:1.08);
+      // big gap: jump (a little ahead, the seek itself takes time); small gap: nudge the speed, no visible jump
+      if(Math.abs(d)>1.2){v.currentTime=want+0.2;v.playbackRate=1;}
+      else v.playbackRate=Math.abs(d)<0.03?1:Math.min(1.25,Math.max(0.8,1-d*0.6));
     }
   },200);
 </script>
