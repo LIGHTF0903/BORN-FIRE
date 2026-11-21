@@ -172,25 +172,51 @@ document.querySelectorAll('.rv').forEach(el=>io.observe(el));
 
 // Full-screen background live video (muted autoplay loop, tap to unmute)
 (function(){
-  const stage=document.getElementById('stage'), btn=document.getElementById('stage-sound'), VID=PAGE.hero||'jKdQVbeaqe4', START=PAGE.heroStart??140;
+  const stage=document.getElementById('stage'), btn=document.getElementById('stage-sound'), VID=PAGE.hero||'jKdQVbeaqe4';
+  let START=PAGE.heroStart??140;
   // Data-saver on (Android Chrome / Samsung Internet): keep the still poster (the .stage background) and never load the background video
   const SAVE=!!(navigator.connection&&navigator.connection.saveData);
   if(SAVE)stage.classList.add('still');
-  let player=null, ready=false, vid=null;
+  let player=null, ready=false;
   // not playing: paused, or never started (autoplay blocked: unstarted/cued)
-  const stopped=()=>{if(vid)return vid.paused;const s=player.getPlayerState();return s!==YT.PlayerState.PLAYING&&s!==YT.PlayerState.BUFFERING;};
-  // preview: phones held upright play the vertical cut of the video (self-hosted MP4) instead of the YouTube one
-  if(!SAVE&&PAGE.heroV&&matchMedia('(max-width:600px) and (orientation:portrait)').matches){
-    vid=document.createElement('video');vid.className='stage__video stage__video--v';
-    ['muted','playsinline','loop','autoplay'].forEach(a=>vid.setAttribute(a,''));vid.muted=true;vid.defaultMuted=true;vid.playsInline=true;
-    vid.preload='auto';vid.tabIndex=-1;vid.setAttribute('aria-hidden','true');
-    vid.addEventListener('playing',()=>stage.classList.add('playing'));
-    vid.src=PAGE.heroV;document.getElementById('stage-player').replaceWith(vid);
-    player={mute(){vid.muted=true;},unMute(){vid.muted=false;},setVolume(v){vid.volume=v/100;},playVideo(){const p=vid.play();if(p)p.catch(()=>{});},pauseVideo(){vid.pause();}};
-    ready=true;player.playVideo();
+  const stopped=()=>{const s=player.getPlayerState();return s!==YT.PlayerState.PLAYING&&s!==YT.PlayerState.BUFFERING;};
+  // preview (vertical-hero): phones show the owner's vertical cut while held upright. YouTube keeps playing underneath
+  // as the clock and the only sound; the vertical MP4 (always muted) follows YouTube's time (mp4 = youtube - heroVOff),
+  // and turning the phone only cross-fades between the two (CSS on .dual / .vok), so the scene carries on.
+  const DUAL=!SAVE&&!FINE&&!!PAGE.heroV, UP=matchMedia('(max-width:600px) and (orientation:portrait)'), OFF=PAGE.heroVOff||0, VS=Math.max(0,Math.ceil(OFF));
+  if(DUAL){
+    stage.classList.add('dual');
+    if(UP.matches)START=VS;  // opened upright: start where the vertical cut starts
+    const vid=document.createElement('video');vid.className='stage__vv';
+    ['muted','playsinline'].forEach(a=>vid.setAttribute(a,''));vid.muted=true;vid.defaultMuted=true;vid.playsInline=true;
+    vid.preload='auto';vid.tabIndex=-1;vid.setAttribute('aria-hidden','true');vid.src=PAGE.heroV;
+    document.getElementById('stage-player').after(vid);
+    const play=()=>{const p=vid.play();if(p)p.catch(()=>{});};
+    btn.addEventListener('click',play);  // a tap also lets the MP4 start where autoplay is blocked (iOS Low Power Mode)
+    // YouTube's time, smoothed between its reports
+    let lt=-1,lw=0;const now=()=>{const t=player.getCurrentTime(),w=performance.now();if(t!==lt){lt=t;lw=w;return t;}return lt+(w-lw)/1000;};
+    let ok=false,jumpT=0;const show=v=>{if(v!==ok){ok=v;stage.classList.toggle('vok',v);}};
+    window.__vsync=()=>({yt:ready?player.getCurrentTime():null,mp4:vid.currentTime,off:OFF,ok,paused:vid.paused,rate:vid.playbackRate});
+    setInterval(()=>{
+      if(!ready)return;
+      if(player.getPlayerState()!==YT.PlayerState.PLAYING){if(!vid.paused)vid.pause();return;}
+      const D=vid.duration;if(!D)return;
+      const tv=now()-OFF;
+      if(tv<0||tv>D-.25){  // outside the vertical cut (Wonderlust's cut ends at YouTube 69 s)
+        if(performance.now()-jumpT<1500)return;
+        if(UP.matches){jumpT=performance.now();vid.currentTime=VS-OFF;play();show(true);player.seekTo(VS,true);lt=-1;}  // upright: the MP4 covers YouTube while both jump back to the cut's start
+        else{if(!vid.paused)vid.pause();show(false);}
+        return;
+      }
+      if(vid.paused){vid.currentTime=tv+.15;play();return;}
+      const d=vid.currentTime-tv;
+      if(Math.abs(d)>.5){vid.currentTime=tv+.1;vid.playbackRate=1;return;}
+      vid.playbackRate=Math.min(1.05,Math.max(.95,1-d*.5));  // small speed nudges keep it in step without visible jumps
+      if(!ok&&Math.abs(d)<.2)show(true);
+    },200);
   }
   window.onYouTubeIframeAPIReady=function(){
-    if(vid||SAVE)return;
+    if(SAVE)return;
     player=new YT.Player('stage-player',{videoId:VID,host:'https://www.youtube-nocookie.com',
       playerVars:Object.assign({autoplay:1,mute:1,controls:0,start:START,playsinline:1,rel:0,modestbranding:1,disablekb:1,iv_load_policy:3,fs:0},
         FINE?{vq:'hd1080'}:{}),  // PC: ask for 1080p; phones/tablets: YouTube picks automatically
@@ -200,7 +226,7 @@ document.querySelectorAll('.rv').forEach(el=>io.observe(el));
                           if(e.data===YT.PlayerState.ENDED){holdUntil=Date.now()+5000;wake();e.target.seekTo(START,true);e.target.playVideo();}}
       }});
   };
-  if(!vid){const t=document.createElement('script');t.src='https://www.youtube.com/iframe_api';document.head.appendChild(t);}
+  const t=document.createElement('script');t.src='https://www.youtube.com/iframe_api';document.head.appendChild(t);
   btn.addEventListener('click',()=>{
     if(!ready)return;
     const unmute=!stage.classList.contains('unmuted');
@@ -215,7 +241,7 @@ document.querySelectorAll('.rv').forEach(el=>io.observe(el));
   // While a track video plays, the background video is paused (its sound setting is left as it was);
   // when the track video is closed, the background picks up again from where it stopped.
   let pausedForCard=false;
-  window.pauseStage=()=>{if(!ready||pausedForCard)return;try{if(vid?!vid.paused:player.getPlayerState()!==YT.PlayerState.PAUSED){player.pauseVideo();pausedForCard=true;}}catch(_){}};
+  window.pauseStage=()=>{if(!ready||pausedForCard)return;try{if(player.getPlayerState()!==YT.PlayerState.PAUSED){player.pauseVideo();pausedForCard=true;}}catch(_){}};
   window.resumeStage=()=>{if(!pausedForCard)return;pausedForCard=false;try{player.playVideo();}catch(_){}};
   // Scroll-linked fade: music keeps playing while scrolling, getting quieter (as if from a distance)
   let lastVol=-1;
