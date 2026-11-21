@@ -205,6 +205,8 @@ html.th-open{overflow:hidden}
   .manifesto .wrap::before{content:"";display:block;width:clamp(130px,calc(100svh - 520px),280px);aspect-ratio:1;margin:0 auto 3svh;border-radius:12px;
     background:url(listen/cover.jpg) center/cover;box-shadow:0 30px 80px -24px rgba(255,120,40,.55),0 0 0 1px rgba(255,255,255,.08)}
   .manifesto .go{margin-top:min(36px,4svh)}
+  /* the Scroll link lands the intro a little higher (halfway between the default stop and flush under the nav), same as phones */
+  #album{scroll-margin-top:-32px}
   /* the headline stays big and fills the screen; the cover gives way to it on shorter screens */
   .manifesto h1{font-size:clamp(72px,min(6vw,12svh),86px)}
   /* the English headline runs to three lines, so it is a little smaller than the Korean one; the cover stays the same size */
