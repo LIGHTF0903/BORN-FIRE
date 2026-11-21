@@ -178,7 +178,7 @@ document.querySelectorAll('.rv').forEach(el=>io.observe(el));
   // Data-saver on (Android Chrome / Samsung Internet): keep the still poster (the .stage background) and never load the background video
   const SAVE=!!(navigator.connection&&navigator.connection.saveData);
   if(SAVE)stage.classList.add('still');
-  let player=null, ready=false; let showT=0; const UPRIGHT=matchMedia('(max-width:600px) and (orientation:portrait)').matches;
+  let player=null, ready=false;
   // not playing: paused, or never started (autoplay blocked: unstarted/cued)
   const stopped=()=>{const s=player.getPlayerState();return s!==YT.PlayerState.PLAYING&&s!==YT.PlayerState.BUFFERING;};
   window.onYouTubeIframeAPIReady=function(){
@@ -188,17 +188,11 @@ document.querySelectorAll('.rv').forEach(el=>io.observe(el));
         FINE?{vq:'hd1080'}:{}),  // PC: ask for 1080p; phones/tablets: YouTube picks automatically
       events:{
         onReady:e=>{ready=true;e.target.mute();e.target.getIframe().tabIndex=-1;},  // autoplay=1 starts it; extra playVideo() calls make YouTube flash its play/pause icon; tabIndex: decorative (aria-hidden), kept out of the Tab order
-        onStateChange:e=>{clearTimeout(showT);
-                          // preview: held upright the whole player frame is on screen, so wait out YouTube's start-up title / 'More videos' overlay (about 3 s) before showing it
-                          if(e.data===YT.PlayerState.PLAYING){if(UPRIGHT)showT=setTimeout(()=>stage.classList.add('playing'),3000);else stage.classList.add('playing');}
-                          // preview: while YouTube isn't playing (paused, ended, autoplay blocked) the poster shows instead, so YouTube's own pause screen ('More videos', title) never appears
-                          else if(e.data===YT.PlayerState.PAUSED||e.data===YT.PlayerState.ENDED||e.data===YT.PlayerState.CUED)stage.classList.remove('playing');
+        onStateChange:e=>{if(e.data===YT.PlayerState.PLAYING)stage.classList.add('playing');
                           if(e.data===YT.PlayerState.ENDED){holdUntil=Date.now()+5000;wake();e.target.seekTo(START,true);e.target.playVideo();}}
       }});
   };
   const t=document.createElement('script');t.src='https://www.youtube.com/iframe_api';document.head.appendChild(t);
-  // preview: opened upright, the hero loops the same stretch as the owner's vertical cut (PAGE.heroStartUp to PAGE.heroEndUp)
-  if(PAGE.heroEndUp!=null&&START===PAGE.heroStartUp)setInterval(()=>{if(ready&&player.getPlayerState()===YT.PlayerState.PLAYING&&player.getCurrentTime()>=PAGE.heroEndUp){holdUntil=Date.now()+5000;wake();player.seekTo(START,true);}},200);
   btn.addEventListener('click',()=>{
     if(!ready)return;
     const unmute=!stage.classList.contains('unmuted');
