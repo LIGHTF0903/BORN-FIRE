@@ -176,11 +176,21 @@ document.querySelectorAll('.rv').forEach(el=>io.observe(el));
   // Data-saver on (Android Chrome / Samsung Internet): keep the still poster (the .stage background) and never load the background video
   const SAVE=!!(navigator.connection&&navigator.connection.saveData);
   if(SAVE)stage.classList.add('still');
-  let player=null, ready=false;
+  let player=null, ready=false, vid=null;
   // not playing: paused, or never started (autoplay blocked: unstarted/cued)
-  const stopped=()=>{const s=player.getPlayerState();return s!==YT.PlayerState.PLAYING&&s!==YT.PlayerState.BUFFERING;};
+  const stopped=()=>{if(vid)return vid.paused;const s=player.getPlayerState();return s!==YT.PlayerState.PLAYING&&s!==YT.PlayerState.BUFFERING;};
+  // preview: phones held upright play the vertical cut of the video (self-hosted MP4) instead of the YouTube one
+  if(!SAVE&&PAGE.heroV&&matchMedia('(max-width:600px) and (orientation:portrait)').matches){
+    vid=document.createElement('video');vid.className='stage__video stage__video--v';
+    ['muted','playsinline','loop','autoplay'].forEach(a=>vid.setAttribute(a,''));vid.muted=true;vid.defaultMuted=true;vid.playsInline=true;
+    vid.preload='auto';vid.tabIndex=-1;vid.setAttribute('aria-hidden','true');
+    vid.addEventListener('playing',()=>stage.classList.add('playing'));
+    vid.src=PAGE.heroV;document.getElementById('stage-player').replaceWith(vid);
+    player={mute(){vid.muted=true;},unMute(){vid.muted=false;},setVolume(v){vid.volume=v/100;},playVideo(){const p=vid.play();if(p)p.catch(()=>{});},pauseVideo(){vid.pause();}};
+    ready=true;player.playVideo();
+  }
   window.onYouTubeIframeAPIReady=function(){
-    if(SAVE)return;
+    if(vid||SAVE)return;
     player=new YT.Player('stage-player',{videoId:VID,host:'https://www.youtube-nocookie.com',
       playerVars:Object.assign({autoplay:1,mute:1,controls:0,start:START,playsinline:1,rel:0,modestbranding:1,disablekb:1,iv_load_policy:3,fs:0},
         FINE?{vq:'hd1080'}:{}),  // PC: ask for 1080p; phones/tablets: YouTube picks automatically
@@ -190,7 +200,7 @@ document.querySelectorAll('.rv').forEach(el=>io.observe(el));
                           if(e.data===YT.PlayerState.ENDED){holdUntil=Date.now()+5000;wake();e.target.seekTo(START,true);e.target.playVideo();}}
       }});
   };
-  const t=document.createElement('script');t.src='https://www.youtube.com/iframe_api';document.head.appendChild(t);
+  if(!vid){const t=document.createElement('script');t.src='https://www.youtube.com/iframe_api';document.head.appendChild(t);}
   btn.addEventListener('click',()=>{
     if(!ready)return;
     const unmute=!stage.classList.contains('unmuted');
@@ -205,7 +215,7 @@ document.querySelectorAll('.rv').forEach(el=>io.observe(el));
   // While a track video plays, the background video is paused (its sound setting is left as it was);
   // when the track video is closed, the background picks up again from where it stopped.
   let pausedForCard=false;
-  window.pauseStage=()=>{if(!ready||pausedForCard)return;try{if(player.getPlayerState()!==YT.PlayerState.PAUSED){player.pauseVideo();pausedForCard=true;}}catch(_){}};
+  window.pauseStage=()=>{if(!ready||pausedForCard)return;try{if(vid?!vid.paused:player.getPlayerState()!==YT.PlayerState.PAUSED){player.pauseVideo();pausedForCard=true;}}catch(_){}};
   window.resumeStage=()=>{if(!pausedForCard)return;pausedForCard=false;try{player.playVideo();}catch(_){}};
   // Scroll-linked fade: music keeps playing while scrolling, getting quieter (as if from a distance)
   let lastVol=-1;
