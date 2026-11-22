@@ -13,6 +13,11 @@ const N=TRACKS.length;
 const badge=i=>i===TITLE?'<span class="badge">TITLE</span>':isBonus(TRACKS[i][2])?'<span class="badge badge--bonus">BONUS</span>':'';
 const PLAYSVG='<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 4l14 8-14 8z"/></svg>';
 const photo=i=>`${PAGE.base}assets/cards/${TRACKS[i][0]}.jpg`;
+// preview (holy-video): photos below the hero ([data-bg]) load after the hero video starts, one at a time in page order,
+// whether or not the visitor scrolls, so on slow connections the video gets the bandwidth first
+function loadDeferred(){if(loadDeferred.done)return;loadDeferred.done=1;const els=[...document.querySelectorAll('[data-bg]')];
+  (function next(){const el=els.shift();if(!el)return;const u=el.dataset.bg,im=new Image();
+    im.onload=im.onerror=()=>{el.style.backgroundImage=`url('${u}')`;el.removeAttribute('data-bg');next();};im.src=u;})();}
 const credit=i=>TRACKS[i][3]?cr(noBonus(TRACKS[i][2])):PAGE.soonCredit;
 const idx=k=>((k%N)+N)%N;
 const wrapD=d=>{d=idx(d);return d>N/2?d-N:d;};
@@ -22,7 +27,7 @@ const wrapD=d=>{d=idx(d);return d>N/2?d-N:d;};
    ===================================================================================== */
 const pyre=document.getElementById('flow'), scene=document.getElementById('scene'), ringEl=document.getElementById('ring');
 ringEl.innerHTML=TRACKS.map((t,i)=>`<button class="card${t[3]?'':' soon'}" type="button" data-i="${i}" tabindex="-1" aria-label="${t[0]} ${t[1]}${t[3]?'':' ('+PAGE.soon+')'}">
-  <span class="card__f" style="background-image:url('${photo(i)}')"></span><span class="card__n">${t[0]}</span><span class="card__t"><span class="card__badge">${badge(i)}</span><span class="card__name">${tl(t[1])}</span></span></button>`).join('');
+  <span class="card__f" data-bg="${photo(i)}"></span><span class="card__n">${t[0]}</span><span class="card__t"><span class="card__badge">${badge(i)}</span><span class="card__name">${tl(t[1])}</span></span></button>`).join('');
 const cards=[...ringEl.children];
 const fCredit=document.getElementById('frontCredit'), fBadge=document.getElementById('frontBadge'), fcount=document.getElementById('flowCount'), front=document.getElementById('front');
 const back=[...document.getElementById('tback').children];let backOn=0;
@@ -190,7 +195,9 @@ document.querySelectorAll('.rv').forEach(el=>io.observe(el));
     vid.src=(PAGE.heroVm&&Math.min(screen.width,screen.height)<=600)?PAGE.heroVm:PAGE.heroV;document.getElementById('stage-player').replaceWith(vid);
     player={mute(){vid.muted=true;},unMute(){vid.muted=false;},setVolume(v){vid.volume=v/100;},playVideo(){const p=vid.play();if(p)p.catch(()=>{});},pauseVideo(){vid.pause();}};
     ready=true;player.playVideo();
-  }
+    // the photos below wait for the hero video: they start once it plays (or after 10 s if it never does)
+    vid.addEventListener('playing',loadDeferred,{once:true});setTimeout(loadDeferred,10000);
+  }else addEventListener('load',loadDeferred);
   window.onYouTubeIframeAPIReady=function(){
     if(vid||SAVE)return;
     player=new YT.Player('stage-player',{videoId:VID,host:'https://www.youtube-nocookie.com',
