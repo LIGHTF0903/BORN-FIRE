@@ -186,7 +186,8 @@ document.querySelectorAll('.rv').forEach(el=>io.observe(el));
     ['muted','playsinline','loop','autoplay'].forEach(a=>vid.setAttribute(a,''));vid.muted=true;vid.defaultMuted=true;vid.playsInline=true;
     vid.preload='auto';vid.tabIndex=-1;vid.setAttribute('aria-hidden','true');
     vid.addEventListener('playing',()=>stage.classList.add('playing'));
-    vid.src=PAGE.heroV;document.getElementById('stage-player').replaceWith(vid);
+    // phones (short side 600 px or less, either orientation) get the light file, everything else the 1080p one
+    vid.src=(PAGE.heroVm&&Math.min(screen.width,screen.height)<=600)?PAGE.heroVm:PAGE.heroV;document.getElementById('stage-player').replaceWith(vid);
     player={mute(){vid.muted=true;},unMute(){vid.muted=false;},setVolume(v){vid.volume=v/100;},playVideo(){const p=vid.play();if(p)p.catch(()=>{});},pauseVideo(){vid.pause();}};
     ready=true;player.playVideo();
   }
