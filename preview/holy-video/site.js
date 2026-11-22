@@ -12,7 +12,7 @@ const TITLE=7; // 모닥불
 const N=TRACKS.length;
 const badge=i=>i===TITLE?'<span class="badge">TITLE</span>':isBonus(TRACKS[i][2])?'<span class="badge badge--bonus">BONUS</span>':'';
 const PLAYSVG='<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 4l14 8-14 8z"/></svg>';
-const photo=i=>`${PAGE.base}assets/cards/${TRACKS[i][0]}.jpg`;
+const photo=i=>`../cards/${TRACKS[i][0]}.webp`;   // preview (holy-video): WebP 80 copies of assets/cards
 // preview (holy-video): photos below the hero ([data-bg]) load after the hero video starts, one at a time in page order,
 // whether or not the visitor scrolls, so on slow connections the video gets the bandwidth first
 // the four font files the first screen doesn't use come first (until then that text shows in Pretendard Bold / a fallback)
