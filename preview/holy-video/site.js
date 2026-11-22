@@ -15,7 +15,13 @@ const PLAYSVG='<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><
 const photo=i=>`${PAGE.base}assets/cards/${TRACKS[i][0]}.jpg`;
 // preview (holy-video): photos below the hero ([data-bg]) load after the hero video starts, one at a time in page order,
 // whether or not the visitor scrolls, so on slow connections the video gets the bandwidth first
-function loadDeferred(){if(loadDeferred.done)return;loadDeferred.done=1;const els=[...document.querySelectorAll('[data-bg]')];
+// the four font files the first screen doesn't use come first (until then that text shows in Pretendard Bold / a fallback)
+const LATIN='U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD';
+function loadFonts(){const F=`${PAGE.base}assets/fonts/`;
+  [['Pretendard','Pretendard-SemiBold.subset.woff2',{weight:'600'}],['Pretendard','Pretendard-ExtraBold.subset.woff2',{weight:'800'}],
+   ['Anton','Anton-latin.woff2',{unicodeRange:LATIN}],['Pinyon Script','PinyonScript-latin.woff2',{unicodeRange:LATIN}]]
+  .forEach(([fam,file,d])=>{try{const f=new FontFace(fam,`url(${F}${file}) format('woff2')`,Object.assign({style:'normal',display:'swap'},d));document.fonts.add(f);f.load().catch(()=>{});}catch(_){}});}
+function loadDeferred(){if(loadDeferred.done)return;loadDeferred.done=1;loadFonts();const els=[...document.querySelectorAll('[data-bg]')];
   (function next(){const el=els.shift();if(!el)return;const u=el.dataset.bg,im=new Image();
     im.onload=im.onerror=()=>{el.style.backgroundImage=`url('${u}')`;el.removeAttribute('data-bg');next();};im.src=u;})();}
 const credit=i=>TRACKS[i][3]?cr(noBonus(TRACKS[i][2])):PAGE.soonCredit;
