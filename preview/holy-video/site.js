@@ -31,8 +31,10 @@ function loadFonts(){const F=`${PAGE.base}assets/fonts/`,L='../fonts/';
 function loadDeferred(){if(loadDeferred.done)return;loadDeferred.done=1;loadFonts();
   document.documentElement.classList.add('late');   // the intro's album cover (CSS) may load now
   const els=[...document.querySelectorAll('[data-bg],[data-src]')];
-  (function next(){const el=els.shift();if(!el)return;const u=el.dataset.bg||el.dataset.src,im=new Image();
-    im.onload=im.onerror=()=>{if(el.dataset.src){el.src=u;el.removeAttribute('data-src');}else{el.style.backgroundImage=`url('${u}')`;el.removeAttribute('data-bg');}next();};im.src=u;})();}
+  // three at a time, still in page order (each finished photo starts the next one), so slow connections wait less per request
+  function next(){const el=els.shift();if(!el)return;const u=el.dataset.bg||el.dataset.src,im=new Image();
+    im.onload=im.onerror=()=>{if(el.dataset.src){el.src=u;el.removeAttribute('data-src');}else{el.style.backgroundImage=`url('${u}')`;el.removeAttribute('data-bg');}next();};im.src=u;}
+  next();next();next();}
 const credit=i=>TRACKS[i][3]?cr(noBonus(TRACKS[i][2])):PAGE.soonCredit;
 const idx=k=>((k%N)+N)%N;
 const wrapD=d=>{d=idx(d);return d>N/2?d-N:d;};
