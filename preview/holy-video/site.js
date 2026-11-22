@@ -17,13 +17,18 @@ const photo=i=>`${PAGE.base}assets/cards/${TRACKS[i][0]}.jpg`;
 // whether or not the visitor scrolls, so on slow connections the video gets the bandwidth first
 // the four font files the first screen doesn't use come first (until then that text shows in Pretendard Bold / a fallback)
 const LATIN='U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD';
-function loadFonts(){const F=`${PAGE.base}assets/fonts/`;
-  [['Pretendard','Pretendard-SemiBold.subset.woff2',{weight:'600'}],['Pretendard','Pretendard-ExtraBold.subset.woff2',{weight:'800'}],
-   ['Anton','Anton-latin.woff2',{unicodeRange:LATIN}],['Pinyon Script','PinyonScript-latin.woff2',{unicodeRange:LATIN}]]
-  .forEach(([fam,file,d])=>{try{const f=new FontFace(fam,`url(${F}${file}) format('woff2')`,Object.assign({style:'normal',display:'swap'},d));document.fonts.add(f);f.load().catch(()=>{});}catch(_){}});}
-function loadDeferred(){if(loadDeferred.done)return;loadDeferred.done=1;loadFonts();const els=[...document.querySelectorAll('[data-bg]')];
-  (function next(){const el=els.shift();if(!el)return;const u=el.dataset.bg,im=new Image();
-    im.onload=im.onerror=()=>{el.style.backgroundImage=`url('${u}')`;el.removeAttribute('data-bg');next();};im.src=u;})();}
+// Pretendard: small Latin-only files (../fonts/*.latin.woff2) load now; the full files with Hangul only if Korean is on the page
+const KOREAN='U+1100-11FF, U+3000-303F, U+3130-318F, U+3200-32FF, U+4E00-9FFF, U+AC00-D7A3, U+F900-FAFF, U+FF00-FFEF';
+function loadFonts(){const F=`${PAGE.base}assets/fonts/`,L='../fonts/';
+  [['Pretendard',F+'Pretendard-SemiBold.subset.woff2',{weight:'600',unicodeRange:KOREAN},0],['Pretendard',F+'Pretendard-ExtraBold.subset.woff2',{weight:'800',unicodeRange:KOREAN},0],
+   ['Pretendard',L+'Pretendard-SemiBold.latin.woff2',{weight:'600',unicodeRange:LATIN},1],['Pretendard',L+'Pretendard-ExtraBold.latin.woff2',{weight:'800',unicodeRange:LATIN},1],
+   ['Anton',F+'Anton-latin.woff2',{unicodeRange:LATIN},1],['Pinyon Script',F+'PinyonScript-latin.woff2',{unicodeRange:LATIN},1]]
+  .forEach(([fam,url,d,now])=>{try{const f=new FontFace(fam,`url(${url}) format('woff2')`,Object.assign({style:'normal',display:'swap'},d));document.fonts.add(f);if(now)f.load().catch(()=>{});}catch(_){}});}
+function loadDeferred(){if(loadDeferred.done)return;loadDeferred.done=1;loadFonts();
+  document.documentElement.classList.add('late');   // the intro's album cover (CSS) may load now
+  const els=[...document.querySelectorAll('[data-bg],[data-src]')];
+  (function next(){const el=els.shift();if(!el)return;const u=el.dataset.bg||el.dataset.src,im=new Image();
+    im.onload=im.onerror=()=>{if(el.dataset.src){el.src=u;el.removeAttribute('data-src');}else{el.style.backgroundImage=`url('${u}')`;el.removeAttribute('data-bg');}next();};im.src=u;})();}
 const credit=i=>TRACKS[i][3]?cr(noBonus(TRACKS[i][2])):PAGE.soonCredit;
 const idx=k=>((k%N)+N)%N;
 const wrapD=d=>{d=idx(d);return d>N/2?d-N:d;};
@@ -54,7 +59,8 @@ function render(){const gap=cw*.74, far=cw*.46;
   const f=frontIdx();if(f!==shown)showFront(f);}
 function showFront(i){const first=shown<0;shown=i;
   // the room behind: cross-fade to this song's photo
-  const nb=back[backOn^1];nb.style.backgroundImage=`url('${photo(i)}')`;nb.classList.add('on');back[backOn].classList.remove('on');backOn^=1;
+  // (preview: before the hero video starts, the photo waits in data-bg for loadDeferred)
+  const nb=back[backOn^1];if(loadDeferred.done)nb.style.backgroundImage=`url('${photo(i)}')`;else nb.dataset.bg=photo(i);nb.classList.add('on');back[backOn].classList.remove('on');backOn^=1;
   const set=()=>{fBadge.innerHTML=badge(i);fCredit.innerHTML=credit(i);front.classList.remove('swap');};
   fcount.innerHTML=`<b>${TRACKS[i][0]}</b> / ${String(N).padStart(2,'0')}`;
   if(first||RM){set();return;}front.classList.add('swap');clearTimeout(showFront.t);showFront.t=setTimeout(set,180);}
