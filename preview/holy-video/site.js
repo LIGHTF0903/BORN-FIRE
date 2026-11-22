@@ -203,16 +203,21 @@ document.querySelectorAll('.rv').forEach(el=>io.observe(el));
   // preview (holy-video): the hero plays the owner's vertical cut (self-hosted MP4) on every screen instead of YouTube;
   // it covers the stage (fills the width when the screen is wider than the video). Same sound button, fade and pause rules.
   if(!SAVE&&PAGE.heroV){
-    vid=document.createElement('video');vid.className='stage__video stage__vv';
-    ['muted','playsinline','loop','autoplay'].forEach(a=>vid.setAttribute(a,''));vid.muted=true;vid.defaultMuted=true;vid.playsInline=true;
-    vid.preload='auto';vid.tabIndex=-1;vid.setAttribute('aria-hidden','true');
-    vid.addEventListener('playing',()=>stage.classList.add('playing'));
-    // phones (short side 600 px or less, either orientation) get the light file, everything else the 1080p one
-    vid.src=(PAGE.heroVm&&Math.min(screen.width,screen.height)<=600)?PAGE.heroVm:PAGE.heroV;document.getElementById('stage-player').replaceWith(vid);
+    // the page's inline script normally made the video already (so it starts downloading before this file arrives); take it over
+    vid=document.getElementById('stage-vv');
+    if(!vid){
+      vid=document.createElement('video');vid.id='stage-vv';vid.className='stage__video stage__vv';
+      ['muted','playsinline','loop','autoplay'].forEach(a=>vid.setAttribute(a,''));vid.muted=true;vid.defaultMuted=true;vid.playsInline=true;
+      vid.preload='auto';vid.tabIndex=-1;vid.setAttribute('aria-hidden','true');
+      // phones (short side 600 px or less, either orientation) get the light file, everything else the 1080p one
+      vid.src=(PAGE.heroVm&&Math.min(screen.width,screen.height)<=600)?PAGE.heroVm:PAGE.heroV;document.getElementById('stage-player').replaceWith(vid);
+    }
+    const on=()=>!vid.paused&&vid.readyState>2;   // already playing before this file arrived?
+    vid.addEventListener('playing',()=>stage.classList.add('playing'));if(on())stage.classList.add('playing');
     player={mute(){vid.muted=true;},unMute(){vid.muted=false;},setVolume(v){vid.volume=v/100;},playVideo(){const p=vid.play();if(p)p.catch(()=>{});},pauseVideo(){vid.pause();}};
     ready=true;player.playVideo();
     // the photos below wait for the hero video: they start once it plays (or after 10 s if it never does)
-    vid.addEventListener('playing',loadDeferred,{once:true});setTimeout(loadDeferred,10000);
+    if(on())loadDeferred();else vid.addEventListener('playing',loadDeferred,{once:true});setTimeout(loadDeferred,10000);
   }else addEventListener('load',loadDeferred);
   window.onYouTubeIframeAPIReady=function(){
     if(vid||SAVE)return;

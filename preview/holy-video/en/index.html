@@ -87,6 +87,7 @@
 
 <header class="stage" id="stage" style="background-image:url('https://i.ytimg.com/vi/PzUdoQCf3lk/maxresdefault.jpg')">
   <div id="stage-player" class="stage__video" aria-hidden="true"></div>
+  <script>/* preview (holy-video): make the hero video right away so it starts downloading before site.js arrives (site.js takes it over); phones (short side 600 px or less) get the light file */(function(){if(navigator.connection&&navigator.connection.saveData)return;var p=document.getElementById('stage-player'),v=document.createElement('video');v.id='stage-vv';v.className='stage__video stage__vv';['muted','playsinline','loop','autoplay'].forEach(function(a){v.setAttribute(a,'')});v.muted=true;v.defaultMuted=true;v.playsInline=true;v.preload='auto';v.tabIndex=-1;v.setAttribute('aria-hidden','true');v.addEventListener('playing',function(){document.getElementById('stage').classList.add('playing')});v.src=Math.min(screen.width,screen.height)<=600?'../holy-m.mp4':'../holy.mp4';p.parentNode.replaceChild(v,p);})();</script>
   <button class="stage__sound" id="stage-sound" type="button" aria-label="Unmute" aria-pressed="false">
     <svg class="off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="m22 9-6 6M16 9l6 6"/></svg>
     <svg class="on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>
