@@ -18,11 +18,15 @@ const photo=i=>`${PAGE.base}assets/cards/${TRACKS[i][0]}.jpg`;
 // the four font files the first screen doesn't use come first (until then that text shows in Pretendard Bold / a fallback)
 const LATIN='U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD';
 // Pretendard: small Latin-only files (../fonts/*.latin.woff2) load now; the full files with Hangul only if Korean is on the page
+const USED='U+0020-007E, U+00A9, U+00B7, U+2014, U+2026, U+2039-203A, U+2190, U+2192, U+21BA';
 const KOREAN='U+1100-11FF, U+3000-303F, U+3130-318F, U+3200-32FF, U+4E00-9FFF, U+AC00-D7A3, U+F900-FAFF, U+FF00-FFEF';
 function loadFonts(){const F=`${PAGE.base}assets/fonts/`,L='../fonts/';
   [['Pretendard',F+'Pretendard-SemiBold.subset.woff2',{weight:'600',unicodeRange:KOREAN},0],['Pretendard',F+'Pretendard-ExtraBold.subset.woff2',{weight:'800',unicodeRange:KOREAN},0],
-   ['Pretendard',L+'Pretendard-SemiBold.latin.woff2',{weight:'600',unicodeRange:LATIN},1],['Pretendard',L+'Pretendard-ExtraBold.latin.woff2',{weight:'800',unicodeRange:LATIN},1],
-   ['Anton',F+'Anton-latin.woff2',{unicodeRange:LATIN},1],['Pinyon Script',F+'PinyonScript-latin.woff2',{unicodeRange:LATIN},1]]
+   ['Pretendard',L+'Pretendard-SemiBold.latin.woff2',{weight:'600',unicodeRange:LATIN},0],['Pretendard',L+'Pretendard-ExtraBold.latin.woff2',{weight:'800',unicodeRange:LATIN},0],
+   ['Anton',F+'Anton-latin.woff2',{unicodeRange:LATIN},0],['Pinyon Script',F+'PinyonScript-latin.woff2',{unicodeRange:LATIN},0],
+   // smallest files: only the characters this page uses (added last so they win; the files above are the fallback for anything else)
+   ['Pretendard',L+'Pretendard-SemiBold.used.woff2',{weight:'600',unicodeRange:USED},1],['Pretendard',L+'Pretendard-ExtraBold.used.woff2',{weight:'800',unicodeRange:USED},1],
+   ['Anton',L+'Anton.used.woff2',{unicodeRange:USED},1],['Pinyon Script',L+'PinyonScript.used.woff2',{unicodeRange:USED},1]]
   .forEach(([fam,url,d,now])=>{try{const f=new FontFace(fam,`url(${url}) format('woff2')`,Object.assign({style:'normal',display:'swap'},d));document.fonts.add(f);if(now)f.load().catch(()=>{});}catch(_){}});}
 function loadDeferred(){if(loadDeferred.done)return;loadDeferred.done=1;loadFonts();
   document.documentElement.classList.add('late');   // the intro's album cover (CSS) may load now
